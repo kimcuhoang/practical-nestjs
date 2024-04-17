@@ -7,11 +7,15 @@ import { ProjectSchema } from './persistence/schemas/project.schema';
 
 @Global()
 @Module({
-    imports: [CqrsModule, TypeOrmModule.forFeature([ProjectSchema])],
+    imports: [
+        CqrsModule, 
+        TypeOrmModule.forFeature([ProjectSchema])
+    ],
     providers: [
         ...CommandHandlers,
         ...QueryHandlers
     ],
     controllers: [ProjectsController]
 })
+
 export class ProjectsModule {}

@@ -11,9 +11,6 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
             type: 'postgres',
             url: options.databaseUrl,
             synchronize: false,
-            entities: [
-                ...options.schemas
-            ],
             migrations: [
                 ...options.migrations
             ],

@@ -1,11 +1,15 @@
-import { Init1713373618275 } from "./migrations/1713373618275-init";
+import { Init1713379213286 } from "./migrations/1713379213286-init";
 import { ProjectSchema } from "./schemas/project.schema";
 
-export const ProjectsModuleSchemas = [
+const ProjectsModuleMigrations = [
+    Init1713379213286
+]
+
+const Schemas = [
     ProjectSchema
 ]
 
-
-export const ProjectsModuleMigrations = [
-    Init1713373618275
-]
+export const ProjectsModuleDataSource = {
+    Schemas: Schemas,
+    Migrations: ProjectsModuleMigrations
+};

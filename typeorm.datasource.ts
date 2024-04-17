@@ -1,4 +1,4 @@
-import { Schemas } from "./src/projects/persistence";
+import { ProjectsModuleDataSource } from "./src/projects/persistence";
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
@@ -17,7 +17,10 @@ const pgConnectionOptions: PostgresConnectionOptions = {
     type: 'postgres',
     url: connectionString,
     entities: [
-        ...Schemas
+        ...ProjectsModuleDataSource.Schemas
+    ],
+    migrations: [
+        ...ProjectsModuleDataSource.Migrations
     ],
     migrationsTableName: 'MigrationHistory',
     logging: true

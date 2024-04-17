@@ -4,7 +4,7 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers
 import { Client } from 'pg';
 import { AppModule } from '../src/app.module';
 import { DatabaseModule } from './../src/building-blocks/infra/database/database.module';
-import { ProjectsModuleMigrations, ProjectsModuleSchemas } from './../src/projects/persistence';
+import { ProjectsModuleDataSource } from './../src/projects/persistence';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let postgresClient: Client;
@@ -32,14 +32,11 @@ beforeAll(async () => {
         imports: [
           DatabaseModule.register({
             databaseUrl: databaseUrl,
-            schemas: [
-              ...ProjectsModuleSchemas
-            ],
             migrations: [
-              ...ProjectsModuleMigrations
+              ...ProjectsModuleDataSource.Migrations
             ]
           }),
-          AppModule,
+          AppModule
         ],
       }).compile();
   
