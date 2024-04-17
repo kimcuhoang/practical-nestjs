@@ -2,6 +2,8 @@ import { ConfigurableModuleBuilder } from "@nestjs/common";
 
 export class DatabaseConfiguration {
     databaseUrl: string;
+    schemas: any[];
+    migrations: any[];
 }
 
 const {

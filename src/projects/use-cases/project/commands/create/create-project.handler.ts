@@ -2,7 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CreateProjectRequest } from "./create-project.request";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Repository } from "typeorm";
-import { Project } from "../../../../models/project";
+import { Project } from "../../../../core/project";
 
 @CommandHandler(CreateProjectRequest)
 export class CreateProjectHandler implements ICommandHandler<CreateProjectRequest, string> {

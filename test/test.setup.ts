@@ -3,7 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Client } from 'pg';
 import { AppModule } from '../src/app.module';
-import { DatabaseModule } from './../src/infra/database/database.module';
+import { DatabaseModule } from './../src/building-blocks/infra/database/database.module';
+import { ProjectsModuleMigrations, ProjectsModuleSchemas } from './../src/projects/persistence';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let postgresClient: Client;
@@ -30,7 +31,13 @@ beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [
           DatabaseModule.register({
-            databaseUrl: databaseUrl
+            databaseUrl: databaseUrl,
+            schemas: [
+              ...ProjectsModuleSchemas
+            ],
+            migrations: [
+              ...ProjectsModuleMigrations
+            ]
           }),
           AppModule,
         ],

@@ -1,7 +1,6 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './database.module-definition';
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Schemas } from '../../projects/schemas';
 
 @Global()
 @Module({})
@@ -13,10 +12,10 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
             url: options.databaseUrl,
             synchronize: false,
             entities: [
-                ...Schemas
+                ...options.schemas
             ],
             migrations: [
-                'dist/infra/database/migrations/*.js'
+                ...options.migrations
             ],
             migrationsTableName: 'MigrationHistory',
             autoLoadEntities: true,
