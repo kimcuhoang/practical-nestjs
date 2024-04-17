@@ -1,8 +1,8 @@
-import { IQuery, IQueryHandler, QueryHandler } from "@nestjs/cqrs";
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { SearchProjectsRequest } from "./search-projects.request";
 import { SearchProjectsResponse } from "./search-projects.response";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Project } from "src/project-management/models/project";
+import { Project } from "../../../../models/project";
 import { Repository } from "typeorm";
 
 @QueryHandler(SearchProjectsRequest)

@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CommandBus, EventBus, QueryBus } from '@nestjs/cqrs';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateProjectPayload } from './use-cases/project/commands/create/create-project.payload';
 import { CreateProjectRequest } from './use-cases/project/commands/create/create-project.request';
 import { ApiResponse } from '@nestjs/swagger';
@@ -15,7 +15,7 @@ export class DomainController {
     ) { }
 
     @Get()
-    @ApiResponse({ status: 200, type: SearchProjectsResponse })
+    @ApiResponse({ status: HttpStatus.OK, type: SearchProjectsResponse })
     async search(): Promise<SearchProjectsResponse> {
         const request = new SearchProjectsRequest();
         const response = await this._queryBus.execute(request);
@@ -23,6 +23,9 @@ export class DomainController {
     }
 
     @Post()
+    // the response status code is always 200 by default, except for POST requests which are 201
+    // https://docs.nestjs.com/controllers#status-code
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({ status: 200, type: String })
     async create(@Body() payload: CreateProjectPayload): Promise<string> {
         const request = new CreateProjectRequest(payload);

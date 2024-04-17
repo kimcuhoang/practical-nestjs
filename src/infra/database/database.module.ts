@@ -8,7 +8,6 @@ import { Schemas } from '../../project-management/schemas';
 export class DatabaseModule extends DatabaseConfigurableModuleClass {
 
     public static register(options: DatabaseModuleOptions): DynamicModule {
-        console.log('DatabaseModule.register', options);
         const typeOrmModuleOptions: TypeOrmModuleOptions = {
             type: 'postgres',
             url: options.databaseUrl,

@@ -1,24 +1,30 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { Guid } from 'guid-typescript';
+import { postgresClient, app } from './test.setup';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication;
+  let httpServer: any;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeEach(() => {
+    httpServer = app.getHttpServer();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterEach(async () => {
+    await postgresClient.query('DELETE FROM "Projects" CASCADE');
+  });
+
+  it('/domain (POST)', async () => {
+    const response = await request(httpServer).post('/domain').send({ name: 'test' });
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.text).not.toEqual(Guid.EMPTY.toString());
+
+  });
+
+  it('/domain (GET)', async () => {
+    const response = await request(app.getHttpServer()).get('/domain');
+    expect(response.status).toBe(200);
+    expect(response.body.projects).toMatchObject([]);
+    expect(response.body.total).toBeGreaterThanOrEqual(0);
   });
 });
