@@ -1,4 +1,4 @@
-import { Schemas } from "./src/project-management/schemas";
+import { Schemas } from "./src/projects/schemas";
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 

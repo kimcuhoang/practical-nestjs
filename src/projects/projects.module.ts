@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { CommandHandlers, QueryHandlers } from './use-cases';
-import { DomainController } from './domain.controller';
+import { ProjectsController } from './projects.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectSchema } from './schemas/project.schema';
@@ -12,6 +12,6 @@ import { ProjectSchema } from './schemas/project.schema';
         ...CommandHandlers,
         ...QueryHandlers
     ],
-    controllers: [DomainController]
+    controllers: [ProjectsController]
 })
-export class DomainModule {}
+export class ProjectsModule {}

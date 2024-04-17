@@ -1,4 +1,4 @@
-import { Project } from "src/project-management/models/project";
+import { Project } from "../models/project";
 import { EntitySchema } from "typeorm";
 import { EntityBaseSchema } from "./entity-base-schema";
 

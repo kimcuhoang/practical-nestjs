@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './infra/database/database.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { DomainModule } from './project-management/domain.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { DomainModule } from './project-management/domain.module';
       databaseUrl: process.env.DATABASE_URL
     }),
     CqrsModule.forRoot(),
-    DomainModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [
