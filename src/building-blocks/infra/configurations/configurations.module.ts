@@ -1,7 +1,7 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigurableModuleClass, OPTIONS_TYPE } from './configurtions.module-definition';
 import { ConfigurationsService } from './configurations.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
@@ -15,7 +15,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }
     }
   ],
-  imports: [ConfigModule],
   exports: [ConfigurationsService]
 })
 export class ConfigurationsModule extends ConfigurableModuleClass { }

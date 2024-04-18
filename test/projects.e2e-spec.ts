@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { Guid } from 'guid-typescript';
 import { postgresClient, app } from './test.setup';
 
-xdescribe('AppController (e2e)', () => {
+describe('AppController (e2e)', () => {
   let httpServer: any;
   const url = '/projects';
 

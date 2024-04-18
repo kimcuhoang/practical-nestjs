@@ -1,7 +1,6 @@
 import { ConfigurableModuleBuilder } from "@nestjs/common";
 
 export interface DatabaseConfiguration {
-    databaseUrl: string;
     migrations: any[];
 }
 
@@ -9,7 +8,6 @@ const {
     ConfigurableModuleClass,
     MODULE_OPTIONS_TOKEN,
     OPTIONS_TYPE,
-    ASYNC_OPTIONS_TYPE
 } = new ConfigurableModuleBuilder<DatabaseConfiguration>().build();
 
 export {
@@ -18,4 +16,3 @@ export {
 }
 
 export type DatabaseModuleOptions = typeof OPTIONS_TYPE;
-export type AsyncDatabaseModuleOptions = typeof ASYNC_OPTIONS_TYPE;

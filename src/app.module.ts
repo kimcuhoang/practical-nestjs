@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './building-blocks/infra/database/database.module';
@@ -12,12 +12,9 @@ import { ConfigurationsModule } from './building-blocks/infra/configurations/con
 @Module({
   imports: [
     CqrsModule.forRoot(),
-    ConfigModule.forRoot(),
-    ConfigurationsModule.register({
-      connectionString: process.env.DATABASE_URL
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigurationsModule,
     DatabaseModule.register({
-      databaseUrl: process.env.DATABASE_URL,
       migrations: [
         ...ProjectsModuleDataSource.Migrations
       ]

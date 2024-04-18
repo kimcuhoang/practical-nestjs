@@ -10,8 +10,8 @@ let app: INestApplication;
 let connectionString: string;
 
 beforeAll(async () => {
+
     postgresContainer = await new PostgreSqlContainer("postgres:latest")
-        .withName("postgres-testing")
         .withDatabase("practical-nestjs-testing")
         .withUsername("postgres")
         .withPassword("postgres")
@@ -41,7 +41,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-    //Stop container as well as postgresClient 
     await postgresClient.end();
     await postgresContainer.stop();
     await app.close();
