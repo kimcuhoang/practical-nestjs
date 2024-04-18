@@ -3,12 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Client } from 'pg';
 import { AppModule } from '../src/app.module';
-import { DatabaseModule } from './../src/building-blocks/infra/database/database.module';
-import { ProjectsModuleDataSource } from './../src/projects/persistence';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let postgresClient: Client;
 let app: INestApplication;
+let connectionString: string;
 
 beforeAll(async () => {
     postgresContainer = await new PostgreSqlContainer("postgres:latest")
@@ -26,24 +25,19 @@ beforeAll(async () => {
         password: postgresContainer.getPassword()
     });
 
-    const databaseUrl = `postgresql://${postgresClient.user}:${postgresClient.password}@${postgresClient.host}:${postgresClient.port}/${postgresClient.database}`;
+    connectionString = `postgresql://${postgresClient.user}:${postgresClient.password}@${postgresClient.host}:${postgresClient.port}/${postgresClient.database}`;
+
+    process.env.DATABASE_URL = connectionString;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [
-          DatabaseModule.register({
-            databaseUrl: databaseUrl,
-            migrations: [
-              ...ProjectsModuleDataSource.Migrations
-            ]
-          }),
-          AppModule
-        ],
-      }).compile();
-  
-      app = moduleFixture.createNestApplication();
-      await app.init();
-  
-      await postgresClient.connect();
+        imports: [ AppModule ],
+    })
+    .compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    await postgresClient.connect();
 })
 
 afterAll(async () => {
@@ -55,4 +49,4 @@ afterAll(async () => {
 
 // add some timeout until containers are up and working 
 jest.setTimeout(8000);
-export { postgresClient, postgresContainer, app };
+export { postgresClient, postgresContainer, app, connectionString };

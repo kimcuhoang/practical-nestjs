@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from "@nestjs/common";
 
-export class DatabaseConfiguration {
+export interface DatabaseConfiguration {
     databaseUrl: string;
     migrations: any[];
 }

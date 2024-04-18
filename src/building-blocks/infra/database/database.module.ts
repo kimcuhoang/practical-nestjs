@@ -7,6 +7,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 export class DatabaseModule extends DatabaseConfigurableModuleClass {
 
     public static register(options: DatabaseModuleOptions): DynamicModule {
+        console.log(options);
         const typeOrmModuleOptions: TypeOrmModuleOptions = {
             type: 'postgres',
             url: options.databaseUrl,
