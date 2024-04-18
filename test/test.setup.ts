@@ -2,12 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Client } from 'pg';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '@src/app.module';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let postgresClient: Client;
 let app: INestApplication;
 let connectionString: string;
+let httpServer: any;
 
 beforeAll(async () => {
 
@@ -29,23 +30,22 @@ beforeAll(async () => {
 
     process.env.DATABASE_URL = connectionString;
 
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [ AppModule ],
+    const moduleFixture:TestingModule = await Test.createTestingModule({
+        imports: [ AppModule ]
     })
     .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    await postgresClient.connect();
+    httpServer = app.getHttpServer();
 })
 
 afterAll(async () => {
-    await postgresClient.end();
     await postgresContainer.stop();
     await app.close();
 });
 
 // add some timeout until containers are up and working 
 jest.setTimeout(8000);
-export { postgresClient, postgresContainer, app, connectionString };
+export { app, httpServer, connectionString };

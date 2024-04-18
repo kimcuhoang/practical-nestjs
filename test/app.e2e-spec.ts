@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { app, connectionString } from './test.setup';
+import { app, connectionString } from '@test/test.setup';
 
 describe('AppController (e2e)', () => {
     let httpServer: any;

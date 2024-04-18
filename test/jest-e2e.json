@@ -4,7 +4,8 @@
   "moduleNameMapper": {
     "^@src/(.*)$": "<rootDir>/../src/$1",
     "^@projects/(.*)$": "<rootDir>/../src/projects/$1",
-    "^@building-blocks/(.*)$": "<rootDir>/../src/building-blocks/$1"
+    "^@building-blocks/(.*)$": "<rootDir>/../src/building-blocks/$1",
+    "^@test/(.*)$": "<rootDir>/$1"
   },
   
   "setupFilesAfterEnv": ["./test.setup.ts"],

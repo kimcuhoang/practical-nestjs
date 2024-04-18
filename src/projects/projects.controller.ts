@@ -1,10 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProjectPayload } from './use-cases/project/commands/create/create-project.payload';
 import { CreateProjectRequest } from './use-cases/project/commands/create/create-project.request';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SearchProjectsResponse } from './use-cases/project/queries/search/search-projects.response';
 import { SearchProjectsRequest } from './use-cases/project/queries/search/search-projects.request';
+import { FindByIdResponse } from './use-cases/project/queries/find-by-id/find-by-id.response';
+import { FindByIdRequest } from './use-cases/project/queries/find-by-id/find-by-id.request';
 
 @ApiTags('Projects Management')
 @Controller('projects')
@@ -18,6 +20,15 @@ export class ProjectsController {
     @ApiResponse({ status: HttpStatus.OK, type: SearchProjectsResponse })
     async search(): Promise<SearchProjectsResponse> {
         const request = new SearchProjectsRequest();
+        const response = await this._queryBus.execute(request);
+        return response;
+    }
+
+    @Get('/:id')
+    @ApiResponse({ status: HttpStatus.OK, type: FindByIdResponse })
+    @ApiParam({ name: 'id', type: String, required: true})
+    async findById(@Param('id') id: string): Promise<FindByIdResponse> {
+        const request = new FindByIdRequest(id);
         const response = await this._queryBus.execute(request);
         return response;
     }
