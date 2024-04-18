@@ -16,9 +16,12 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@building-blocks/*": ["src/building-blocks/*"],
+      "@projects/*": ["src/projects/*"],
+      "@test/*": ["test/*"]
+    }
   },
-  "paths": {
-    "@src": ["src/*"]
-  }
 }

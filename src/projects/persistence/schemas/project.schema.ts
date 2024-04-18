@@ -1,7 +1,6 @@
-import { Project } from "../../core/project";
 import { EntitySchema } from "typeorm";
-import { EntityBaseSchema } from "../../../building-blocks/infra/database/schemas/entity-base-schema";
-
+import { Project } from "@projects/core/project";
+import { EntityBaseSchema } from "@building-blocks/infra/database/schemas/entity-base-schema";
 
 export const ProjectSchema = new EntitySchema<Project>({
     name: "Project",

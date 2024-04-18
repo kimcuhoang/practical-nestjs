@@ -1,6 +1,6 @@
 import { IQueryResult } from "@nestjs/cqrs";
 import { ApiProperty } from "@nestjs/swagger";
-import { Project } from "../../../../core/project";
+import { Project } from "@projects/core/project";
 
 class SearchProjectResult {
     @ApiProperty({type: String, example: 'Project Id'})
