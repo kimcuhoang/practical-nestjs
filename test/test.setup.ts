@@ -18,6 +18,8 @@ beforeAll(async () => {
         .withPassword("postgres")
         .start();
 
+    console.log(postgresContainer.getConnectionUri());
+
     postgresClient = new Client({
         host: postgresContainer.getHost(),
         port: postgresContainer.getPort(),

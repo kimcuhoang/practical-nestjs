@@ -3,13 +3,13 @@ import { CommandHandlers, QueryHandlers } from './use-cases';
 import { ProjectsController } from './projects.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectSchema } from './persistence/schemas/project.schema';
+import { ProjectsModuleDataSource } from './persistence';
 
 @Global()
 @Module({
     imports: [
         CqrsModule, 
-        TypeOrmModule.forFeature([ProjectSchema])
+        TypeOrmModule.forFeature([...ProjectsModuleDataSource.Schemas])
     ],
     providers: [
         ...CommandHandlers,

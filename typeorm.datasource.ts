@@ -1,7 +1,7 @@
-import { ProjectsModuleDataSource } from "./src/projects/persistence";
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
-
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import * as glob from 'glob';
 
 const postgresClient = {
     user: "lab",
@@ -13,17 +13,32 @@ const postgresClient = {
 
 const connectionString = `postgresql://${postgresClient.user}:${postgresClient.password}@${postgresClient.host}:${postgresClient.port}/${postgresClient.database}`;
 
+
+// const dir = 'dist/**/*.schema{.js,.ts}';
+
+// console.log(dir);
+
+// glob(dir, (err: any, tsFiles: any) => {
+//     if (err) {
+//         console.error("Error during asynchronous file matching:", err);
+//         return;
+//     }
+//     console.log("Selected TypeScript files asynchronously:", tsFiles);
+// });
+
 const pgConnectionOptions: PostgresConnectionOptions = {
     type: 'postgres',
     url: connectionString,
     entities: [
-        ...ProjectsModuleDataSource.Schemas
+        'dist/**/*.schema{.js,.ts}'
     ],
     migrations: [
-        ...ProjectsModuleDataSource.Migrations
+        'dist/**/migrations/*{.js,.ts}'
     ],
     migrationsTableName: 'MigrationHistory',
-    logging: true
+    logging: true,
+    synchronize: false,
+    namingStrategy: new SnakeNamingStrategy()
 };
 
 export default new DataSource(pgConnectionOptions);

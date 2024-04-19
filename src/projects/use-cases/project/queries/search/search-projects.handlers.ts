@@ -3,7 +3,7 @@ import { SearchProjectsRequest } from "./search-projects.request";
 import { SearchProjectsResponse } from "./search-projects.response";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Project } from "@projects/core/project";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
 
 @QueryHandler(SearchProjectsRequest)
 export class SearchProjectsHandler implements IQueryHandler<SearchProjectsRequest, SearchProjectsResponse> {
@@ -12,7 +12,14 @@ export class SearchProjectsHandler implements IQueryHandler<SearchProjectsReques
     ) { }
 
     async execute(query: SearchProjectsRequest): Promise<SearchProjectsResponse> {
-        const [projects, total] = await this.projectRepository.findAndCount();
+
+        const filterOptions : FindOptionsWhere<Project> = !!query.searchTerm  
+            ? { name: ILike(`%${query.searchTerm}%`) }
+            : { } ;
+
+        const [projects, total] = await this.projectRepository.findAndCount({
+            where: filterOptions
+        });
         return new SearchProjectsResponse(projects, total);
     }
 }

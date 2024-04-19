@@ -2,6 +2,7 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './database.module-definition';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from '@nestjs/config';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Global()
 @Module({})
@@ -19,6 +20,7 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
                     ...options.migrations
                 ],
                 migrationsTableName: 'MigrationHistory',
+                namingStrategy: new SnakeNamingStrategy(),
                 autoLoadEntities: true,
                 migrationsRun: true,
                 logging: true

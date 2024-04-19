@@ -4,7 +4,6 @@ import { EntityBaseSchema } from "@building-blocks/infra/database/schemas/entity
 
 export const ProjectSchema = new EntitySchema<Project>({
     name: "Project",
-    tableName: "Projects",
     columns: {
         ...EntityBaseSchema,
         name: {

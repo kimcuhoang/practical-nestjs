@@ -1,10 +1,11 @@
 import { HttpStatus } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import * as request from 'supertest';
 import { Guid } from 'guid-typescript';
 import { app, httpServer } from '@test/test.setup';
-import { Repository } from 'typeorm';
 import { Project } from '@src/projects/core/project';
-import { getRepositoryToken } from '@nestjs/typeorm';
+
 
 describe('ProjectsController (e2e)', () => {
   let projectRepository: Repository<Project>;

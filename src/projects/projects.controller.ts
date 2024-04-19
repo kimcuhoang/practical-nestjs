@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProjectPayload } from './use-cases/project/commands/create/create-project.payload';
@@ -18,8 +18,8 @@ export class ProjectsController {
 
     @Get()
     @ApiResponse({ status: HttpStatus.OK, type: SearchProjectsResponse })
-    async search(): Promise<SearchProjectsResponse> {
-        const request = new SearchProjectsRequest();
+    async search(@Query('text') text: string): Promise<SearchProjectsResponse> {
+        const request = new SearchProjectsRequest(text);
         const response = await this._queryBus.execute(request);
         return response;
     }
