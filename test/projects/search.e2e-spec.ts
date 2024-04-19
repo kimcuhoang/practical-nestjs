@@ -19,7 +19,7 @@ describe('Search projects (e2e)', () => {
   });
 
   afterEach(async () => {
-    await projectRepository.clear();
+    await projectRepository.delete({});
   });
 
   it(`${url} (GET)`, async () => {

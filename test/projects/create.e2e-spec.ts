@@ -16,11 +16,18 @@ describe('ProjectsController (e2e)', () => {
   });
 
   afterEach(async () => {
-    await projectRepository.clear();
+    await projectRepository.delete({});
   });
 
-  it(`${url} (POST)`, async () => {
-    const response = await request(httpServer).post(url).send({ name: 'test' });
+  it('create-01', async () => {
+    const payload = {
+      name: 'test',
+      tasks: [
+        { name: 'task 1' },
+        { name: 'task 2' }
+      ]
+    }
+    const response = await request(httpServer).post(url).send(payload);
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.text).not.toEqual(Guid.EMPTY.toString());
 

@@ -19,7 +19,7 @@ describe('ProjectsContoller (e2e)', () => {
   });
 
   afterEach(async () => {
-    await projectRepository.clear();
+    await projectRepository.delete({});
   });
 
   it(`${url}/:id (GET)`, async () => {

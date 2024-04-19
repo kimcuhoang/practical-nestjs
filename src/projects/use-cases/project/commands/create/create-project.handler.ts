@@ -12,8 +12,15 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectReques
     ) {}
 
     async execute(command: CreateProjectRequest): Promise<string> {
+        const payload = command.payload;
         const project = Project.create(p => {
-            p.name = command.payload.name;
+            p.name = payload.name;
+            payload.tasks.forEach(t => {
+                p.addTask(_ => {
+                    _.name = t.name;
+                })
+            });
+
         });
         await this.projectRepository.save(project);
         return project.id;
