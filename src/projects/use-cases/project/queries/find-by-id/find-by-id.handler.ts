@@ -15,6 +15,9 @@ export class FindByIdHandler implements IQueryHandler<FindByIdRequest, FindByIdR
     async execute(query: FindByIdRequest): Promise<FindByIdResponse> {
 
         const project = await this._projectRepository.findOne({
+            relations: {
+                tasks: true
+            },
             where: { id: query.id }
         });
         

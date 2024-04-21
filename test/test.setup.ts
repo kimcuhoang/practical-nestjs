@@ -10,11 +10,18 @@ let httpServer: any;
 
 beforeAll(async () => {
 
-    postgresContainer = await new PostgreSqlContainer("postgres:latest")
-        .withDatabase("practical-nestjs-testing")
-        .withUsername("postgres")
-        .withPassword("postgres")
-        .start();
+    try {
+        postgresContainer = await new PostgreSqlContainer("postgres:latest")
+            .withDatabase("practical-nestjs-testing")
+            .withUsername("postgres")
+            .withPassword("postgres")
+            .withStartupTimeout(2000)
+            .start();
+    } catch (error) {
+        console.error("Error starting container", error);
+        throw error;
+    }
+
 
     connectionString = postgresContainer.getConnectionUri();
     process.env.DATABASE_URL = connectionString;

@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
 
-describe('Search projects (e2e)', () => {
+describe('GET-projects', () => {
   let project: Project;
   let projectRepository: Repository<Project>;
   const url = '/projects';
@@ -22,7 +22,7 @@ describe('Search projects (e2e)', () => {
     await projectRepository.delete({});
   });
 
-  it(`${url} (GET)`, async () => {
+  it("GET-projects", async () => {
     const response = await request(httpServer).get(url);
     console.log(response.body);
     expect(response.status).toBe(HttpStatus.OK);
@@ -30,7 +30,7 @@ describe('Search projects (e2e)', () => {
     expect(response.body.total).toBeGreaterThanOrEqual(1);
   });
 
-  it(`${url}?text= (GET)`, async () => {
+  it("GET-projects/text", async () => {
     const searchTerm = encodeURIComponent("dự án");
     const requestUrl = `${url}?text=${searchTerm}`;
     const response = await request(httpServer).get(requestUrl);

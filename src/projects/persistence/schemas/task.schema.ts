@@ -1,6 +1,7 @@
 import { Task } from "@projects/core/task";
 import { EntityBaseSchema } from "@building-blocks/infra/database/schemas/entity-base-schema";
 import { EntitySchema, EntitySchemaColumnOptions } from "typeorm";
+import { Project } from "@src/projects/core/project";
 import { ProjectSchema } from "./project.schema";
 
 const columns = {
@@ -16,7 +17,7 @@ const columns = {
 }
 
 export const TaskSchema = new EntitySchema<Task>({
-    name: "Task",
+    name: Task.name,
     columns: {
         ...EntityBaseSchema,
         ...columns
@@ -24,10 +25,11 @@ export const TaskSchema = new EntitySchema<Task>({
     relations: {
         project: {
             type: "many-to-one",
-            target: () => ProjectSchema.options.name,
+            target: Project.name,
+            inverseSide: "tasks", // The `tasks` property from `Project` entity
             joinColumn: {
                 name: columns.projectId.name,
-                referencedColumnName: 'id',
+                referencedColumnName: ProjectSchema.options.columns.id.name,
                 foreignKeyConstraintName: 'FK_Task_Project'
             },
             createForeignKeyConstraints: true,

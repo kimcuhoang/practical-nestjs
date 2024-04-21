@@ -18,6 +18,9 @@ export class SearchProjectsHandler implements IQueryHandler<SearchProjectsReques
             : { } ;
 
         const [projects, total] = await this.projectRepository.findAndCount({
+            relations: {
+                tasks: true
+            },
             where: filterOptions
         });
         return new SearchProjectsResponse(projects, total);
