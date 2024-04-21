@@ -6,16 +6,24 @@ import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
 
 describe('GET-projects', () => {
-  let project: Project;
+  let projects: Project[] = [];
   let projectRepository: Repository<Project>;
   const url = '/projects';
 
   beforeEach(async () => {
     projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
-    project = Project.create(p => {
-      p.name = 'Đây là cái dự án';
-    });
-    await projectRepository.save(project)
+    for (let i = 0; i < 10; i++) {
+      const project = Project.create(p => {
+        p.name = `Đây là cái dự án ${i}`;
+        p.addTask(task => {
+          task.name = `Đây là cái task của dự án ${i}`;
+        });
+      });
+      await projectRepository.save(project);
+      projects.push(project);
+    }
+
+    await projectRepository.save(projects)
   });
 
   afterEach(async () => {
@@ -24,19 +32,19 @@ describe('GET-projects', () => {
 
   it("GET-projects", async () => {
     const response = await request(httpServer).get(url);
-    console.log(response.body);
+    
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.projects).toHaveLength(1);
-    expect(response.body.total).toBeGreaterThanOrEqual(1);
+    expect(response.body.projects).toHaveLength(projects.length);
+    expect(response.body.total).toBeGreaterThanOrEqual(projects.length);
   });
 
   it("GET-projects/text", async () => {
     const searchTerm = encodeURIComponent("dự án");
     const requestUrl = `${url}?text=${searchTerm}`;
     const response = await request(httpServer).get(requestUrl);
-    console.log(response.body);
+
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.projects).toHaveLength(1);
-    expect(response.body.total).toBeGreaterThanOrEqual(1);
+    expect(response.body.projects).toHaveLength(projects.length);
+    expect(response.body.total).toBeGreaterThanOrEqual(projects.length);
   });
 });

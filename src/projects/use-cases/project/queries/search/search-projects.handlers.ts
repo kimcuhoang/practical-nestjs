@@ -13,9 +13,15 @@ export class SearchProjectsHandler implements IQueryHandler<SearchProjectsReques
 
     async execute(query: SearchProjectsRequest): Promise<SearchProjectsResponse> {
 
-        const filterOptions : FindOptionsWhere<Project> = !!query.searchTerm  
-            ? { name: ILike(`%${query.searchTerm}%`) }
-            : { } ;
+        const searchTerm = !!query.searchTerm ? `%${query.searchTerm}%` : '';
+        
+        const filterOptions : FindOptionsWhere<Project> | FindOptionsWhere<Project>[] = !!query.searchTerm  
+            ? 
+            [
+                { name: ILike(searchTerm) },
+                { tasks: { name: ILike(searchTerm) } }
+            ] 
+            : {} ;
 
         const [projects, total] = await this.projectRepository.findAndCount({
             relations: {

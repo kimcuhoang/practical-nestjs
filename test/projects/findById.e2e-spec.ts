@@ -4,6 +4,7 @@ import { ILike, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
+import { faker } from '@faker-js/faker';
 
 describe('ProjectsContoller (e2e)', () => {
   let project: Project;
@@ -13,9 +14,9 @@ describe('ProjectsContoller (e2e)', () => {
   beforeEach(async () => {
     projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
     project = Project.create(p => {
-      p.name = 'test';
+      p.name = faker.lorem.sentence(5);
       p.addTask(task => {
-        task.name = 'test';
+        task.name = faker.lorem.sentence(5);
       })
     });
     await projectRepository.save(project)
@@ -34,13 +35,21 @@ describe('ProjectsContoller (e2e)', () => {
       where: {
         id: project.id,
         tasks: {
-          name: ILike("%test%")
+          name: ILike(`%${project.tasks[0].name.substring(0, 5)}%`)
         }
       }
     });
 
+    console.log(savedProject);
+    expect(savedProject).toBeDefined();
     expect(savedProject).toMatchObject({ id: project.id, name: project.name });
     expect(savedProject.tasks).toHaveLength(project.tasks.length);
+
+    savedProject.tasks.forEach(task => {
+      const taskPayload = project.tasks.find(t => t.name === task.name);
+      expect(taskPayload).toBeDefined();
+    });
+
   });
 
   it("GET-projects/id", async () => {
@@ -49,5 +58,11 @@ describe('ProjectsContoller (e2e)', () => {
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.body).toMatchObject({ id: project.id, name: project.name });
     expect(response.body.tasks).toHaveLength(project.tasks.length);
+
+    response.body.tasks.forEach((task: { name: string; }) => {
+      const taskPayload = project.tasks.find(t => t.name === task.name);
+      expect(taskPayload).toBeDefined();
+    });
+    
   });
 });
