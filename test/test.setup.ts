@@ -31,7 +31,11 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-    await postgresContainer.stop();
+    await postgresContainer.stop({
+        timeout:8000,
+        remove: true,
+        removeVolumes: true
+    });
     await app.close();
 });
 

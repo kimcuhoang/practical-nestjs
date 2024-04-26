@@ -4,24 +4,62 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
+import { faker } from '@faker-js/faker';
 
-describe('GET-projects', () => {
+const numberOfProjects = 4;
+const testCases = [
+  { searchTerm: "task 0 của dự án 0", totalResults: 1 },
+  { searchTerm: "dự án", totalResults: numberOfProjects },
+  { searchTerm: "", totalResults: numberOfProjects },
+];
+
+describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) => {
+
   let projects: Project[] = [];
   let projectRepository: Repository<Project>;
   const url = '/projects';
 
+  it(`Search project by text:"${searchTerm}"`, async () => {
+
+    const searchTermQuery = encodeURIComponent(searchTerm);
+    const requestUrl = `${url}?text=${searchTermQuery}`;
+    const response = await request(httpServer).get(requestUrl);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body.projects.length).toBe(totalResults);
+    expect(response.body.total).toBe(totalResults);
+
+    const projects = response.body.projects;
+    projects.forEach(project => {
+      expect(project.id).toBeDefined();
+      expect(project.name).toBeDefined();
+      expect(project.tasks).toBeDefined();
+    });
+  });
+
   beforeEach(async () => {
+
     projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
-    for (let i = 0; i < 10; i++) {
+
+    for (let i = 0; i < numberOfProjects - 1; i++) {
       const project = Project.create(p => {
+
         p.name = `Đây là cái dự án ${i}`;
-        p.addTask(task => {
-          task.name = `Đây là cái task của dự án ${i}`;
-        });
+
+        const numberOfTasks = faker.number.int({ min: 1, max: 3 });
+
+        for (let j = 0; j < numberOfTasks; j++) {
+          p.addTask(task => {
+            task.name = `Đây là cái task ${j} của dự án ${i}`;
+          });
+        }
       });
-      await projectRepository.save(project);
       projects.push(project);
     }
+
+    projects.push(Project.create(p => {
+      p.name = "Dự án không có task";
+    }));
 
     await projectRepository.save(projects)
   });
@@ -29,22 +67,4 @@ describe('GET-projects', () => {
   afterEach(async () => {
     await projectRepository.delete({});
   });
-
-  it("GET-projects", async () => {
-    const response = await request(httpServer).get(url);
-    
-    expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.projects).toHaveLength(projects.length);
-    expect(response.body.total).toBeGreaterThanOrEqual(projects.length);
-  });
-
-  it("GET-projects/text", async () => {
-    const searchTerm = encodeURIComponent("dự án");
-    const requestUrl = `${url}?text=${searchTerm}`;
-    const response = await request(httpServer).get(requestUrl);
-
-    expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.projects).toHaveLength(projects.length);
-    expect(response.body.total).toBeGreaterThanOrEqual(projects.length);
-  });
-});
+}); // End of test

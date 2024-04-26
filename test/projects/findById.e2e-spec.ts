@@ -26,6 +26,19 @@ describe('ProjectsContoller (e2e)', () => {
     await projectRepository.delete({});
   });
 
+  it("GET-projects/id", async () => {
+    const response = await request(httpServer).get(`${url}/${project.id}`);
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body).toMatchObject({ id: project.id, name: project.name });
+    expect(response.body.tasks).toHaveLength(project.tasks.length);
+
+    response.body.tasks.forEach((task: { name: string; }) => {
+      const taskPayload = project.tasks.find(t => t.name === task.name);
+      expect(taskPayload).toBeDefined();
+    });
+    
+  });
+
   it("query-project-by-id", async () => {
     const savedProject = await projectRepository.findOne({
       //relationLoadStrategy: "join", // This is important to load the relations: query = 2 calls, join = 1 call
@@ -40,7 +53,6 @@ describe('ProjectsContoller (e2e)', () => {
       }
     });
 
-    console.log(savedProject);
     expect(savedProject).toBeDefined();
     expect(savedProject).toMatchObject({ id: project.id, name: project.name });
     expect(savedProject.tasks).toHaveLength(project.tasks.length);
@@ -49,20 +61,7 @@ describe('ProjectsContoller (e2e)', () => {
       const taskPayload = project.tasks.find(t => t.name === task.name);
       expect(taskPayload).toBeDefined();
     });
-
   });
 
-  it("GET-projects/id", async () => {
-    const response = await request(httpServer).get(`${url}/${project.id}`);
-    console.log(response.body);
-    expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body).toMatchObject({ id: project.id, name: project.name });
-    expect(response.body.tasks).toHaveLength(project.tasks.length);
-
-    response.body.tasks.forEach((task: { name: string; }) => {
-      const taskPayload = project.tasks.find(t => t.name === task.name);
-      expect(taskPayload).toBeDefined();
-    });
-    
-  });
+  
 });

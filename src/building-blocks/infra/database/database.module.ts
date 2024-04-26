@@ -15,6 +15,7 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
             useFactory: async (configService: ConfigService) => ({
                 type: 'postgres',
                 url: configService.get<string>('DATABASE_URL'),
+                logging: configService.get<string>('LOG_ENABLED')?.toLowerCase() === 'true',
                 synchronize: false,
                 migrations: [
                     ...options.migrations
@@ -23,7 +24,6 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
                 namingStrategy: new SnakeNamingStrategy(),
                 autoLoadEntities: true,
                 migrationsRun: true,
-                logging: true
             })
         });
 
