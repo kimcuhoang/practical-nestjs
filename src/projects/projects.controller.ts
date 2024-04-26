@@ -41,6 +41,7 @@ export class ProjectsController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({ status: 200, type: String })
     async create(@Body() payload: CreateProjectPayload): Promise<string> {
+        console.log(`create project with payload: ${JSON.stringify(payload)}`);
         const request = new CreateProjectRequest(payload);
         const response = await this._commandBus.execute(request);
         return response;

@@ -10,9 +10,9 @@ export class SearchProjectsRequest implements IQuery {
 }
 
 export class SearchProjectsPayload {
-    @Expose()
+    @Expose({ name: 'text'})
     @IsOptional()
-    @ApiProperty({ required: false, type: String })
+    @ApiProperty({ required: false, type: String, name: 'text' })
     searchTerm?: string;
 
     @Expose()

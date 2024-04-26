@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { AppModule } from '@src/app.module';
@@ -24,7 +24,10 @@ beforeAll(async () => {
     })
     .compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture
+        .createNestApplication()
+        .useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
     await app.init();
 
     httpServer = app.getHttpServer();

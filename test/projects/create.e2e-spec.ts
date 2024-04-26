@@ -22,10 +22,10 @@ describe('ProjectsController (e2e)', () => {
 
   it('create-01', async () => {
     const payload = {
-      name: faker.lorem.sentence(5),
+      projectName: faker.lorem.sentence(5),
       tasks: [
-        { name: faker.lorem.sentence(5) },
-        { name: faker.lorem.sentence(5) }
+        { taskName: faker.lorem.sentence(5) },
+        { taskName: faker.lorem.sentence(5) }
       ]
     }
     const response = await request(httpServer).post(url).send(payload);
@@ -37,11 +37,11 @@ describe('ProjectsController (e2e)', () => {
       where: { id: response.text } 
     });
     expect(project).toBeDefined();
-    expect(project.name).toBe(payload.name);
+    expect(project.name).toBe(payload.projectName);
     expect(project.tasks).toHaveLength(payload.tasks.length);
 
     project.tasks.forEach(task => {
-      const taskPayload = payload.tasks.find(t => t.name === task.name);
+      const taskPayload = payload.tasks.find(t => t.taskName === task.name);
       expect(taskPayload).toBeDefined();
     });
   });

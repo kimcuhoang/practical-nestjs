@@ -12,12 +12,13 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectReques
     ) {}
 
     async execute(command: CreateProjectRequest): Promise<string> {
+        
         const payload = command.payload;
         const project = Project.create(p => {
-            p.name = payload.name;
+            p.name = payload.projectName;
             payload.tasks.forEach(t => {
                 p.addTask(_ => {
-                    _.name = t.name;
+                    _.name = t.taskName;
                 })
             });
 

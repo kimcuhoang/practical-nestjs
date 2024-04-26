@@ -4,13 +4,13 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
-import { faker } from '@faker-js/faker';
+import { faker, sk } from '@faker-js/faker';
 
 const numberOfProjects = 4;
 const testCases = [
   { searchTerm: "task 0 của dự án 0", totalResults: 1 },
-  // { searchTerm: "dự án", totalResults: numberOfProjects },
-  // { searchTerm: "", totalResults: numberOfProjects },
+  { searchTerm: "dự án", totalResults: numberOfProjects },
+  { searchTerm: "", totalResults: numberOfProjects }
 ];
 
 describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) => {
@@ -22,7 +22,9 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
   it(`Search project by text:"${searchTerm}"`, async () => {
 
     const searchTermQuery = encodeURIComponent(searchTerm);
-    const requestUrl = `${url}?searchTerm=${searchTermQuery}&skip=0&take=10`;
+    const skip = 0;
+    const take = 100;
+    const requestUrl = `${url}?text=${searchTermQuery}&skip=${skip}&take=${take}`;
     const response = await request(httpServer).get(requestUrl);
 
     expect(response.status).toBe(HttpStatus.OK);
