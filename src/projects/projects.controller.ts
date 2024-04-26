@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, Post, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProjectPayload } from './use-cases/project/commands/create/create-project.payload';
 import { CreateProjectRequest } from './use-cases/project/commands/create/create-project.request';
 import { SearchProjectsResponse } from './use-cases/project/queries/search/search-projects.response';
-import { SearchProjectsRequest } from './use-cases/project/queries/search/search-projects.request';
+import { SearchProjectsPayload, SearchProjectsRequest } from './use-cases/project/queries/search/search-projects.request';
 import { FindByIdResponse } from './use-cases/project/queries/find-by-id/find-by-id.response';
 import { FindByIdRequest } from './use-cases/project/queries/find-by-id/find-by-id.request';
 
@@ -17,9 +17,11 @@ export class ProjectsController {
     ) { }
 
     @Get()
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({ status: HttpStatus.OK, type: SearchProjectsResponse })
-    async search(@Query('text') text: string): Promise<SearchProjectsResponse> {
-        const request = new SearchProjectsRequest(text);
+    async search(@Query() payload: SearchProjectsPayload): Promise<SearchProjectsResponse> {
+        console.log(`search projects with payload: ${JSON.stringify(payload)}`);
+        const request = new SearchProjectsRequest(payload);
         const response = await this._queryBus.execute(request);
         return response;
     }

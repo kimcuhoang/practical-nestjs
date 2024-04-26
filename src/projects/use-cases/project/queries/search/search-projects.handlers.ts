@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { SearchProjectsRequest } from "./search-projects.request";
+import { SearchProjectsPayload, SearchProjectsRequest } from "./search-projects.request";
 import { SearchProjectsResponse } from "./search-projects.response";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Project } from "@projects/core/project";
@@ -13,15 +13,15 @@ export class SearchProjectsHandler implements IQueryHandler<SearchProjectsReques
     ) { }
 
     async execute(query: SearchProjectsRequest): Promise<SearchProjectsResponse> {
-        return await this.executeViaQueryBuilder(query);
+        return await this.executeViaQueryBuilder(query.payload);
     }
 
-    private async executeViaQueryBuilder(request: SearchProjectsRequest): Promise<SearchProjectsResponse> {
+    private async executeViaQueryBuilder(payload: SearchProjectsPayload): Promise<SearchProjectsResponse> {
         let queryBuilder = this.projectRepository
             .createQueryBuilder('project')
             .leftJoinAndSelect('project.tasks', 'task');
 
-        const searchTerm = request.searchTermSanitized();
+        const searchTerm = !!payload.searchTerm ? `%${payload.searchTerm}%` : '';
 
         if (!!searchTerm) {
             
@@ -37,36 +37,39 @@ export class SearchProjectsHandler implements IQueryHandler<SearchProjectsReques
                 .orWhere(`project.id IN (${query})`, parameters);
         }
 
-        const [projects, total] = await queryBuilder
-            .select("project").addSelect("task")
-            .getManyAndCount();
+        queryBuilder = queryBuilder
+                .select("project").addSelect("task")
+                .orderBy('project.name', 'ASC')
+                .skip(payload.skip! < 0 ? 0 : payload.skip!) 
+                .take(payload.take! < 1 || payload.take! > 10 ? 10 : payload.take!);
 
+        const [projects, total] = await queryBuilder.getManyAndCount()
         return new SearchProjectsResponse(projects, total);
     }
 
-    private async executeViaRepository(request: SearchProjectsRequest): Promise<SearchProjectsResponse> {
+    // private async executeViaRepository(request: SearchProjectsRequest): Promise<SearchProjectsResponse> {
 
-        const taskFilterOptions: FindOptionsWhere<Task> | FindOptionsWhere<Task>[] = !!request.searchTerm
-            ? { name: ILike(request.searchTerm) }
-            : {};
+    //     const taskFilterOptions: FindOptionsWhere<Task> | FindOptionsWhere<Task>[] = !!request.searchTerm
+    //         ? { name: ILike(request.searchTerm) }
+    //         : {};
 
 
-        const projectFilterOptions: FindOptionsWhere<Project> | FindOptionsWhere<Project>[] = !!request.searchTerm
-            ?
-            [
-                { name: ILike(request.searchTerm) },
-                { tasks: taskFilterOptions }
-            ]
-            : {};
+    //     const projectFilterOptions: FindOptionsWhere<Project> | FindOptionsWhere<Project>[] = !!request.searchTerm
+    //         ?
+    //         [
+    //             { name: ILike(request.searchTerm) },
+    //             { tasks: taskFilterOptions }
+    //         ]
+    //         : {};
 
-        const [projects, total] = await this.projectRepository.findAndCount({
-            relations: {
-                tasks: true
-            },
-            where: projectFilterOptions
-        });
-        return new SearchProjectsResponse(projects, total);
-    }
+    //     const [projects, total] = await this.projectRepository.findAndCount({
+    //         relations: {
+    //             tasks: true
+    //         },
+    //         where: projectFilterOptions
+    //     });
+    //     return new SearchProjectsResponse(projects, total);
+    // }
 
     
 }
