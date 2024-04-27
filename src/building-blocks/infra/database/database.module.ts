@@ -29,8 +29,7 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
 
         return {
             module: DatabaseModule,
-            imports: [typeOrmModule],
-            exports: [TypeOrmModule]
+            imports: [typeOrmModule]
         }
     };
 }
