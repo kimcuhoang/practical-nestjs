@@ -925,6 +925,13 @@
   dependencies:
     testcontainers "^10.8.2"
 
+"@testcontainers/redis@^10.9.0":
+  version "10.9.0"
+  resolved "https://registry.yarnpkg.com/@testcontainers/redis/-/redis-10.9.0.tgz#fabc1480b01343f82ea868c2ba5bbea26c73a9f5"
+  integrity sha512-zj0WibTLyLVWzkjLz26q2b8Hx0VnC4+rq7p7Pg+LWqX6ijAfcHCafze27V1wNG7aC/26nH6p5QV0y+34Aq50aw==
+  dependencies:
+    testcontainers "^10.9.0"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.11.tgz#6ee46400685f130e278128c7b38b7e031ff5b2f2"
@@ -5362,6 +5369,27 @@ testcontainers@^10.8.2:
   version "10.8.2"
   resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-10.8.2.tgz#1e1df0e2d14d44c7ef2737b0e5fe3efb57e8d3c4"
   integrity sha512-9Ink7NUyYZwOjQhk0C6R6basWy2WADNly+md3D9YDap0pcDr3C+vrO8Ah1bkYco/9Zg8VoYTHO+blkLeebBYkA==
+  dependencies:
+    "@balena/dockerignore" "^1.0.2"
+    "@types/dockerode" "^3.3.24"
+    archiver "^5.3.2"
+    async-lock "^1.4.1"
+    byline "^5.0.0"
+    debug "^4.3.4"
+    docker-compose "^0.24.6"
+    dockerode "^3.3.5"
+    get-port "^5.1.1"
+    node-fetch "^2.7.0"
+    proper-lockfile "^4.1.2"
+    properties-reader "^2.3.0"
+    ssh-remote-port-forward "^1.0.4"
+    tar-fs "^3.0.5"
+    tmp "^0.2.1"
+
+testcontainers@^10.9.0:
+  version "10.9.0"
+  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-10.9.0.tgz#9d5b2ef189ed32a0be376d013017ba8593a09e93"
+  integrity sha512-LN+cKAOd61Up9SVMJW+3VFVGeVQG8JBqZhEQo2U0HBfIsAynyAXcsLBSo+KZrOfy9SBz7pGHctWN/KabLDbNFA==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     "@types/dockerode" "^3.3.24"

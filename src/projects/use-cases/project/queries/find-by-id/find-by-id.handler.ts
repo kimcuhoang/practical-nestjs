@@ -24,7 +24,8 @@ export class FindByIdHandler implements IQueryHandler<FindByIdRequest, FindByIdR
                 where: { id: query.id }
             });
 
-        const project = await this._cacheProvider.getOrSetIfMissing(`project-${query.id}`, taskGetProject);
+        const project = await this._cacheProvider
+                .getOrSetIfMissing<Project>(`project-${query.id}`, taskGetProject, 60);
 
         // const project = await this._projectRepository.findOne({
         //     relations: {

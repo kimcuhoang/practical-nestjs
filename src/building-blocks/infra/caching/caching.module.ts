@@ -15,17 +15,17 @@ export class CachingModule {
             inject: [ ConfigService ],
             useFactory: async(configService: ConfigService) => {
                 return ({
-                    store: configService.get<string>("REDIS_ENABLED")?.toLowerCase() === 'false' 
-                        ? 'memory'
-                        : await redisStore({
-                            // url: configService.get<string>("REDIS_URL"),
-                            // host: configService.get<string>(""),
-                            username: configService.get<string>("REDIS_USERNAME"),
-                            password: configService.get<string>("REDIS_PASSWORD"),
-                            socket: {
-                                host: configService.get<string>("REDIS_HOST"),
-                                port: configService.get<number>("REDIS_PORT")
-                            }
+                    store: await redisStore({
+                                url: configService.get<string>("REDIS_URL"),
+                                username: configService.get<string>("REDIS_USERNAME"),
+                                password: configService.get<string>("REDIS_PASSWORD"),
+                                disableOfflineQueue: true,
+                                pingInterval: 5 * 60 * 1000,
+                                socket: {
+                                    // host: configService.get<string>("REDIS_HOST"),
+                                    // port: configService.get<number>("REDIS_PORT"),
+                                    tls: false
+                                },
                         })
                 });
             }
