@@ -4,6 +4,8 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers
 import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
 import { AppModule } from '@src/app.module';
 import { Wait } from 'testcontainers';
+import { RedisService } from '@src/building-blocks/infra/redis/redis.service';
+import { REDIS_CLIENT, RedisModule } from '@src/building-blocks/infra/redis/redis.module';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
@@ -37,7 +39,7 @@ beforeAll(async () => {
     process.env.REDIS_PORT = redisContainer.getPort().toString();
 
     const moduleFixture:TestingModule = await Test.createTestingModule({
-        imports: [ AppModule ]
+        imports: [ AppModule ],
     })
     .compile();
 
@@ -53,6 +55,7 @@ beforeAll(async () => {
 
 
 afterAll(async () => {
+
     await redisContainer.stop({
         remove: true,
         removeVolumes: true,

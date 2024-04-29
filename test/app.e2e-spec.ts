@@ -16,4 +16,11 @@ describe('AppController (e2e)', () => {
         expect(response.text).toBe(connectionString)
         expect(process.env.DATABASE_URL).toBe(connectionString);
     });
+
+    test("/redis/ping (GET)", async () => {
+        const response = await request(httpServer).get("/redis/ping");
+
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.text).toBe("PONG");
+    });
 });

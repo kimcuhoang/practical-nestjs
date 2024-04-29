@@ -1,25 +1,27 @@
 import { faker } from "@faker-js/faker";
-import { CachingProvider } from "@src/building-blocks/infra/caching/caching.provider";
+import { REDIS_CLIENT } from "@src/building-blocks/infra/redis/redis.module";
+import { RedisService } from "@src/building-blocks/infra/redis/redis.service";
 import { app } from "@test/test.setup";
 
 
 
 describe("Test - Caching", () => {
-    let cachingProvider: CachingProvider;
-    
-    let cachedObject = {
+    let redisService: RedisService;
+
+    const cacheKey = faker.string.uuid();
+    const cacheObjects = faker.helpers.multiple(() => ({
         id: faker.string.uuid(),
         name: faker.person.fullName()
-    };
-
+    }), { count: 5 });
+    
     beforeEach(async () => {
-        cachingProvider = app.get<CachingProvider>(CachingProvider);
-        await cachingProvider.setValue(cachedObject.id, cachedObject);
+        redisService = app.get<RedisService>(RedisService);
+        await redisService.set(cacheKey, cacheObjects);
     });
 
     it("Setup Caching Provider", async () => {
-        const value = await cachingProvider.get(cachedObject.id);
-        expect(value).toEqual(cachedObject);
+        const objectsFromCache = await redisService.get(cacheKey);
+        expect(objectsFromCache).toEqual(cacheObjects);
     });
 
 });
