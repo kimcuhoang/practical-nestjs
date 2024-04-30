@@ -1,12 +1,16 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 
 @Injectable()
-export class CachingProvider {
+export class CachingProvider implements OnModuleDestroy {
     constructor(
-        @Inject(CACHE_MANAGER) private readonly _cacheManager: Cache
+        @Inject(CACHE_MANAGER) private readonly _cacheManager: Cache,
     ){}
+
+    async onModuleDestroy() {
+        await (this._cacheManager.store as any)?.client?.quit();
+    }
 
     public async setValue<T>(key: string, value: T, ttl?: number) : Promise<void> {
         await this._cacheManager.set(key, value, ttl);

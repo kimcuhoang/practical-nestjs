@@ -40,13 +40,11 @@ describe('ProjectsContoller (e2e)', () => {
       expect(taskPayload).toBeDefined();
     });
 
-    // const cachingProvider = app.get<CachingProvider>(CachingProvider);
-    // const cachedProject = await cachingProvider.get<Project>(`project-${project.id}`);
+    const cachingProvider = app.get<CachingProvider>(CachingProvider);
+    const cachedProject = await cachingProvider.get<Project>(`project-${project.id}`);
 
-    // const redisService = app.get<RedisService>(REDIS_CLIENT);
-    // const cachedProject = await redisService.get<Project>(`project-${project.id}`);
-    // console.log(`cachedProject: ${JSON.stringify(cachedProject)}`);
-    // expect(cachedProject).toMatchObject({ id: project.id, name: project.name });
+    console.log(`cachedProject: ${JSON.stringify(cachedProject)}`);
+    expect(cachedProject).toMatchObject({ id: project.id, name: project.name });
     
   });
 

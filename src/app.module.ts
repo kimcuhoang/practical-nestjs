@@ -10,6 +10,7 @@ import { ProjectsModule } from '@projects/projects.module';
 import { ProjectsModuleDataSource } from '@projects/persistence';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
 import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
+import { CachingModule } from './building-blocks/infra/caching/caching.module';
 
 
 const infrastructureModules = [
@@ -18,6 +19,7 @@ const infrastructureModules = [
       ...ProjectsModuleDataSource.Migrations
     ]
   }),
+  CachingModule.register(),
   RedisModule.register(),
   RedisModule12.register(),
   ConfigurationsModule

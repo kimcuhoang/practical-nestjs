@@ -1,21 +1,16 @@
-import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { REDIS_CLIENT } from './redis.module';
 
 @Injectable()
-export class RedisService implements OnModuleInit, OnModuleDestroy {
+export class RedisService implements OnModuleDestroy {
 
     public constructor(
-        // @Inject(REDIS_CLIENT) private readonly redis: RedisClient,
         @Inject(REDIS_CLIENT) private readonly redis: Redis,
       ) {}
 
-    onModuleInit() {
-        // this.redis.connect();
-    }
-
-    onModuleDestroy() {
-        this.redis.quit();
+    async onModuleDestroy() {
+        await this.redis.quit();
     }
 
     public async ping(): Promise<string> {
