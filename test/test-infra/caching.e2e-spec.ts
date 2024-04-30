@@ -1,5 +1,4 @@
 import { faker } from "@faker-js/faker";
-import { REDIS_CLIENT } from "@src/building-blocks/infra/redis/redis.module";
 import { RedisService } from "@src/building-blocks/infra/redis/redis.service";
 import { app } from "@test/test.setup";
 

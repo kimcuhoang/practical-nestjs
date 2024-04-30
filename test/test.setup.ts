@@ -6,6 +6,7 @@ import { AppModule } from '@src/app.module';
 import { Wait } from 'testcontainers';
 import { RedisService } from '@src/building-blocks/infra/redis/redis.service';
 import { REDIS_CLIENT, RedisModule } from '@src/building-blocks/infra/redis/redis.module';
+import { Redis } from 'ioredis';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
@@ -25,7 +26,7 @@ beforeAll(async () => {
             .withNetworkAliases("practical-nestjs-network")
             .start();
 
-    redisContainer = await new RedisContainer("redis:alpine")
+    redisContainer = await new RedisContainer("redis:latest")
         .withStartupTimeout(8000)
         .withNetworkAliases("practical-nestjs-network")
         .start();
@@ -37,6 +38,7 @@ beforeAll(async () => {
     process.env.REDIS_URL = redisContainer.getConnectionUrl();
     process.env.REDIS_HOST = redisContainer.getHost();
     process.env.REDIS_PORT = redisContainer.getPort().toString();
+    // console.log(`Redis URL: ${process.env.REDIS_URL}`);
 
     const moduleFixture:TestingModule = await Test.createTestingModule({
         imports: [ AppModule ],
@@ -56,6 +58,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
 
+    await app.close();
+    
     await redisContainer.stop({
         remove: true,
         removeVolumes: true,
@@ -66,7 +70,23 @@ afterAll(async () => {
         removeVolumes: true
     });
 
-    await app.close();
+    
+
+    // const redis = app.get<Redis>(REDIS_CLIENT);
+    
+    // await redis.quit(async () => {
+    //     await redisContainer.stop({
+    //         remove: true,
+    //         removeVolumes: true,
+    //     });
+    
+    //     await postgresContainer.stop({
+    //         remove: true,
+    //         removeVolumes: true
+    //     });
+    
+    //     await app.close();
+    // })
     
 });
 
