@@ -4,9 +4,6 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers
 import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
 import { AppModule } from '@src/app.module';
 import { Wait } from 'testcontainers';
-import { RedisService } from '@src/building-blocks/infra/redis/redis.service';
-import { REDIS_CLIENT, RedisModule } from '@src/building-blocks/infra/redis/redis.module';
-import { Redis } from 'ioredis';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
@@ -26,7 +23,7 @@ beforeAll(async () => {
             .withNetworkAliases("practical-nestjs-network")
             .start();
 
-    redisContainer = await new RedisContainer("redis:latest")
+    redisContainer = await new RedisContainer("redis:alpine")
         .withStartupTimeout(8000)
         .withNetworkAliases("practical-nestjs-network")
         .start();
@@ -69,25 +66,6 @@ afterAll(async () => {
         remove: true,
         removeVolumes: true
     });
-
-    
-
-    // const redis = app.get<Redis>(REDIS_CLIENT);
-    
-    // await redis.quit(async () => {
-    //     await redisContainer.stop({
-    //         remove: true,
-    //         removeVolumes: true,
-    //     });
-    
-    //     await postgresContainer.stop({
-    //         remove: true,
-    //         removeVolumes: true
-    //     });
-    
-    //     await app.close();
-    // })
-    
 });
 
 // add some timeout until containers are up and working 

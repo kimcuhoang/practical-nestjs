@@ -1,5 +1,4 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-// import { REDIS_CLIENT, RedisClient } from './redis__.module';
 import { Redis } from 'ioredis';
 import { REDIS_CLIENT } from './redis.module';
 

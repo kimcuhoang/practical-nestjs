@@ -9,6 +9,7 @@ import { ConfigurationsModule } from '@building-blocks/infra/configurations/conf
 import { ProjectsModule } from '@projects/projects.module';
 import { ProjectsModuleDataSource } from '@projects/persistence';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
+import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
 
 
 const infrastructureModules = [
@@ -18,6 +19,7 @@ const infrastructureModules = [
     ]
   }),
   RedisModule.register(),
+  RedisModule12.register(),
   ConfigurationsModule
 ];
 

@@ -5,6 +5,10 @@ import { RedisService } from "./redis.service";
 
 export const REDIS_CLIENT = Symbol('REDIS_CLIENT');
 
+/*
+yarn add ioredis -D
+*/
+
 @Module({})
 export class RedisModule {
     public static register(): DynamicModule {
