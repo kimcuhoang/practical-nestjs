@@ -23,10 +23,6 @@ services:
     volumes:
       - "redis-data:/root/redis"
       - "redis-config:/usr/local/etc/redis/redis.conf"
-    # environment:
-    #   - REDIS_PASSWORD=my-password
-    #   - REDIS_PORT=6379
-    #   - REDIS_DATABASES=16
     networks:
       - nestjs
 

@@ -8,19 +8,33 @@ import { DatabaseModule } from '@building-blocks/infra/database/database.module'
 import { ConfigurationsModule } from '@building-blocks/infra/configurations/configurations.module';
 import { ProjectsModule } from '@projects/projects.module';
 import { ProjectsModuleDataSource } from '@projects/persistence';
+import { RedisModule } from './building-blocks/infra/redis/redis.module';
+import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
+import { CachingModule } from './building-blocks/infra/caching/caching.module';
 
+
+const infrastructureModules = [
+  DatabaseModule.register({
+    migrations: [
+      ...ProjectsModuleDataSource.Migrations
+    ]
+  }),
+  CachingModule.register(),
+  RedisModule.register(),
+  RedisModule12.register(),
+  ConfigurationsModule
+];
+
+const featureModules = [
+  ProjectsModule
+];
 
 @Module({
   imports: [
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    ConfigurationsModule,
-    DatabaseModule.register({
-      migrations: [
-        ...ProjectsModuleDataSource.Migrations
-      ]
-    }),
-    ProjectsModule,
+    ...infrastructureModules,
+    ...featureModules
   ],
   controllers: [AppController],
   providers: [ AppService ],
