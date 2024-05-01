@@ -12,19 +12,17 @@ let connectionString: string;
 let httpServer: any;
 
 
-beforeAll(async () => {
+global.beforeAll(async () => {
 
     postgresContainer = await new PostgreSqlContainer("postgres:alpine")
             .withDatabase("practical-nestjs-testing")
             .withUsername("postgres")
             .withPassword("postgres")
-            .withStartupTimeout(8000)
             .withWaitStrategy(Wait.forListeningPorts())
             .withNetworkAliases("practical-nestjs-network")
             .start();
 
     redisContainer = await new RedisContainer("redis:alpine")
-        .withStartupTimeout(8000)
         .withNetworkAliases("practical-nestjs-network")
         .start();
 
@@ -53,7 +51,7 @@ beforeAll(async () => {
 
 
 
-afterAll(async () => {
+global.afterAll(async () => {
 
     await app.close();
     

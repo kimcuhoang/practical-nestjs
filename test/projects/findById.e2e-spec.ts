@@ -6,8 +6,7 @@ import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
 import { faker } from '@faker-js/faker';
 import { CachingProvider } from '@src/building-blocks/infra/caching/caching.provider';
-import { RedisService } from '@src/building-blocks/infra/redis/redis.service';
-import { REDIS_CLIENT } from '@src/building-blocks/infra/redis/redis.module';
+
 
 describe('ProjectsContoller (e2e)', () => {
   let project: Project;
