@@ -1,15 +1,14 @@
 import { DynamicModule, FactoryProvider, Global, LoggerService, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createClient } from 'redis';
 import { RedisService12 } from './redis12.service';
-
-export const REDIS_CLIENT_12 = Symbol('REDIS_CLIENT_12');
-export type RedisClient = ReturnType<typeof createClient>;
+import { REDIS_CLIENT_12, RedisClient } from './constants';
+import { createClient } from 'redis';
 
 /*
 yarn add redis -D
 */
 
+@Global()
 @Module({})
 export class RedisModule12 {
     public static register(): DynamicModule {

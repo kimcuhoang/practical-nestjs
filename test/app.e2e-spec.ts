@@ -23,4 +23,11 @@ describe('AppController (e2e)', () => {
         expect(response.status).toBe(HttpStatus.OK);
         expect(response.text).toBe("PONG");
     });
+
+    test("/redis12/ping", async () => {
+        const response = await request(httpServer).get("/redis12/ping");
+
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.text).toBe("PONG");
+    });
 });

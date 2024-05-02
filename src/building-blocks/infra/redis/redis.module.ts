@@ -1,14 +1,16 @@
-import { DynamicModule, FactoryProvider, Module } from "@nestjs/common";
+import { DynamicModule, FactoryProvider, Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Redis } from "ioredis";
 import { RedisService } from "./redis.service";
+import { REDIS_CLIENT } from "./constants";
 
-export const REDIS_CLIENT = Symbol('REDIS_CLIENT');
+
 
 /*
 yarn add ioredis -D
 */
 
+@Global()
 @Module({})
 export class RedisModule {
     public static register(): DynamicModule {
@@ -21,11 +23,24 @@ export class RedisModule {
                     host: configService.get('REDIS_HOST'),
                     port: configService.get('REDIS_PORT'),
                     db: 0,
-                    keepAlive: 1000,
-                    connectTimeout: 2000
+                    // keepAlive: 1000,
+                    // connectTimeout: 2000,
+                    showFriendlyErrorStack: true,
+                    lazyConnect: true,
+                    enableReadyCheck: true,
+                    reconnectOnError: (err: Error) => {
+                        console.log(`Redis Cache connection err: ${err}`);
+                        return true;
+                    }
+                })
+                .on('connect', () => {
+                    console.log(`Redis-Module: Connected to redis instance`)
+                })
+                .on('ready', () => {
+                    console.log(`Redis-Module: Redis instance is ready`)
                 })
                 .on('error', (error) => {
-                    console.error(error);
+                    console.error(`Redis-Module: Error: ${error}`);
                 });
 
                 return client;

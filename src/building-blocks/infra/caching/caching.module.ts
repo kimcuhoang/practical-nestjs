@@ -1,46 +1,51 @@
-import { CacheModule, } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { redisStore } from 'cache-manager-ioredis-yet';
+import { RedisService } from '../redis/redis.service';
 import { CachingProvider } from './caching.provider';
-import { redisStore } from 'cache-manager-redis-yet';
 
 @Global()
 @Module({})
 export class CachingModule {
-
-    public static register() : DynamicModule {
+    public static register(): DynamicModule {
 
         const cacheDynamicModule: DynamicModule = CacheModule.registerAsync({
             isGlobal: true,
-            inject: [ ConfigService ],
-            useFactory: async(configService: ConfigService) => {
+            inject: [ConfigService, RedisService],
+            useFactory: async (configService: ConfigService, redisService: RedisService) => {
 
-                if (configService.get<string>('REDIS_CACHE_ENABLED')?.toLowerCase() === 'true') {
+                const ttl = configService.get<number>('CACHE_TTL') || parseInt(process.env.CACHE_TTL!, 10) || 6000;
 
-                    const storeInstance = await redisStore({
-                        url: configService.get<string>('REDIS_URL'),
-                    });
+                const useInMemoryCache = configService.get<boolean>('USE_MEMORY_CACHE') 
+                        || process.env.USE_MEMORY_CACHE?.toLowerCase() === 'true'
+                        || false;
 
-                    storeInstance.client.on('error', (error) => {
-                        console.error(error);
-                    });
-
+                if (useInMemoryCache) {
                     return {
-                        store: storeInstance
+                        store: "memory",
+                        ttl: ttl
                     };
                 }
 
+                const redisClient = redisService.getRedisClient();
+                const redisOptions = redisClient.options;
+                const storeInstance = await redisStore({
+                    ...redisOptions
+                });
+
                 return {
-                    store: "memory"
+                    store: storeInstance,
+                    ttl: ttl
                 };
             }
         });
 
         return {
             module: CachingModule,
-            imports: [ cacheDynamicModule ],
-            providers: [ CachingProvider ],
-            exports: [ CachingProvider ]
+            imports: [cacheDynamicModule],
+            providers: [CachingProvider],
+            exports: [CachingProvider]
         };
     }
 }

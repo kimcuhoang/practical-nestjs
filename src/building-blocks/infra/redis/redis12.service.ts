@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { REDIS_CLIENT_12, RedisClient } from './redis12.module';
+import { REDIS_CLIENT_12, RedisClient } from './constants';
 
 @Injectable()
 export class RedisService12 implements OnModuleInit, OnModuleDestroy {
@@ -7,6 +7,10 @@ export class RedisService12 implements OnModuleInit, OnModuleDestroy {
     constructor(
         @Inject(REDIS_CLIENT_12) private readonly _redisClient: RedisClient,
     ) {}
+
+    public getRedisClient(): RedisClient {
+        return this._redisClient;
+    }
 
     async onModuleDestroy() {
         await this._redisClient.quit();
