@@ -1,9 +1,12 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Inject, Redirect } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigurationsService } from './building-blocks/infra/configurations/configurations.service';
 import { RedisService12 } from './building-blocks/infra/redis/redis12.service';
 import { RedisService } from './building-blocks/infra/redis/redis.service';
+import { STATUS_CODES } from 'http';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("App")
 @Controller()
 export class AppController {
   constructor(
@@ -13,7 +16,12 @@ export class AppController {
     private readonly _redisService12: RedisService12
   ) {}
 
-  @Get()
+  @Get("")
+  @ApiExcludeEndpoint(true)
+  @Redirect("/swagger", HttpStatus.MOVED_PERMANENTLY)
+  
+
+  @Get("hello")
   getHello(): string {
     return this.appService.getHello();
   }
