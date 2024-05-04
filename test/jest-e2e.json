@@ -1,17 +1,26 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "rootDir": "..",
   "moduleNameMapper": {
-    "^@src/(.*)$": "<rootDir>/../src/$1",
-    "^@projects/(.*)$": "<rootDir>/../src/projects/$1",
-    "^@building-blocks/(.*)$": "<rootDir>/../src/building-blocks/$1",
-    "^@test/(.*)$": "<rootDir>/$1"
+    "^@src/(.*)$": "<rootDir>/src/$1",
+    "^@projects/(.*)$": "<rootDir>/src/projects/$1",
+    "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
+    "^@test/(.*)$": "<rootDir>/test/$1"
   },
-  
-  "setupFilesAfterEnv": ["./test.setup.ts"],
+  "setupFilesAfterEnv": ["./test/test.setup.ts"],
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "coverageReporters": ["json", "html", "clover", "lcov", "text"],
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/main.ts",
+    "!src/**/index.ts",
+    "!src/**/*.module.ts",
+    "!src/**/persistence/**",
+    "!src/building-blocks/**",
+    "!node_modules/**"
+  ]
 }
