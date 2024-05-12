@@ -25,12 +25,4 @@
     "!src/building-blocks/**",
     "!node_modules/**"
   ]
-  // "modulePaths": [
-  //   // "node_modules",
-  //   "<rootDir>"
-  // ],
-  // "moduleDirectories": [
-  //   // "node_modules",
-  //   "<rootDir>"
-  // ]
 }
