@@ -2,12 +2,15 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "..",
   "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
     "^@src/(.*)$": "<rootDir>/src/$1",
     "^@projects/(.*)$": "<rootDir>/src/projects/$1",
     "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
     "^@test/(.*)$": "<rootDir>/test/$1"
   },
   "setupFilesAfterEnv": ["./test/test.setup.ts"],
+  "globalSetup": "./test/global.setup.ts",
+  "globalTeardown": "./test/global.teardown.ts",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
@@ -22,5 +25,13 @@
     "!src/**/persistence/**",
     "!src/building-blocks/**",
     "!node_modules/**"
+  ],
+  "modulePaths": [
+    // "node_modules",
+    "<rootDir>"
+  ],
+  "moduleDirectories": [
+    // "node_modules",
+    "<rootDir>"
   ]
 }

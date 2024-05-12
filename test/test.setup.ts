@@ -1,26 +1,14 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
-import { AppModule } from '@src/app.module';
+import { INestApplication } from '@nestjs/common';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { StartedRedisContainer } from '@testcontainers/redis';
 
-let postgresContainer: StartedPostgreSqlContainer;
-let redisContainer: StartedRedisContainer | undefined;
 let app: INestApplication;
 let connectionString: string;
-let httpServer: any;
+let httpServer: any | undefined;
 
-global.beforeAll(async () => {
+beforeAll(async () => {
 
-    process.env.RYUK_CONTAINER_IMAGE = "testcontainers/ryuk:0.6.0";
-
-    postgresContainer = await new PostgreSqlContainer("postgres:alpine")
-        .withDatabase("practical-nestjs-testing")
-        .withUsername("postgres")
-        .withPassword("postgres")
-        .withNetworkAliases("practical-nestjs-network")
-        .withStartupTimeout(50000)
-        .start();
+    const postgresContainer = (globalThis.PostgresContainer as StartedPostgreSqlContainer)
 
     connectionString = postgresContainer.getConnectionUri();
 
@@ -33,49 +21,47 @@ global.beforeAll(async () => {
     const redisIsDisabled = !redisHost || !redisPort || !redisUrl;
 
     if (!redisIsDisabled) {
-        redisContainer = await new RedisContainer("redis:alpine")
-            .withNetworkAliases("practical-nestjs-network")
-            .withStartupTimeout(50000)
-            .start();
+        const redisContainer = globalThis.RedisContainer as StartedRedisContainer;
 
         process.env.REDIS_URL = redisContainer.getConnectionUrl();
         process.env.REDIS_HOST = redisContainer.getHost();
         process.env.REDIS_PORT = redisContainer.getPort().toString();
     }
 
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [AppModule],
-    })
-    .compile();
+    // const moduleFixture: TestingModule = await Test.createTestingModule({
+    //     imports: [AppModule],
+    // })
+    // .compile();
 
-    app = moduleFixture
-        .createNestApplication()
-        .useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    // const app = moduleFixture
+    //     .createNestApplication()
+    //     .useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-    await app.init();
+    // await app.init();
 
-    httpServer = app.getHttpServer();
+    app = globalThis.Application as INestApplication;
+    httpServer = app?.getHttpServer();
 });
 
 
 
-global.afterAll(async () => {
+afterAll(async () => {
 
-    await app.close();
+    // await app.close();
 
-    await postgresContainer.stop({
-        timeout: 50000,
-        remove: true,
-        // removeVolumes: true
-    });
+    // await postgresContainer.stop({
+    //     timeout: 50000,
+    //     remove: true,
+    //     // removeVolumes: true
+    // });
 
-    if (redisContainer) {
-        await redisContainer.stop({
-            timeout: 50000,
-            remove: true,
-            // removeVolumes: true,
-        });
-    }
+    // if (redisContainer) {
+    //     await redisContainer.stop({
+    //         timeout: 50000,
+    //         remove: true,
+    //         // removeVolumes: true,
+    //     });
+    // }
 });
 
 // add some timeout until containers are up and working 

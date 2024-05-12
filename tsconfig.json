@@ -21,7 +21,8 @@
       "@src/*": ["src/*"],
       "@building-blocks/*": ["src/building-blocks/*"],
       "@projects/*": ["src/projects/*"],
-      "@test/*": ["test/*"]
+      "@test/*": ["test/*"],
+      "@e2e-test/*": ["e2e-tests/*"],
     }
   },
 }
