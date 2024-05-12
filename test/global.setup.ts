@@ -1,4 +1,4 @@
-require("ts-node/register");
+require("tsconfig-paths/register")
 import { ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';

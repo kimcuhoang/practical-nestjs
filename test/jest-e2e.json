@@ -2,7 +2,6 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "..",
   "moduleNameMapper": {
-    "^@/(.*)$": "<rootDir>/src/$1",
     "^@src/(.*)$": "<rootDir>/src/$1",
     "^@projects/(.*)$": "<rootDir>/src/projects/$1",
     "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
@@ -25,13 +24,13 @@
     "!src/**/persistence/**",
     "!src/building-blocks/**",
     "!node_modules/**"
-  ],
-  "modulePaths": [
-    // "node_modules",
-    "<rootDir>"
-  ],
-  "moduleDirectories": [
-    // "node_modules",
-    "<rootDir>"
   ]
+  // "modulePaths": [
+  //   // "node_modules",
+  //   "<rootDir>"
+  // ],
+  // "moduleDirectories": [
+  //   // "node_modules",
+  //   "<rootDir>"
+  // ]
 }
