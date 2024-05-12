@@ -20,10 +20,12 @@ global.beforeAll(async () => {
             .withPassword("postgres")
             .withWaitStrategy(Wait.forListeningPorts())
             .withNetworkAliases("practical-nestjs-network")
+            .withStartupTimeout(40000)
             .start();
 
     redisContainer = await new RedisContainer("redis:alpine")
         .withNetworkAliases("practical-nestjs-network")
+        .withStartupTimeout(40000)
         .start();
 
     connectionString = postgresContainer.getConnectionUri();
@@ -56,16 +58,18 @@ global.afterAll(async () => {
     await app.close();
     
     await redisContainer.stop({
+        timeout: 40000,
         remove: true,
         removeVolumes: true,
     });
 
     await postgresContainer.stop({
+        timeout: 40000,
         remove: true,
         removeVolumes: true
     });
 });
 
 // add some timeout until containers are up and working 
-jest.setTimeout(8000);
+jest.setTimeout(120000);
 export { app, httpServer, connectionString };
