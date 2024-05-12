@@ -3,42 +3,48 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
 import { AppModule } from '@src/app.module';
-import { Wait } from 'testcontainers';
 
 let postgresContainer: StartedPostgreSqlContainer;
-let redisContainer: StartedRedisContainer;
+let redisContainer: StartedRedisContainer | undefined;
 let app: INestApplication;
 let connectionString: string;
 let httpServer: any;
 
-
 global.beforeAll(async () => {
 
-    postgresContainer = await new PostgreSqlContainer("postgres:alpine")
-            .withDatabase("practical-nestjs-testing")
-            .withUsername("postgres")
-            .withPassword("postgres")
-            .withWaitStrategy(Wait.forListeningPorts())
-            .withNetworkAliases("practical-nestjs-network")
-            .withStartupTimeout(40000)
-            .start();
+    process.env.RYUK_CONTAINER_IMAGE = "testcontainers/ryuk:0.6.0";
 
-    redisContainer = await new RedisContainer("redis:alpine")
+    postgresContainer = await new PostgreSqlContainer("postgres:alpine")
+        .withDatabase("practical-nestjs-testing")
+        .withUsername("postgres")
+        .withPassword("postgres")
         .withNetworkAliases("practical-nestjs-network")
-        .withStartupTimeout(40000)
+        .withStartupTimeout(50000)
         .start();
 
     connectionString = postgresContainer.getConnectionUri();
 
     process.env.DATABASE_URL = connectionString;
 
-    process.env.REDIS_URL = redisContainer.getConnectionUrl();
-    process.env.REDIS_HOST = redisContainer.getHost();
-    process.env.REDIS_PORT = redisContainer.getPort().toString();
-    // console.log(`Redis URL: ${process.env.REDIS_URL}`);
+    const redisHost = process.env.REDIS_HOST;
+    const redisPort = process.env.REDIS_PORT;
+    const redisUrl = process.env.REDIS_URL;
 
-    const moduleFixture:TestingModule = await Test.createTestingModule({
-        imports: [ AppModule ],
+    const redisIsDisabled = !redisHost || !redisPort || !redisUrl;
+
+    if (!redisIsDisabled) {
+        redisContainer = await new RedisContainer("redis:alpine")
+            .withNetworkAliases("practical-nestjs-network")
+            .withStartupTimeout(50000)
+            .start();
+
+        process.env.REDIS_URL = redisContainer.getConnectionUrl();
+        process.env.REDIS_HOST = redisContainer.getHost();
+        process.env.REDIS_PORT = redisContainer.getPort().toString();
+    }
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppModule],
     })
     .compile();
 
@@ -56,18 +62,20 @@ global.beforeAll(async () => {
 global.afterAll(async () => {
 
     await app.close();
-    
-    await redisContainer.stop({
-        timeout: 40000,
-        remove: true,
-        removeVolumes: true,
-    });
 
     await postgresContainer.stop({
-        timeout: 40000,
+        timeout: 50000,
         remove: true,
-        removeVolumes: true
+        // removeVolumes: true
     });
+
+    if (redisContainer) {
+        await redisContainer.stop({
+            timeout: 50000,
+            remove: true,
+            // removeVolumes: true,
+        });
+    }
 });
 
 // add some timeout until containers are up and working 

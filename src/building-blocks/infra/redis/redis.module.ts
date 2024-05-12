@@ -15,13 +15,21 @@ yarn add ioredis -D
 export class RedisModule {
     public static register(): DynamicModule {
 
-        const redisClientFactory: FactoryProvider<Promise<Redis>> = {
+        const redisClientFactory: FactoryProvider<Promise<Redis | undefined>> = {
             provide: REDIS_CLIENT,
             inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => {
+            useFactory: async (configService: ConfigService): Promise<Redis | undefined> => {
+
+                const redisHost = configService.get<string>('REDIS_HOST') ?? undefined;
+                const redisPort = configService.get<number>('REDIS_PORT') ?? undefined;
+
+                if (!redisHost || !redisPort) {
+                    return undefined;
+                }
+
                 const client = new Redis({
-                    host: configService.get('REDIS_HOST'),
-                    port: configService.get('REDIS_PORT'),
+                    host: redisHost,
+                    port: redisPort,
                     db: 0,
                     // keepAlive: 1000,
                     // connectTimeout: 2000,

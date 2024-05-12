@@ -8,20 +8,20 @@ export class RedisService12 implements OnModuleInit, OnModuleDestroy {
         @Inject(REDIS_CLIENT_12) private readonly _redisClient: RedisClient,
     ) {}
 
-    public getRedisClient(): RedisClient {
-        return this._redisClient;
+    public getRedisClient(): RedisClient | undefined {
+        return this._redisClient ?? undefined;
     }
 
     async onModuleDestroy() {
-        await this._redisClient.quit();
+        await this._redisClient?.quit();
     }
 
     async onModuleInit() {
-        await this._redisClient.connect();
+        await this._redisClient?.connect();
     }
 
     public async ping(): Promise<string> {
-        return await this._redisClient.ping();
+        return await this._redisClient?.ping() ?? "Redis is disabled";
     }
 
     public async set<T>(key: string, value: T): Promise<T> {

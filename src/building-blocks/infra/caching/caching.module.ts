@@ -17,25 +17,22 @@ export class CachingModule {
 
                 const ttl = configService.get<number>('CACHE_TTL') || parseInt(process.env.CACHE_TTL!, 10) || 6000;
 
-                const useInMemoryCache = configService.get<boolean>('USE_MEMORY_CACHE') 
-                        || process.env.USE_MEMORY_CACHE?.toLowerCase() === 'true'
-                        || false;
+                const redisClient = redisService?.getRedisClient() ?? undefined;
 
-                if (useInMemoryCache) {
+                if (redisClient) {
+                    const redisOptions = redisClient.options;
+                    const storeInstance = await redisStore({
+                        ...redisOptions
+                    });
+
                     return {
-                        store: "memory",
+                        store: storeInstance,
                         ttl: ttl
                     };
                 }
 
-                const redisClient = redisService.getRedisClient();
-                const redisOptions = redisClient.options;
-                const storeInstance = await redisStore({
-                    ...redisOptions
-                });
-
                 return {
-                    store: storeInstance,
+                    store: "memory",
                     ttl: ttl
                 };
             }

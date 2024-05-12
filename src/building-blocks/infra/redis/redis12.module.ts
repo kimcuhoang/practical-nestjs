@@ -13,12 +13,19 @@ yarn add redis -D
 export class RedisModule12 {
     public static register(): DynamicModule {
 
-        const redisClientFactory: FactoryProvider<Promise<RedisClient>> = {
+        const redisClientFactory: FactoryProvider<Promise<RedisClient | undefined>> = {
             provide: REDIS_CLIENT_12,
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => {
+
+                const redisUrl = configService.get<string>('REDIS_URL') ?? undefined;
+
+                if (!redisUrl) {
+                    return undefined;
+                }
+
                 const client = createClient({
-                    url: configService.get<string>('REDIS_URL'),
+                    url: redisUrl,
                     database: 0,
                 })
                 .on('error', (error) => {

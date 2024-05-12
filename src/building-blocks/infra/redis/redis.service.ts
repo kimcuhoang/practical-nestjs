@@ -9,16 +9,16 @@ export class RedisService implements OnModuleDestroy {
         @Inject(REDIS_CLIENT) private readonly _redis: Redis,
       ) {}
 
-    public getRedisClient(): Redis {
-        return this._redis;
+    public getRedisClient(): Redis | undefined {
+        return this._redis ?? undefined;
     }
 
     async onModuleDestroy() {
-        await this._redis.quit();
+        await this._redis?.quit();
     }
 
     public async ping(): Promise<string> {
-        return await this._redis.ping();
+        return await this._redis?.ping() ?? "Redis is disabled";
     }
 
     public async set<T>(key: string, value: T): Promise<T> {
