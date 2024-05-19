@@ -3,6 +3,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Expose, Type } from "class-transformer";
 import { IsNumber, IsOptional } from "class-validator";
 
+export * from "./search-projects.response";
+
 export class SearchProjectsRequest implements IQuery {
     constructor(
         public payload: SearchProjectsPayload
