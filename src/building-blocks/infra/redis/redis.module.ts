@@ -4,8 +4,6 @@ import { Redis } from "ioredis";
 import { RedisService } from "./redis.service";
 import { REDIS_CLIENT } from "./constants";
 
-
-
 /*
 yarn add ioredis -D
 */
@@ -20,8 +18,8 @@ export class RedisModule {
             inject: [ConfigService],
             useFactory: async (configService: ConfigService): Promise<Redis | undefined> => {
 
-                const redisHost = configService.get<string>('REDIS_HOST') ?? undefined;
-                const redisPort = configService.get<number>('REDIS_PORT') ?? undefined;
+                const redisHost = configService.get<string>('REDIS_HOST');
+                const redisPort = configService.get<number>('REDIS_PORT');
 
                 if (!redisHost || !redisPort) {
                     return undefined;

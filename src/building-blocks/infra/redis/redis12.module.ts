@@ -18,7 +18,7 @@ export class RedisModule12 {
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => {
 
-                const redisUrl = configService.get<string>('REDIS_URL') ?? undefined;
+                const redisUrl = configService.get<string>('REDIS_URL');
 
                 if (!redisUrl) {
                     return undefined;

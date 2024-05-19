@@ -1,4 +1,6 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '@src/app.module';
 
 let app: INestApplication;
 let connectionString: string;
@@ -6,35 +8,40 @@ let httpServer: any | undefined;
 
 beforeAll(async () => {
 
-    // console.log(process.env.REDIS_URL);
-    // console.log(process.env.DATABASE_URL);
+    connectionString = globalThis.postgresContainer.getConnectionUri();
+    process.env.DATABASE_URL = connectionString;
 
-    app = globalThis.Application as INestApplication;
+    if (globalThis.redisEnabled) {
+
+        globalThis.console.warn("Redis is enabled");
+
+        const redisUrl = globalThis.redisContainer.getConnectionUrl();
+
+        process.env.REDIS_URL = redisUrl;
+        process.env.REDIS_HOST = globalThis.redisContainer.getHost();
+        process.env.REDIS_PORT = globalThis.redisContainer.getFirstMappedPort().toString();
+    }
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppModule]
+    })
+    .compile();
+
+    app = moduleFixture
+        .createNestApplication()
+        .useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+    await app.init();
     httpServer = app.getHttpServer();
-    connectionString = globalThis.ConnectionString;
+    
 });
 
 
 
 afterAll(async () => {
-
-    // await app.close();
-
-    // await postgresContainer.stop({
-    //     timeout: 50000,
-    //     remove: true,
-    //     // removeVolumes: true
-    // });
-
-    // if (redisContainer) {
-    //     await redisContainer.stop({
-    //         timeout: 50000,
-    //         remove: true,
-    //         // removeVolumes: true,
-    //     });
-    // }
+    await app.close();
 });
 
 // add some timeout until containers are up and working 
-// jest.setTimeout(120000);
+jest.setTimeout(120000);
 export { app, httpServer, connectionString };
