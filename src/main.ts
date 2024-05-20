@@ -33,7 +33,14 @@ async function bootstrap() {
     explorer: true
   });
 
-  // app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true, 
+    transform: true, 
+    validationError: { 
+      target: true,
+      value: true
+    }
+  }));
   await app.listen(3000);
 }
 bootstrap();
