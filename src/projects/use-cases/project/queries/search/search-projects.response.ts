@@ -16,7 +16,7 @@ class TaskDto {
 
 }
 
-class ProjectDto {
+export class ProjectDto {
     @ApiProperty({type: String, example: 'Project Id'})
     id: string;
     @ApiProperty({type: String, example: 'Project Name'})

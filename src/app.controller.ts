@@ -3,7 +3,6 @@ import { AppService } from './app.service';
 import { ConfigurationsService } from './building-blocks/infra/configurations/configurations.service';
 import { RedisService12 } from './building-blocks/infra/redis/redis12.service';
 import { RedisService } from './building-blocks/infra/redis/redis.service';
-import { STATUS_CODES } from 'http';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("App")

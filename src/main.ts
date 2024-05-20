@@ -7,7 +7,14 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true, 
+    transform: true, 
+    validationError: { 
+      target: true,
+      value: true
+    }
+  }));
 
   const options: SwaggerDocumentOptions = {
     deepScanRoutes: true
@@ -26,7 +33,14 @@ async function bootstrap() {
     explorer: true
   });
 
-  // app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true, 
+    transform: true, 
+    validationError: { 
+      target: true,
+      value: true
+    }
+  }));
   await app.listen(3000);
 }
 bootstrap();

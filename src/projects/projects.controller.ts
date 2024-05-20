@@ -1,12 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateProjectPayload } from './use-cases/project/commands/create/create-project.payload';
-import { CreateProjectRequest } from './use-cases/project/commands/create/create-project.request';
-import { SearchProjectsResponse } from './use-cases/project/queries/search/search-projects.response';
-import { SearchProjectsPayload, SearchProjectsRequest } from './use-cases/project/queries/search/search-projects.request';
-import { FindByIdResponse } from './use-cases/project/queries/find-by-id/find-by-id.response';
-import { FindByIdRequest } from './use-cases/project/queries/find-by-id/find-by-id.request';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { 
+    CreateProjectPayload, CreateProjectRequest, 
+    FindByIdRequest, FindByIdResponse, 
+    SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
+} from './use-cases';
 
 @ApiTags('Projects Management')
 @Controller('projects')

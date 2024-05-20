@@ -2,9 +2,8 @@ import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { SearchProjectsPayload, SearchProjectsRequest } from "./search-projects.request";
 import { SearchProjectsResponse } from "./search-projects.response";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Project } from "@projects/core/project";
-import { FindOptionsWhere, ILike, Repository } from "typeorm";
-import { Task } from "@src/projects/core/task";
+import { Project } from "@projects/core";
+import { Repository } from "typeorm";
 
 @QueryHandler(SearchProjectsRequest)
 export class SearchProjectsHandler implements IQueryHandler<SearchProjectsRequest, SearchProjectsResponse> {

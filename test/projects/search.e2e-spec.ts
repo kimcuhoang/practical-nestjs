@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
 import { app, httpServer } from '@test/test.setup';
-import { faker, sk } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
+import { ProjectDto } from '@src/projects/use-cases';
 
 const numberOfProjects = 4;
 const testCases = [
@@ -31,7 +32,7 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
     expect(response.body.projects.length).toBe(totalResults);
     expect(response.body.total).toBe(totalResults);
 
-    const projects = response.body.projects;
+    const projects = response.body.projects as ProjectDto[];
     projects.forEach(project => {
       expect(project.id).toBeDefined();
       expect(project.name).toBeDefined();

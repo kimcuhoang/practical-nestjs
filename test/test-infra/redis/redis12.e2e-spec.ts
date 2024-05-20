@@ -4,7 +4,7 @@ import { app } from "@test/test.setup";
 
 
 
-describe("Test - Caching", () => {
+describe("Test Redis12", () => {
     let redisService: RedisService12;
 
     const cacheKey = faker.string.uuid();
@@ -20,7 +20,7 @@ describe("Test - Caching", () => {
         }
     });
 
-    it("Setup Caching Provider", async () => {
+    it("RedisService12", async () => {
         if (redisService.getRedisClient()) {
             const objectsFromCache = await redisService.get(cacheKey);
             expect(objectsFromCache).toEqual(cacheObjects);

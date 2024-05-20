@@ -4,8 +4,9 @@ import { Repository } from 'typeorm';
 import * as request from 'supertest';
 import { Guid } from 'guid-typescript';
 import { app, httpServer } from '@test/test.setup';
-import { Project } from '@src/projects/core/project';
 import { faker } from '@faker-js/faker'
+import { Project } from '@src/projects/core';
+import { CreateProjectPayload } from '@src/projects/use-cases';
 
 
 describe('ProjectsController (e2e)', () => {
@@ -20,14 +21,15 @@ describe('ProjectsController (e2e)', () => {
     await projectRepository.delete({});
   });
 
-  it('create-01', async () => {
+  test('create-01', async () => {
     const payload = {
       projectName: faker.lorem.sentence(5),
       tasks: [
         { taskName: faker.lorem.sentence(5) },
         { taskName: faker.lorem.sentence(5) }
       ]
-    }
+    } as CreateProjectPayload;
+
     const response = await request(httpServer).post(url).send(payload);
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.text).not.toEqual(Guid.EMPTY.toString());
@@ -44,6 +46,16 @@ describe('ProjectsController (e2e)', () => {
       const taskPayload = payload.tasks.find(t => t.taskName === task.name);
       expect(taskPayload).toBeDefined();
     });
+  });
+
+  test('create-02', async () => {
+    const payload = new CreateProjectPayload();
+    const response = await request(httpServer).post(url).send(payload);
+    
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+
+    const errors = response.body.message as string[];
+    expect(errors.find(e => e.startsWith('projectName'))).toBeDefined();
   });
 
 });
