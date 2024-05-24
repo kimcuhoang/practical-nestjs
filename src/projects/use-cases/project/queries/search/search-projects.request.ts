@@ -1,7 +1,7 @@
 import { IQuery } from "@nestjs/cqrs";
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose, Type } from "class-transformer";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsInt, IsNumber, IsOptional } from "class-validator";
 
 export * from "./search-projects.response";
 
@@ -19,14 +19,15 @@ export class SearchProjectsPayload {
 
     @Expose()
     @IsOptional()
-    @IsNumber()
+    @IsInt()
     @Type(() => Number)
     @ApiProperty({ required: false , type: Number, default: 0 })
     skip?: number;
 
     @Expose()
     @IsOptional()
-    @IsNumber()
+    @IsInt()
+    @Type(() => Number)
     @ApiProperty({ required: false , type: Number, default: 10 })
     take?: number;
 }

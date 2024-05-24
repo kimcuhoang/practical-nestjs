@@ -13,7 +13,7 @@ beforeAll(async () => {
 
     if (globalThis.redisEnabled) {
 
-        globalThis.console.warn("Redis is enabled");
+        globalThis.console.log("Redis is enabled");
 
         const redisUrl = globalThis.redisContainer.getConnectionUrl();
 
