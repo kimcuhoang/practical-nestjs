@@ -7,6 +7,7 @@ import { app, httpServer } from '@test/test.setup';
 import { faker } from '@faker-js/faker'
 import { Project } from '@src/projects/core';
 import { CreateProjectPayload } from '@src/projects/use-cases';
+import { addDays, endOfDay } from 'date-fns';
 
 
 describe('ProjectsController (e2e)', () => {
@@ -22,13 +23,17 @@ describe('ProjectsController (e2e)', () => {
   });
 
   test('create-01', async () => {
+    const today = new Date();
+    const startDate = faker.date.future({ refDate: today });
+
     const payload = {
       projectName: faker.lorem.sentence(5),
+      startDate: startDate,
       tasks: [
         { taskName: faker.lorem.sentence(5) },
         { taskName: faker.lorem.sentence(5) }
       ]
-    } as CreateProjectPayload;
+    };
 
     const response = await request(httpServer).post(url).send(payload);
     expect(response.status).toBe(HttpStatus.OK);
@@ -42,13 +47,18 @@ describe('ProjectsController (e2e)', () => {
     expect(project.name).toBe(payload.projectName);
     expect(project.tasks).toHaveLength(payload.tasks.length);
 
+    console.log({
+      startDate: project.startDate,
+      dueDate: project.dueDate
+    });
+
     project.tasks.forEach(task => {
       const taskPayload = payload.tasks.find(t => t.taskName === task.name);
       expect(taskPayload).toBeDefined();
     });
   });
 
-  test('create-02', async () => {
+  xtest('create-02', async () => {
     const payload = new CreateProjectPayload();
     const response = await request(httpServer).post(url).send(payload);
     

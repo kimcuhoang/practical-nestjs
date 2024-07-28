@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
+  // process.env.TZ = "UTC";
   const app = await NestFactory.create(AppModule);
   
   app.useGlobalPipes(new ValidationPipe({ 

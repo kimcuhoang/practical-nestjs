@@ -10,6 +10,8 @@ beforeAll(async () => {
 
     connectionString = globalThis.postgresContainer.getConnectionUri();
     process.env.DATABASE_URL = connectionString;
+    process.env.LOG_ENABLED = "true";
+    // process.env.TZ = "UTC";
 
     if (globalThis.redisEnabled) {
 

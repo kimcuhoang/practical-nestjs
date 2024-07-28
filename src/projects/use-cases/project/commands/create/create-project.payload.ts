@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Expose } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
+import { Expose, Type } from "class-transformer";
+import { IsDate, isDate, IsOptional, IsString } from "class-validator";
 
 class CreateProjectTaskPayload {
     @Expose()
@@ -14,6 +14,12 @@ export class CreateProjectPayload {
     @IsString()
     @ApiProperty({ type: String, example: 'Project Name', required: true })
     projectName: string;
+
+    @Expose()
+    @IsDate()
+    @Type(() => Date)
+    @ApiProperty({ type: Date, required: true })
+    startDate: Date;
 
     @Expose({ name: 'tasks'})
     @IsOptional()

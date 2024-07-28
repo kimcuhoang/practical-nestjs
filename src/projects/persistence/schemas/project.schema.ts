@@ -11,6 +11,10 @@ export const ProjectSchema = new EntitySchema<Project>({
             type: String,
             nullable: false
         },
+        startDate: {
+            type: Date,
+            nullable: false
+        }
     },
     relations: {
         tasks: {

@@ -4,6 +4,7 @@ import { Task } from "./task";
 
 export class Project extends EntityBase {
     name: string;
+    startDate: Date;
     tasks: Task[] = [];
 
     constructor(id: string) {

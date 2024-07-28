@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import * as glob from 'glob';
 
 const postgresClient = {
     user: "lab",

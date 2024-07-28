@@ -20,6 +20,7 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
                 migrations: [
                     ...options.migrations
                 ],
+                useUTC: true,
                 migrationsTableName: 'MigrationHistory',
                 namingStrategy: new SnakeNamingStrategy(),
                 autoLoadEntities: true,

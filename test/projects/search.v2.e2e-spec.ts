@@ -17,7 +17,7 @@ describe.each(testCases)("Query projects by text", ({ searchTerm, totalResults }
   let projectRepository: Repository<Project>;
   let projects: Project[] = [];
 
-  it(`Text: "${searchTerm}"`, async () => {
+  test(`Text: "${searchTerm}"`, async () => {
 
     let queryBuilder = projectRepository
       .createQueryBuilder('project')

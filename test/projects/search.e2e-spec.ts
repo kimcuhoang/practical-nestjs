@@ -20,7 +20,7 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
   let projectRepository: Repository<Project>;
   const url = '/projects';
 
-  it(`Search project by text:"${searchTerm}"`, async () => {
+  test(`Search project by text:"${searchTerm}"`, async () => {
 
     const searchTermQuery = encodeURIComponent(searchTerm);
     const skip = 0;
