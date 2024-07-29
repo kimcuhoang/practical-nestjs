@@ -1,5 +1,5 @@
 import { Project } from "@src/projects/core";
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
+import { And, Between, LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { app } from "@test/test.setup";
 import * as moment from "moment";
@@ -14,11 +14,6 @@ describe(`Search projects & playing with date-time`, () => {
     const timezoneForWorkingArea = 8;
 
     const refDate = moment().format("YYYY-MM-DD");
-
-    const today = moment(refDate)
-            .utcOffset(timezoneForWorkingArea)
-            .utc()
-            .toDate();
 
     beforeEach(async() => {
         projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
@@ -40,11 +35,14 @@ describe(`Search projects & playing with date-time`, () => {
 
     test(`search projects has start-date from ${refDate}`, async() => {
         
-        const searchDate = moment(refDate).utcOffset(timezoneForWorkingArea).startOf('date').utc().toDate();
+        const searchDate = moment(refDate).utcOffset(timezoneForWorkingArea);
+        const startFrom = moment(searchDate).startOf('date').utc().toDate();
+        const endAt = moment(searchDate).endOf('date').utc().toDate();
 
         const aProject = await projectRepository.findOne({
             where: {
-                startDate: MoreThanOrEqual(searchDate),
+                startDate: And(MoreThanOrEqual(startFrom), LessThanOrEqual(endAt))
+                // startDate: Between(startFrom, endAt)
             }
         });
 
@@ -74,8 +72,9 @@ describe(`Search projects & playing with date-time`, () => {
         });
     });
 
-    xtest(`Manipulating search date for ${today}`, () => {
+    xtest(`Manipulating search date for ${new Date(refDate)}`, () => {
 
+        const today = moment(refDate).utcOffset(timezoneForWorkingArea).utc().toDate();
         const step02 = moment(today).startOf('date').utc();
         const step03 = moment(today).endOf('date').utc();
 
