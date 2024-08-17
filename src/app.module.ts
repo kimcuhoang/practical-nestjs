@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
@@ -6,17 +5,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from '@building-blocks/infra/database/database.module';
 import { ConfigurationsModule } from '@building-blocks/infra/configurations/configurations.module';
-import { ProjectsModule } from '@projects/projects.module';
-import { ProjectsModuleDataSource } from '@projects/persistence';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
 import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
 import { CachingModule } from './building-blocks/infra/caching/caching.module';
-
+import { ProjectsModule } from './projects';
+import { PeopleModule } from './people';
 
 const infrastructureModules = [
   DatabaseModule.register({
     migrations: [
-      ...ProjectsModuleDataSource.Migrations
+      "dist/**/migrations/*.js"
     ]
   }),
   CachingModule.register(),
@@ -26,7 +24,8 @@ const infrastructureModules = [
 ];
 
 const featureModules = [
-  ProjectsModule
+  ProjectsModule,
+  PeopleModule
 ];
 
 @Module({

@@ -1,18 +1,15 @@
-import { Global, Module } from '@nestjs/common';
-import { Handlers } from './use-cases';
+import { Module } from '@nestjs/common';
 import { ProjectsController } from './projects.controller';
-import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectsModuleDataSource } from './persistence';
+import ProjectsModuleSchemas from './persistence';
+import ProjectsModuleHandlers  from './use-cases';
 
-@Global()
 @Module({
     imports: [
-        CqrsModule, 
-        TypeOrmModule.forFeature([...ProjectsModuleDataSource.Schemas])
+        TypeOrmModule.forFeature([...ProjectsModuleSchemas])
     ],
-    providers: [ ...Handlers ],
-    controllers: [ProjectsController]
+    providers: [ ...ProjectsModuleHandlers ],
+    controllers: [ ProjectsController ]
 })
 
 export class ProjectsModule {}

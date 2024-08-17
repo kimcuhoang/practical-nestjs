@@ -8,7 +8,7 @@ import {
     SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
 } from './use-cases';
 
-@ApiTags('Projects Management')
+@ApiTags('Projects')
 @Controller('projects')
 export class ProjectsController {
     constructor(

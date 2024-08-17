@@ -12,7 +12,9 @@ const QueryHandlers = [
     FindByIdHandler
 ]
 
-export const Handlers = [ ...CommandHandlers, ...QueryHandlers ];
+const ProjectsModuleHandlers = [ ...CommandHandlers, ...QueryHandlers ];
+
+export default ProjectsModuleHandlers;
 
 export * from "./project/commands/create/create-project.request";
 export * from "./project/queries/find-by-id/find-by-id.request";

@@ -1,17 +1,17 @@
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import * as glob from 'glob';
+import 'dotenv/config';
 
-const postgresClient = {
-    user: "lab",
-    password: "P@ssword",
-    host: "localhost",
-    port: "5432",
-    database: "practical-nestjs"
-};
+// const postgresClient = {
+//     user: "lab",
+//     password: "P@ssword",
+//     host: "localhost",
+//     port: "5432",
+//     database: "practical-nestjs"
+// };
 
-const connectionString = `postgresql://${postgresClient.user}:${postgresClient.password}@${postgresClient.host}:${postgresClient.port}/${postgresClient.database}`;
+// const connectionString = `postgresql://${postgresClient.user}:${postgresClient.password}@${postgresClient.host}:${postgresClient.port}/${postgresClient.database}`;
 
 
 // const dir = 'dist/**/*.schema{.js,.ts}';
@@ -28,7 +28,7 @@ const connectionString = `postgresql://${postgresClient.user}:${postgresClient.p
 
 const pgConnectionOptions: PostgresConnectionOptions = {
     type: 'postgres',
-    url: connectionString,
+    url: process.env.DATABASE_URL,
     entities: [
         'dist/**/*.schema{.js,.ts}'
     ],

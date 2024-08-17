@@ -1,10 +1,9 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './database.module-definition';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from '@nestjs/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-@Global()
 @Module({})
 export class DatabaseModule extends DatabaseConfigurableModuleClass {
 
@@ -17,6 +16,7 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
                 url: configService.get<string>('DATABASE_URL'),
                 logging: configService.get<string>('LOG_ENABLED')?.toLowerCase() === 'true',
                 synchronize: false,
+                useUTC: true,
                 migrations: [
                     ...options.migrations
                 ],
