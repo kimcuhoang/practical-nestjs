@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CreateProjectRequest } from "./create-project.request";
 import { Project } from "@src/projects/core";
 import { ProjectCreated } from "@src/integration-events/projects/project-created";
+import { Transactional } from "typeorm-transactional";
 
 
 @CommandHandler(CreateProjectRequest)
@@ -14,6 +15,7 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectReques
         private readonly _eventBus: EventBus
     ) {}
 
+    @Transactional()
     async execute(command: CreateProjectRequest): Promise<string> {
         
         const payload = command.payload;

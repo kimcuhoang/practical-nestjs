@@ -3,6 +3,8 @@ import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './databa
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from '@nestjs/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { addTransactionalDataSource, getDataSourceByName } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({})
 export class DatabaseModule extends DatabaseConfigurableModuleClass {
@@ -24,7 +26,14 @@ export class DatabaseModule extends DatabaseConfigurableModuleClass {
                 namingStrategy: new SnakeNamingStrategy(),
                 autoLoadEntities: true,
                 migrationsRun: true,
-            })
+            }),
+            async dataSourceFactory(options) {
+                if (!options) {
+                  throw new Error('Invalid options passed');
+                }
+     
+                return getDataSourceByName('default') || addTransactionalDataSource(new DataSource(options));
+              },
         });
 
         return {

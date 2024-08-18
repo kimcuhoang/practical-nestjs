@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 let app: INestApplication;
 let connectionString: string;
@@ -10,7 +11,7 @@ beforeAll(async () => {
 
     connectionString = globalThis.postgresContainer.getConnectionUri();
     process.env.DATABASE_URL = connectionString;
-    process.env.LOG_ENABLED = "true1";
+    process.env.LOG_ENABLED = "true";
 
     if (globalThis.redisEnabled) {
 
@@ -23,6 +24,7 @@ beforeAll(async () => {
         process.env.REDIS_PORT = globalThis.redisContainer.getFirstMappedPort().toString();
     }
 
+    initializeTransactionalContext();
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule]
     })
