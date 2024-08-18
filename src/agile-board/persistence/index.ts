@@ -1,7 +1,7 @@
-import { AgileProject } from "../core";
+import { AgileProjectSchema } from "./schemas/agile-project.schema";
 
 const AgileBoardModuleSchemas = [
-    AgileProject
+    AgileProjectSchema
 ];
 
 export default AgileBoardModuleSchemas;

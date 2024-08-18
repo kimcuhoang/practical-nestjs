@@ -8,4 +8,10 @@ export class AgileProject extends EntityBase {
     constructor(id: string) {
         super(id);
     };
+
+    public static create(id: string, callback: (p: AgileProject) => void) : AgileProject {
+        const project = new AgileProject(id);
+        callback(project);
+        return project;
+    }
 }

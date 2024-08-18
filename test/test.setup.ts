@@ -10,6 +10,7 @@ beforeAll(async () => {
 
     connectionString = globalThis.postgresContainer.getConnectionUri();
     process.env.DATABASE_URL = connectionString;
+    process.env.LOG_ENABLED = "true1";
 
     if (globalThis.redisEnabled) {
 

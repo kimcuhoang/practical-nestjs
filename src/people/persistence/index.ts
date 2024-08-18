@@ -1,7 +1,9 @@
+import { AssignmentProjectSchema } from "./schemas/assignment-project.schema";
 import { PersonSchema } from "./schemas/person.schema";
 
 const PeopleModuleSchemas = [
-    PersonSchema
+    PersonSchema,
+    AssignmentProjectSchema
 ];
 
 export default PeopleModuleSchemas;
