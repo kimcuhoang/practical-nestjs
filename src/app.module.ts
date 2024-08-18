@@ -8,8 +8,7 @@ import { ConfigurationsModule } from '@building-blocks/infra/configurations/conf
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
 import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
 import { CachingModule } from './building-blocks/infra/caching/caching.module';
-import { ProjectsModule } from './projects';
-import { PeopleModule } from './people';
+import { AgileBoardModule } from './agile-board';
 
 const infrastructureModules = [
   DatabaseModule.register({
@@ -24,8 +23,7 @@ const infrastructureModules = [
 ];
 
 const featureModules = [
-  ProjectsModule,
-  PeopleModule
+  AgileBoardModule
 ];
 
 @Module({
