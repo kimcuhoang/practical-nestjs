@@ -12,6 +12,8 @@ describe('ProjectsContoller (e2e)', () => {
       projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
       project = Project.create(p => {
         p.name = faker.lorem.sentence(5);
+        p.startDate = faker.date.future({ refDate: new Date() });
+        
         for(let i = 0; i < 3; i++) {
             p.addTask(task => {
                 task.name = faker.lorem.sentence(5);

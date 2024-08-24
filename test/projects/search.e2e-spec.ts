@@ -48,6 +48,7 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
       const project = Project.create(p => {
 
         p.name = `Đây là cái dự án ${i}`;
+        p.startDate = faker.date.future({ refDate: new Date() });
 
         const numberOfTasks = faker.number.int({ min: 1, max: 3 });
 
@@ -62,6 +63,7 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
 
     projects.push(Project.create(p => {
       p.name = "Dự án không có task";
+      p.startDate = faker.date.future({ refDate: new Date() });
     }));
 
     await projectRepository.save(projects)

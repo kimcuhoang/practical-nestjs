@@ -10,8 +10,8 @@ const jestConfig: Config.InitialOptions = {
     transform: {
         "^.+\\.(t|j)s$": "ts-jest"
     },
-    // globalSetup: "./test/global.setup.ts",
-    // globalTeardown: "./test/global.teardown.ts",
+    globalSetup: "./test/global.setup.ts",
+    globalTeardown: "./test/global.teardown.ts",
     setupFiles: [
         "reflect-metadata"
     ],

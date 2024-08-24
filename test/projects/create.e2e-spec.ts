@@ -48,8 +48,7 @@ describe('ProjectsController (e2e)', () => {
     expect(project.tasks).toHaveLength(payload.tasks.length);
 
     console.log({
-      startDate: project.startDate,
-      dueDate: project.dueDate
+      startDate: project.startDate
     });
 
     project.tasks.forEach(task => {
