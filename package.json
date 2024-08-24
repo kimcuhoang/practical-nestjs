@@ -22,7 +22,8 @@
     "test:watch": "yarn test --watch",
     "test:cov": "yarn test --coverage",
     "test:e2e": "yarn test",
-    "t": "clear && yarn build && yarn test -f test/projects/search-projects.e2e-spec.ts --all"
+    "t": "clear && yarn build && yarn test -f test/projects/search-projects.e2e-spec.ts --all",
+    "a": "clear && yarn test -f test/test-date-time.e2e-spec.ts --all"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.2",
