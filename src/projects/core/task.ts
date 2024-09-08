@@ -1,6 +1,6 @@
-import { EntityBase } from "@building-blocks/domains/entity-base";
 import { Guid } from "guid-typescript";
 import { Project } from "./project";
+import { EntityBase } from "@src/building-blocks/domains";
 
 
 export class Task extends EntityBase {

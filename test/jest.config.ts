@@ -6,7 +6,10 @@ const jestConfig: Config.InitialOptions = {
     moduleFileExtensions: ["js", "json", "ts"],
     rootDir: "..",
     testEnvironment: "node",
-    testRegex: ".e2e-spec.ts$",
+    testRegex: [
+        ".e2e-spec.ts$",
+        ".e2e.ts$"
+    ],
     transform: {
         "^.+\\.(t|j)s$": "ts-jest"
     },
