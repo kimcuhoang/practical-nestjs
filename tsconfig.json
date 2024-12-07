@@ -17,8 +17,10 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "allowJs": true,
     "paths": {
       "@src/*": ["src/*"],
+      "@infrastructures/*": ["src/infrastructures/*"],
       "@building-blocks/*": ["src/building-blocks/*"],
       "@projects/*": ["src/projects/*"],
       "@test/*": ["test/*"],

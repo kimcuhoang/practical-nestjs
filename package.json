@@ -7,7 +7,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "typeorm": "typeorm-ts-node-commonjs -d typeorm.datasource.ts",
+    "typeorm-ext": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs -d src/typeorm.datasource.ts",
+    "db:create": "yarn typeorm-ext db:create --synchronize no",
+    "db:drop": "yarn typeorm-ext db:drop",
+    "typeorm": "typeorm-ts-node-commonjs -d src/typeorm.datasource.ts",
     "typeorm:run-migrations": "yarn typeorm migration:run",
     "typeorm:generate-migration": "yarn typeorm -p -- migration:generate",
     "typeorm:create-migration": "yarn typeorm -- migration:create",
@@ -35,6 +38,7 @@
     "class-validator": "^0.14.1",
     "guid-typescript": "^1.0.9",
     "madge": "^7.0.0",
+    "meant": "^2.0.1",
     "redis": "^4.6.13",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
@@ -71,6 +75,7 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typeorm": "^0.3.20",
+    "typeorm-extension": "^3.6.3",
     "typeorm-naming-strategies": "^4.1.0",
     "typescript": "^5.1.3"
   }

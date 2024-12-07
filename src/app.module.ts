@@ -4,20 +4,19 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseModule } from '@building-blocks/infra/database/database.module';
 import { ConfigurationsModule } from '@building-blocks/infra/configurations/configurations.module';
 import { ProjectsModule } from '@projects/projects.module';
-import { ProjectsModuleDataSource } from '@projects/persistence';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
 import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
 import { CachingModule } from './building-blocks/infra/caching/caching.module';
-
+import { DatabaseModule, DatabaseModuleSettings } from './building-blocks/infra/database';
+import { getDatabaseModuleSettings } from './typeorm.datasource';
 
 const infrastructureModules = [
   DatabaseModule.register({
-    migrations: [
-      ...ProjectsModuleDataSource.Migrations
-    ]
+    getDatabaseModuleSettings(configService): DatabaseModuleSettings {
+      return getDatabaseModuleSettings(configService);
+    },
   }),
   CachingModule.register(),
   RedisModule.register(),

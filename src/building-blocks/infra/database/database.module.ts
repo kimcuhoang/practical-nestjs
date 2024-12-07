@@ -1,35 +1,56 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './database.module-definition';
+import { DynamicModule, Global, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigService } from '@nestjs/config';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { DatabaseModuleSettings } from "./database.module.settings";
+import { DataSourceProperties } from "./datasource.properties";
+import { Logger } from "testcontainers/build/common";
+
+export type DatabaseModuleOptions = {
+    getDatabaseModuleSettings(configService: ConfigService): DatabaseModuleSettings;
+}
 
 @Global()
 @Module({})
-export class DatabaseModule extends DatabaseConfigurableModuleClass {
-
+export class DatabaseModule {
     public static register(options: DatabaseModuleOptions): DynamicModule {
-
-        const typeOrmModule = TypeOrmModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                type: 'postgres',
-                url: configService.get<string>('DATABASE_URL'),
-                logging: configService.get<string>('LOG_ENABLED')?.toLowerCase() === 'true',
-                synchronize: false,
-                migrations: [
-                    ...options.migrations
-                ],
-                migrationsTableName: 'MigrationHistory',
-                namingStrategy: new SnakeNamingStrategy(),
-                autoLoadEntities: true,
-                migrationsRun: true,
-            })
-        });
-
+        const logger = new Logger(DatabaseModule.name);
         return {
             module: DatabaseModule,
-            imports: [typeOrmModule]
-        }
-    };
+            imports: [
+                TypeOrmModule.forRootAsync({
+                    inject: [DatabaseModuleSettings],
+                    useFactory: async (databaseSettings: DatabaseModuleSettings) => {
+
+                        const migrations = [
+                            ...new Set([
+                                        ...DataSourceProperties.migrations as any[],
+                                        ...databaseSettings.migrations ])
+                        ];
+
+                        console.log(migrations);
+
+                        return ({
+                            ...DataSourceProperties,
+                            url: databaseSettings.url,
+                            logging: databaseSettings.enableForLog,
+                            migrationsRun: databaseSettings.autoMigration,
+                            migrations: migrations
+                        });
+                    }
+                })
+            ],
+            providers: [
+                {
+                    provide: DatabaseModuleSettings,
+                    inject: [ConfigService],
+                    useFactory: (configService: ConfigService) => {
+                        return options.getDatabaseModuleSettings(configService);
+                    }
+                }
+            ],
+            exports: [
+                DatabaseModuleSettings
+            ]
+        };
+    }
 }

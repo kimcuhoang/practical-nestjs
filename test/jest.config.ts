@@ -2,10 +2,14 @@ import type { Config } from '@jest/types';
 
 const jestConfig: Config.InitialOptions = {
     silent: false,
+    verbose: true,
     moduleFileExtensions: ["js", "json", "ts"],
     rootDir: "..",
     testEnvironment: "node",
-    testRegex: ".e2e-spec.ts$",
+    testRegex: [
+        ".e2e-spec.ts$",
+        ".e2e.ts$"
+    ],
     transform: {
         "^.+\\.(t|j)s$": "ts-jest"
     },
@@ -16,8 +20,9 @@ const jestConfig: Config.InitialOptions = {
     ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
-        "^@projects/(.*)$": "<rootDir>/src/projects/$1",
+        "^@infrastructures/(.*)$": "<rootDir>/src/infrastructures/$1",
         "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
+        "^@projects/(.*)$": "<rootDir>/src/projects/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
     },
     coverageReporters: ["json", "html", "clover", "lcov", "text"],
