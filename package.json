@@ -39,9 +39,11 @@
     "guid-typescript": "^1.0.9",
     "madge": "^7.0.0",
     "meant": "^2.0.1",
+    "moment": "^2.30.1",
     "redis": "^4.6.13",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "solclientjs": "^10.17.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

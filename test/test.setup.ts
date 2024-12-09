@@ -10,6 +10,7 @@ beforeAll(async () => {
 
     connectionString = globalThis.postgresContainer.getConnectionUri();
     process.env.DATABASE_URL = connectionString;
+    process.env.SOLACE_ENABLED = "false";
 
     if (globalThis.redisEnabled) {
 

@@ -16,7 +16,7 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectReques
         const payload = command.payload;
         const project = Project.create(p => {
             p.name = payload.projectName;
-            payload.tasks.forEach(t => {
+            payload.tasks?.forEach(t => {
                 p.addTask(_ => {
                     _.name = t.taskName;
                 })

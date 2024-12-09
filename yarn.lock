@@ -4598,6 +4598,11 @@ module-lookup-amd@^8.0.5:
     requirejs "^2.3.6"
     requirejs-config-file "^4.0.0"
 
+moment@^2.30.1:
+  version "2.30.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -5586,6 +5591,11 @@ smob@^1.4.0, smob@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/smob/-/smob-1.5.0.tgz#85d79a1403abf128d24d3ebc1cdc5e1a9548d3ab"
   integrity sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==
+
+solclientjs@^10.17.1:
+  version "10.17.1"
+  resolved "https://registry.yarnpkg.com/solclientjs/-/solclientjs-10.17.1.tgz#5844e4a317280039c15e060ab22b31f511e37ef9"
+  integrity sha512-A+ZBty0GnJfSaF1v8vb3OvetqdZ8ASc/nugd00dt51fXd64h+50UzGh+NDDV46OTwb+umFZ9xF8aoEKyZzeo1A==
 
 source-map-js@^1.2.0:
   version "1.2.0"
