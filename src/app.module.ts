@@ -4,7 +4,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigurationsModule } from '@building-blocks/infra/configurations/configurations.module';
 import { ProjectsModule } from '@projects/projects.module';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
 import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
@@ -20,8 +19,7 @@ const infrastructureModules = [
   }),
   CachingModule.register(),
   RedisModule.register(),
-  RedisModule12.register(),
-  ConfigurationsModule
+  RedisModule12.register()
 ];
 
 const featureModules = [

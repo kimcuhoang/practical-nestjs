@@ -44,4 +44,4 @@ afterAll(async () => {
 
 // add some timeout until containers are up and working 
 jest.setTimeout(120000);
-export { app, httpServer, connectionString };
+export { app, httpServer };
