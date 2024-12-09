@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { RedisIoRedisService } from "@src/building-blocks/infra/redis-ioredis/redis-ioredis.service";
+import { RedisIoRedisService } from "@building-blocks/infra/redis-ioredis";
 import { app } from "@test/test.setup";
 
 describe("Test for Redis with io-redis", () => {

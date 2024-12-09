@@ -2,13 +2,13 @@ import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { ILike, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Project } from '@src/projects/core/project';
+import { Project } from '@projects/core/project';
 import { app, httpServer } from '@test/test.setup';
 import { faker } from '@faker-js/faker';
-import { CachingProvider } from '@src/building-blocks/infra/caching/caching.provider';
+import { CachingProvider } from '@building-blocks/infra/caching/caching.provider';
 
 
-describe('ProjectsContoller (e2e)', () => {
+describe('ProjectsController (e2e)', () => {
   let project: Project;
   let projectRepository: Repository<Project>;
   const url = '/projects';

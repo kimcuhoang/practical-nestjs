@@ -1,8 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { RedisService } from "@src/building-blocks/infra/redis/redis.service";
+import { RedisService } from "@building-blocks/infra/redis/redis.service";
 import { app } from "@test/test.setup";
-
-
 
 describe("Test Redis", () => {
     let redisService: RedisService;

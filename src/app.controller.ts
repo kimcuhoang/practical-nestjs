@@ -1,8 +1,8 @@
 import { Controller, Get, HttpStatus, Inject, Redirect } from '@nestjs/common';
 import { AppService } from './app.service';
-import { RedisService } from './building-blocks/infra/redis/redis.service';
-import { RedisIoRedisService } from './building-blocks/infra/redis-ioredis/redis-ioredis.service';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { RedisIoRedisService } from './building-blocks/infra/redis-ioredis';
+import { RedisService } from './building-blocks/infra/redis';
 
 @ApiTags("App")
 @Controller()
