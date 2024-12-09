@@ -5,8 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProjectsModule } from '@projects/projects.module';
+import { RedisIoRedisModule } from './building-blocks/infra/redis-ioredis/redis-ioredis.module';
 import { RedisModule } from './building-blocks/infra/redis/redis.module';
-import { RedisModule12 } from './building-blocks/infra/redis/redis12.module';
 import { CachingModule } from './building-blocks/infra/caching/caching.module';
 import { DatabaseModule, DatabaseModuleSettings } from './building-blocks/infra/database';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
@@ -18,8 +18,8 @@ const infrastructureModules = [
     },
   }),
   CachingModule.register(),
-  RedisModule.register(),
-  RedisModule12.register()
+  RedisIoRedisModule.register(),
+  RedisModule.register()
 ];
 
 const featureModules = [

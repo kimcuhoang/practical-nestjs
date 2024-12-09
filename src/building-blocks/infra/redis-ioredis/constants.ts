@@ -1,0 +1,1 @@
+export const REDIS_IO_REDIS_CLIENT = Symbol('REDIS_IO_REDIS_CLIENT');

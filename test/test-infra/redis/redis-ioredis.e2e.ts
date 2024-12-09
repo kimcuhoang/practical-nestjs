@@ -1,11 +1,9 @@
 import { faker } from "@faker-js/faker";
-import { RedisService12 } from "@src/building-blocks/infra/redis/redis12.service";
+import { RedisIoRedisService } from "@src/building-blocks/infra/redis-ioredis/redis-ioredis.service";
 import { app } from "@test/test.setup";
 
-
-
-describe("Test Redis12", () => {
-    let redisService: RedisService12;
+describe("Test for Redis with io-redis", () => {
+    let redisService: RedisIoRedisService | undefined;
 
     const cacheKey = faker.string.uuid();
     const cacheObjects = faker.helpers.multiple(() => ({
@@ -14,13 +12,13 @@ describe("Test Redis12", () => {
     }), { count: 5 });
     
     beforeEach(async () => {
-        redisService = app.get<RedisService12>(RedisService12);
+        redisService = app.get(RedisIoRedisService, { strict: false });
         if (redisService.getRedisClient()) {
             await redisService.set(cacheKey, cacheObjects);
         }
     });
 
-    it("RedisService12", async () => {
+    it(`${RedisIoRedisService.name}`, async () => {
         if (redisService.getRedisClient()) {
             const objectsFromCache = await redisService.get(cacheKey);
             expect(objectsFromCache).toEqual(cacheObjects);

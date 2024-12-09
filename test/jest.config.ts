@@ -20,7 +20,6 @@ const jestConfig: Config.InitialOptions = {
     ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
-        "^@infrastructures/(.*)$": "<rootDir>/src/infrastructures/$1",
         "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
         "^@projects/(.*)$": "<rootDir>/src/projects/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"

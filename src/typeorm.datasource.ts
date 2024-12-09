@@ -15,6 +15,9 @@ export const getDatabaseModuleSettings = (configService: ConfigService) : Databa
     });
 };
 
+// =================
+// Kudos: https://stackoverflow.com/a/77328342
+// =================
 const configService: ConfigService = new ConfigService();
 
 const databaseModuleSettings: DatabaseModuleSettings = getDatabaseModuleSettings(configService);
