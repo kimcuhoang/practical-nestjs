@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Destination, MessageDeliveryModeType, Session, SolclientFactory } from "solclientjs";
+import { Destination, MessageDeliveryModeType, SolclientFactory } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
+import { SolaceProvider } from "./solace.provider";
 
 
 @Injectable()
@@ -9,7 +10,7 @@ export class SolacePublisher {
     private readonly logger = new Logger(SolacePublisher.name);
 
     constructor(
-        private readonly solaceSession: Session,
+        private readonly solaceProvider: SolaceProvider,
         private readonly solaceModuleSettings: SolaceModuleSettings
     ){}
 
@@ -21,7 +22,7 @@ export class SolacePublisher {
         messageObj.setBinaryAttachment(JSON.stringify(message));
         messageObj.setDeliveryMode(MessageDeliveryModeType.DIRECT);
 
-        this.solaceSession!.send(messageObj);
+        this.solaceProvider.getSolaceSession().send(messageObj);
     }
 
     public PublishQueue(queue: string, message: any) : void

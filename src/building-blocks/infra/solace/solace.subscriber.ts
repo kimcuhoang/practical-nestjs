@@ -10,12 +10,13 @@ import {
     QueueDescriptor, QueueType, Session, SessionEventCode, SolclientFactory
 } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
+import { SolaceProvider } from "./solace.provider";
 
 @Injectable()
 export class SolaceSubscriber {
     private readonly logger = new Logger(SolaceSubscriber.name);
     constructor(
-        private readonly solaceSession: Session,
+        private readonly solaceProvider: SolaceProvider,
         private readonly solaceModuleSettings: SolaceModuleSettings
     ) { }
 
@@ -28,11 +29,13 @@ export class SolaceSubscriber {
             return;
         }
 
-        this.solaceSession.on(SessionEventCode.UP_NOTICE, () => {
+        const solaceSession = this.solaceProvider.getSolaceSession();
+
+        solaceSession.on(SessionEventCode.UP_NOTICE, () => {
             this.logger.log("=== Successfully connected and ready to subscribe. ===");
 
             topics?.filter(topic => topic).forEach(topic => {
-                this.solaceSession.subscribe(
+                solaceSession.subscribe(
                     SolclientFactory.createTopicDestination(topic),
                     true,
                     topic,
@@ -40,7 +43,7 @@ export class SolaceSubscriber {
             });
         });
 
-        this.solaceSession.on(SessionEventCode.MESSAGE, async (message: Message): Promise<void> => {
+        solaceSession.on(SessionEventCode.MESSAGE, async (message: Message): Promise<void> => {
 
             const content = message.getType() === MessageType.TEXT
                 ? message.getSdtContainer()?.getValue()
@@ -173,7 +176,7 @@ export class SolaceSubscriber {
         actions: Record<string, (destination: string, message: any) => Promise<void>>,
         fallback: (destination: string, message: any) => Promise<void>): MessageConsumer {
 
-        const messageConsumer = this.solaceSession!.createMessageConsumer(properties);
+        const messageConsumer = this.solaceProvider.getSolaceSession().createMessageConsumer(properties);
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_ERROR, (error: MessageConsumerEvent): void => {
             this.logger.error(`Delivery of message with correlation key = ${error.subcode} rejected, info: ${error.reason}`);

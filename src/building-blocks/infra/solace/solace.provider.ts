@@ -1,16 +1,21 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { OperationError, RequestError, Session, SessionEvent, SessionEventCode } from "solclientjs";
+import { OperationError, RequestError, Session, SessionEvent, SessionEventCode, SessionProperties, SolclientFactory } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
 
 @Injectable()
 export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
 
     private readonly logger = new Logger(SolaceProvider.name);
+    private solaceSession: Session;
 
     constructor(
-        private readonly solaceSession: Session,
+        private readonly solaceSessionProperties: SessionProperties,
         private readonly solaceModuleSettings: SolaceModuleSettings
     ){}
+
+    public getSolaceSession(): Session {
+        return this.solaceSession;
+    }
 
     onModuleInit(): void {
 
@@ -18,6 +23,8 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
             this.logger.warn("Solace is disabled");
             return;
         }
+
+        this.solaceSession = SolclientFactory.createSession(this.solaceSessionProperties);
 
         this.solaceSession.on(SessionEventCode.CONNECT_FAILED_ERROR, (error: OperationError): void => {
             this.logger.error(`Connection failed to the message router: ${error.message} - check correct parameter values and connectivity!`);
