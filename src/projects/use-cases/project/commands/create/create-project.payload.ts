@@ -15,6 +15,12 @@ export class CreateProjectPayload {
     @ApiProperty({ type: String, example: 'Project Name', required: true })
     projectName: string;
 
+    @Expose()
+    @IsOptional()
+    @IsString()
+    @ApiProperty({ type: String, example: 'Project Name', required: false })
+    externalMessageId?: string;
+
     @Expose({ name: 'tasks'})
     @IsOptional()
     @ApiProperty({ type: [CreateProjectTaskPayload], example: [{ taskName: 'Task Name' }], required: false})

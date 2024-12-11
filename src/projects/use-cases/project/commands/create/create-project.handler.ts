@@ -8,7 +8,8 @@ import { Project } from "@src/projects/core";
 @CommandHandler(CreateProjectRequest)
 export class CreateProjectHandler implements ICommandHandler<CreateProjectRequest, string> {
     constructor(
-        @InjectRepository(Project) private readonly projectRepository: Repository<Project>
+        @InjectRepository(Project) 
+        private readonly projectRepository: Repository<Project>
     ) {}
 
     async execute(command: CreateProjectRequest): Promise<string> {
@@ -16,6 +17,7 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectReques
         const payload = command.payload;
         const project = Project.create(p => {
             p.name = payload.projectName;
+            p.externalMessageId = payload.externalMessageId;
             payload.tasks?.forEach(t => {
                 p.addTask(_ => {
                     _.name = t.taskName;

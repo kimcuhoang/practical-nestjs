@@ -4,6 +4,7 @@ import { Task } from "./task";
 
 export class Project extends EntityBase {
     name: string;
+    externalMessageId: string | null;
     tasks: Task[] = [];
 
     constructor(id: string) {

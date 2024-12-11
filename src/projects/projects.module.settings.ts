@@ -5,7 +5,8 @@ export class ProjectsModuleSettings {
     projectsSolaceQueueName: string;
     enabledSubscribe: boolean;
     enabledReplay: boolean;
-    startReplayFromDatetime: Date;
+    startReplayFromDatetime: Date | null;
+    startReplayFromLastMessageId: string | null;
 
     constructor(settings: Partial<ProjectsModuleSettings>) {
         Object.assign(this, settings);

@@ -11,6 +11,10 @@ export const ProjectSchema = new EntitySchema<Project>({
             type: String,
             nullable: false
         },
+        externalMessageId: {
+            type: String,
+            nullable: true
+        }
     },
     relations: {
         tasks: {

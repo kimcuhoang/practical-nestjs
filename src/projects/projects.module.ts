@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import * as moment from "moment";
 import { ProjectsModuleSubscriberTask } from './solace-integration/projects.module.subscriber.task';
 
+
 @Global()
 @Module({
     imports: [
@@ -30,7 +31,8 @@ import { ProjectsModuleSubscriberTask } from './solace-integration/projects.modu
                     enabledReplay: configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_ENABLED")?.toLowerCase() === 'true',
                     startReplayFromDatetime: !startReplayFromDateTime 
                                     ? null 
-                                    : moment(startReplayFromDateTime, startReplayFromDateTimeFormat).toDate()
+                                    : moment(startReplayFromDateTime, startReplayFromDateTimeFormat).toDate(),
+                    startReplayFromLastMessageId: configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_FROM_MESSAGEID")
                 });
             }
         }

@@ -3,11 +3,10 @@ import { Injectable, Logger } from "@nestjs/common";
 import {
     ErrorSubcode,
     Message,
-    MessageConsumer,
     MessageConsumerAcknowledgeMode, MessageConsumerEvent, MessageConsumerEventName, MessageConsumerProperties,
     MessageType,
     OperationError,
-    QueueDescriptor, QueueType, Session, SessionEventCode, SolclientFactory
+    QueueDescriptor, QueueType, SessionEventCode, SolclientFactory
 } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
 import { SolaceProvider } from "./solace.provider";
@@ -64,9 +63,9 @@ export class SolaceSubscriber {
         });
     }
 
-    public SubscribeQueue(queue: string,
-        actions: Record<string, (destination: string, message: any) => Promise<void>>,
-        fallback: (destination: string, message: any) => Promise<void>): void {
+    public async SubscribeQueue(queue: string, 
+                                configReplay: (consumerProperties: MessageConsumerProperties) => Promise<void>,
+                                messageHandler: (message: Message, messageContent: any) => Promise<void>): Promise<void> {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -79,19 +78,19 @@ export class SolaceSubscriber {
         }
 
         const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.QUEUE, queue);
-        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, actions, fallback);
+        await configReplay(messageConsumerProperties);
+        const messageConsumer = await this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
 
         try {
             messageConsumer.connect();
-            this.logger.debug(`Message Consumer connect to SOLACE successfully`);
         } catch (error) {
             this.logger.error(error.toString());
         }
     }
 
-    public SubscribeTopicEndpoint(topicEndpoint: string,
-        actions: Record<string, (destination: string, message: any) => Promise<void>>,
-        fallback: (destination: string, message: any) => Promise<void>): void {
+    public async SubscribeTopicEndpoint(topicEndpoint: string, 
+                                        configReplay: (consumerProperties: MessageConsumerProperties) => Promise<void>,
+                                        messageHandler: (message: Message, messageContent: any) => Promise<void>): Promise<void> {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -105,48 +104,12 @@ export class SolaceSubscriber {
 
         const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.TOPIC_ENDPOINT, topicEndpoint);
 
-        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, actions, fallback);
+        await configReplay(messageConsumerProperties);
+
+        const messageConsumer = await this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
 
         try {
             messageConsumer.connect();
-            this.logger.debug(`Message Consumer connect to SOLACE successfully`);
-        } catch (error) {
-            this.logger.error(error.toString());
-        }
-    }
-
-    public RequestReplay(queue: string,
-        configReplay: (messageConsumerProperties: MessageConsumerProperties) => void,
-        actions: Record<string, (destination: string, message: any) => Promise<void>>,
-        fallback: (destination: string, message: any) => Promise<void>): void {
-
-        if (!this.solaceModuleSettings.enabled) {
-            this.logger.warn('Solace is disabled');
-            return;
-        }
-
-        const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.QUEUE, queue);
-
-        configReplay(messageConsumerProperties);
-
-        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, actions, fallback);
-
-        messageConsumer.on(MessageConsumerEventName.DOWN_ERROR, (error: OperationError) => {
-            switch (error.subcode) {
-                case ErrorSubcode.REPLAY_STARTED:
-                case ErrorSubcode.REPLAY_START_TIME_NOT_AVAILABLE:
-                case ErrorSubcode.REPLAY_FAILED:
-                case ErrorSubcode.REPLAY_CANCELLED:
-                case ErrorSubcode.REPLAY_LOG_MODIFIED:
-                case ErrorSubcode.REPLAY_MESSAGE_UNAVAILABLE:
-                case ErrorSubcode.REPLAY_MESSAGE_REJECTED: break;
-                default: this.logger.error(`Received "DOWN_ERROR" event - details: ${error}`);
-            }
-        });
-
-        try {
-            messageConsumer.connect();
-            this.logger.debug(`Message Consumer connect to SOLACE successfully`);
         } catch (error) {
             this.logger.error(error.toString());
         }
@@ -170,12 +133,8 @@ export class SolaceSubscriber {
         return messageConsumerProperties;
     }
 
-
-
-    private CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties,
-        actions: Record<string, (destination: string, message: any) => Promise<void>>,
-        fallback: (destination: string, message: any) => Promise<void>): MessageConsumer {
-
+    private async CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties, messageHandler: (message: Message, messageContent: any) => Promise<void>) {
+        
         const messageConsumer = this.solaceProvider.getSolaceSession().createMessageConsumer(properties);
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_ERROR, (error: MessageConsumerEvent): void => {
@@ -186,25 +145,38 @@ export class SolaceSubscriber {
             this.logger.debug(`Delivery of message with correlation key = ${event.correlationKey} successfully`);
         });
 
+        messageConsumer.on(MessageConsumerEventName.DOWN_ERROR, (error: OperationError) => {
+            switch (error.subcode) {
+                case ErrorSubcode.REPLAY_STARTED:
+                case ErrorSubcode.REPLAY_START_TIME_NOT_AVAILABLE:
+                case ErrorSubcode.REPLAY_FAILED:
+                case ErrorSubcode.REPLAY_CANCELLED:
+                case ErrorSubcode.REPLAY_LOG_MODIFIED:
+                case ErrorSubcode.REPLAY_MESSAGE_UNAVAILABLE:
+                case ErrorSubcode.REPLAY_MESSAGE_REJECTED: break;
+                default: this.logger.error(`Received "DOWN_ERROR" event - details: ${error}`);
+            }
+        });
+
         messageConsumer.on(MessageConsumerEventName.MESSAGE, async (message: Message): Promise<void> => {
 
             const content = message.getType() === MessageType.TEXT
                 ? message.getSdtContainer()?.getValue()
                 : message.getBinaryAttachment();
 
-            const destinationName = message.getDestination()?.getName() ?? "";
 
-            try {
-                const action = actions[destinationName] || fallback;
-                await action(destinationName, content);
-                message.acknowledge();
-            } catch (error) {
-                this.logger.error({
-                    Destination: destinationName,
-                    Message: content,
-                    Error: error.toString()
-                });
-            }
+            this.logger.log({
+                applicationMessageId: message.getApplicationMessageId() ?? "nothing",
+                replicationGroupMessageId: message.getReplicationGroupMessageId().toString(),
+                isRedelivered: message.isRedelivered(),
+                // guaranteedMessageId: message.getGuaranteedMessageId(),
+                // receiveTimestamp: message.getReceiverTimestamp(),
+                // senderId: message.getSenderId(),
+                // senderTimestamp: message.getSenderTimestamp(),
+                // sequenceNumber: message.getSequenceNumber()
+            });
+
+            await messageHandler(message, content);
         });
 
         return messageConsumer;
