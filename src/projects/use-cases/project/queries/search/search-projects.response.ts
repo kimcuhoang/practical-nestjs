@@ -1,7 +1,7 @@
 import { IQueryResult } from "@nestjs/cqrs";
 import { ApiProperty } from "@nestjs/swagger";
-import { Project } from "@projects/core/project";
-import { Task } from "@src/projects/core/task";
+import { Project, Task } from "@projects/core";
+
 
 class TaskDto {
     @ApiProperty({type: String})

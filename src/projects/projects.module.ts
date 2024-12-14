@@ -2,17 +2,17 @@ import { Global, Module } from '@nestjs/common';
 import { Handlers } from './use-cases';
 import { ProjectsController } from './projects.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectsModuleDataSource } from './persistence';
 import { ProjectsModuleSettings } from './projects.module.settings';
 import { ConfigService } from '@nestjs/config';
 import * as moment from "moment";
 import { ProjectsModuleSubscriberTask } from './solace-integration/projects.module.subscriber.task';
+import { ProjectsModuleSchemas } from './persistence';
 
 
 @Global()
 @Module({
     imports: [
-        TypeOrmModule.forFeature([...ProjectsModuleDataSource.Schemas])
+        TypeOrmModule.forFeature([...ProjectsModuleSchemas])
     ],
     providers: [ 
         ...Handlers,

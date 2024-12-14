@@ -1,4 +1,9 @@
 {
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  },
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -19,11 +24,10 @@
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
     "paths": {
-      "@src/*": ["src/*"],
       "@building-blocks/*": ["src/building-blocks/*"],
+      "@src/*": ["src/*"],
       "@projects/*": ["src/projects/*"],
-      "@test/*": ["test/*"],
-      "@e2e-test/*": ["e2e-tests/*"],
+      "@test/*": ["test/*"]
     }
   },
 }

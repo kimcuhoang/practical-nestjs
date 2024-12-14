@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
 import { ProjectsModuleSettings } from "../projects.module.settings";
-import { SolaceModuleSettings, SolaceSubscriber } from "@src/building-blocks/infra/solace";
+import { SolaceModuleSettings, SolaceSubscriber } from "@building-blocks/infra/solace";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateProjectPayload, CreateProjectRequest } from "../use-cases";
 import { Message, MessageConsumerProperties, SolclientFactory } from "solclientjs";

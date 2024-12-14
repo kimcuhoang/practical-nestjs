@@ -2,11 +2,7 @@
 import { ProjectSchema } from "./schemas/project.schema";
 import { TaskSchema } from "./schemas/task.schema";
 
-const Schemas = [
+export const ProjectsModuleSchemas = [
     ProjectSchema,
     TaskSchema
-]
-
-export const ProjectsModuleDataSource = {
-    Schemas: Schemas
-};
+];

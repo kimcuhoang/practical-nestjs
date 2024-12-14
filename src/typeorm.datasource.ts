@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleSettings, DataSourceProperties } from './building-blocks/infra/database';
+import { ProjectsModuleSchemas } from './projects/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleSettings => {
     return new DatabaseModuleSettings({
@@ -25,7 +26,9 @@ const databaseModuleSettings: DatabaseModuleSettings = getDatabaseModuleSettings
 const pgConnectionOptions = {
     ...DataSourceProperties,
     url: databaseModuleSettings.url,
-    entities: [ 'dist/**/*.schema.js' ]
+    entities: [
+        ...ProjectsModuleSchemas
+    ]
 } as PostgresConnectionOptions;
 
 export default new DataSource(pgConnectionOptions);

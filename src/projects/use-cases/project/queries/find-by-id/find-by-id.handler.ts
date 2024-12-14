@@ -3,7 +3,7 @@ import { FindByIdRequest } from "./find-by-id.request";
 import { FindByIdResponse } from "./find-by-id.response";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Project } from "@src/projects/core";
+import { Project } from "@projects/core";
 import { CachingProvider } from "@building-blocks/infra/caching";
 
 @QueryHandler(FindByIdRequest)

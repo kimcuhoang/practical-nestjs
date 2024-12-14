@@ -19,8 +19,8 @@ const jestConfig: Config.InitialOptions = {
         "reflect-metadata"
     ],
     moduleNameMapper: {
-        "^@src/(.*)$": "<rootDir>/src/$1",
         "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
+        "^@src/(.*)$": "<rootDir>/src/$1",
         "^@projects/(.*)$": "<rootDir>/src/projects/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
     },

@@ -2,9 +2,13 @@
   "name": "practical-nestjs",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Kim-CH",
   "private": true,
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kimcuhoang/practical-nestjs"
+  },
   "scripts": {
     "build": "nest build",
     "typeorm-ext": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs -d src/typeorm.datasource.ts",
@@ -12,9 +16,9 @@
     "db:drop": "yarn typeorm-ext db:drop",
     "typeorm": "typeorm-ts-node-commonjs -d src/typeorm.datasource.ts",
     "typeorm:run-migrations": "yarn typeorm migration:run",
-    "typeorm:generate-migration": "yarn typeorm -p -- migration:generate",
-    "typeorm:create-migration": "yarn typeorm -- migration:create",
-    "typeorm:revert-migration": "yarn typeorm -- migration:revert",
+    "typeorm:generate-migration": "yarn typeorm migration:generate",
+    "typeorm:create-migration": "yarn typeorm migration:create",
+    "typeorm:revert-migration": "yarn typeorm migration:revert",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
