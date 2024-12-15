@@ -3,6 +3,7 @@ import type { Config } from '@jest/types';
 const jestConfig: Config.InitialOptions = {
     silent: false,
     verbose: true,
+    restoreMocks: true,
     moduleFileExtensions: ["js", "json", "ts"],
     rootDir: "..",
     testEnvironment: "node",

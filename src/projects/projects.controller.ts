@@ -20,7 +20,7 @@ export class ProjectsController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({ status: HttpStatus.OK, type: SearchProjectsResponse })
     async search(@Query() payload: SearchProjectsPayload): Promise<SearchProjectsResponse> {
-        console.log(`search projects with payload: ${JSON.stringify(payload)}`);
+        // console.log(`search projects with payload: ${JSON.stringify(payload)}`);
         const request = new SearchProjectsRequest(payload);
         const response = await this._queryBus.execute(request);
         return response;
@@ -41,7 +41,7 @@ export class ProjectsController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({ status: 200, type: String })
     async create(@Body() payload: CreateProjectPayload): Promise<string> {
-        console.log(`create project with payload: ${JSON.stringify(payload)}`);
+        // console.log(`create project with payload: ${JSON.stringify(payload)}`);
         const request = new CreateProjectRequest(payload);
         const response = await this._commandBus.execute(request);
         return response;

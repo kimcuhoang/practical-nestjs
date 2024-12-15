@@ -1,4 +1,5 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, LogLevel } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
 
@@ -30,9 +31,18 @@ beforeAll(async () => {
     })
     .compile();
 
+    process.env.LOG_LEVELS = "warn|error";
+
     app = moduleFixture
-        .createNestApplication()
+        .createNestApplication({
+            abortOnError: true,
+            bodyParser: true
+        })
         .useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+    const configService = app.get<ConfigService>(ConfigService);
+    const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [];
+    app.useLogger(logLevels as LogLevel[]);
 
     await app.init();
     httpServer = app.getHttpServer();

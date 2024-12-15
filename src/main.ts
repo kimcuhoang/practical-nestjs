@@ -1,11 +1,21 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { LogLevel, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule);
+
+  const app = await NestFactory.create(AppModule, {
+    abortOnError: true
+  });
+
+  const configService = app.get<ConfigService>(ConfigService);
+
+  const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [ 'error' ];
+  app.useLogger(logLevels as LogLevel[]);
   
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
