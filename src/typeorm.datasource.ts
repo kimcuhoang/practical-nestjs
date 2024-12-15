@@ -4,6 +4,7 @@ import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConne
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleSettings, DataSourceProperties } from './building-blocks/infra/database';
 import { ProjectsModuleSchemas } from './projects/persistence';
+import { NotificationsModuleSchemas } from './notifications/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleSettings => {
     return new DatabaseModuleSettings({
@@ -28,7 +29,8 @@ const pgConnectionOptions = {
     synchronize: false,
     url: databaseModuleSettings.url,
     entities: [
-        ...ProjectsModuleSchemas
+        ...ProjectsModuleSchemas,
+        ...NotificationsModuleSchemas
     ]
 } as PostgresConnectionOptions;
 

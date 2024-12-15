@@ -2,15 +2,16 @@ import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule, DatabaseModuleSettings } from '@building-blocks/infra/database';
-import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { CachingModule } from '@building-blocks/infra/caching';
 import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';
 import { RedisModule } from '@building-blocks/infra/redis';
+import { SolaceModule, SolaceModuleSettings } from '@building-blocks/infra/solace';
 import { ProjectsModule } from './projects';
-import { SolaceModule, SolaceModuleSettings } from './building-blocks/infra/solace';
+import { NotificationsModule } from './notifications';
+import { getDatabaseModuleSettings } from './typeorm.datasource';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 const infrastructureModules = [
   DatabaseModule.register({
@@ -37,7 +38,8 @@ const infrastructureModules = [
 ];
 
 const featureModules = [
-  ProjectsModule
+  ProjectsModule,
+  NotificationsModule
 ];
 
 @Module({

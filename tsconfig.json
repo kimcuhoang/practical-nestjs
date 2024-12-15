@@ -24,9 +24,11 @@
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
     "paths": {
-      "@building-blocks/*": ["src/building-blocks/*"],
       "@src/*": ["src/*"],
+      "@building-blocks/*": ["src/building-blocks/*"],
+      "@integration-events/*": ["src/integration-events/*"],
       "@projects/*": ["src/projects/*"],
+      "@notifications/*": ["src/notifications/*"],
       "@test/*": ["test/*"]
     }
   },

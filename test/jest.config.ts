@@ -19,9 +19,11 @@ const jestConfig: Config.InitialOptions = {
         "reflect-metadata"
     ],
     moduleNameMapper: {
-        "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
         "^@src/(.*)$": "<rootDir>/src/$1",
+        "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
+        "^@integration-events/(.*)$": "<rootDir>/src/integration-events/$1",
         "^@projects/(.*)$": "<rootDir>/src/projects/$1",
+        "^@notifications/(.*)$": "<rootDir>/src/notifications/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
     },
     coverageReporters: ["json", "html", "clover", "lcov", "text"],
@@ -32,6 +34,7 @@ const jestConfig: Config.InitialOptions = {
         "!src/**/*.module.ts",
         "!src/**/persistence/**",
         "!src/building-blocks/**",
+        "!src/integration-events/**",
         "!node_modules/**"
     ]
 };
