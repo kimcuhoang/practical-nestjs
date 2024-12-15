@@ -9,7 +9,9 @@ let httpServer: any | undefined;
 beforeAll(async () => {
 
     connectionString = globalThis.postgresContainer.getConnectionUri();
-    process.env.DATABASE_URL = connectionString;
+    process.env.POSTGRES_DATABASE_URL = connectionString;
+    process.env.POSTGRES_LOG_ENABLED = "false";
+
     process.env.SOLACE_ENABLED = "false";
 
     if (globalThis.redisEnabled) {
@@ -34,7 +36,6 @@ beforeAll(async () => {
 
     await app.init();
     httpServer = app.getHttpServer();
-    
 });
 
 

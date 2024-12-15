@@ -3,6 +3,7 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
 i:
     clear
+    rm -rf node_modules
     yarn install
 
 b: 
@@ -29,7 +30,7 @@ e2e: b
 
 e2e-file: b
     clear
-    yarn test:e2e -f test/app.e2e-spec.ts --all
+    yarn test:e2e -f test/app.e2e.ts --all
 
 e2e-folder: b
     clear

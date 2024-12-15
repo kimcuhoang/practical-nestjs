@@ -33,6 +33,11 @@ export class SolaceModule {
                 inject: [SolaceModuleSettings],
                 useFactory: (settings: SolaceModuleSettings) => {
 
+                    if (!settings.enabled) {
+                        logger.warn("Solace is disabled");
+                        return null;
+                    }
+
                     const factoryProps = new SolclientFactoryProperties({
                         profile: SolclientFactoryProfiles.version10,
                         logLevel: settings.getSolaceLogLevel()

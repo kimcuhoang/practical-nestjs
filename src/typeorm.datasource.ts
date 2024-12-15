@@ -25,6 +25,7 @@ const databaseModuleSettings: DatabaseModuleSettings = getDatabaseModuleSettings
 
 const pgConnectionOptions = {
     ...DataSourceProperties,
+    synchronize: false,
     url: databaseModuleSettings.url,
     entities: [
         ...ProjectsModuleSchemas

@@ -27,12 +27,11 @@ export class DatabaseModule {
                                         ...databaseSettings.migrations ])
                         ];
 
-                        console.log(migrations);
-
                         return ({
                             ...DataSourceProperties,
                             url: databaseSettings.url,
                             logging: databaseSettings.enableForLog,
+                            synchronize: false,
                             migrationsRun: databaseSettings.autoMigration,
                             migrations: migrations
                         });
