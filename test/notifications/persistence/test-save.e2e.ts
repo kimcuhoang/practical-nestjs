@@ -4,6 +4,19 @@ import { app } from "@test/test.setup";
 import { Equal, Repository } from "typeorm";
 import { Notification, NotificationChannel, OwnerNotificationType } from "@notifications/core";
 
+const initNotification = () : Notification => {
+    const notification = Notification.init(_ => {
+        _.ownerType = "Project";
+        _.ownerIdentity = faker.string.uuid();
+        _.ownerNotificationType = OwnerNotificationType.Created,
+        _.title = faker.lorem.word({ length: 10 }),
+        _.content = faker.lorem.paragraph(4);
+        _.notificationChannel = NotificationChannel.Default
+    });
+
+    return notification;
+}
+
 const assertSavedNotification = async (repository: Repository<Notification>, notification: Notification): Promise<void> => {
     const savedNotification = await repository.findOne({
         where: {
@@ -21,7 +34,7 @@ const assertSavedNotification = async (repository: Repository<Notification>, not
 describe(`Test persistence for Notifications-Module`, () => {
     let notificationRepository: Repository<Notification>;
 
-    beforeEach(() => {
+    beforeAll(() => {
         notificationRepository = app.get<Repository<Notification>>(getRepositoryToken(Notification));
     });
 
@@ -31,18 +44,15 @@ describe(`Test persistence for Notifications-Module`, () => {
         expect(deleteResult.affected).toBeGreaterThan(0);
     });
 
-    test(`Save ${Notification.name} successfully`, async() => {
-        const notification = Notification.init(_ => {
-            _.ownerType = "Project";
-            _.ownerIdentity = faker.string.uuid();
-            _.ownerNotificationType = OwnerNotificationType.Created,
-            _.title = faker.lorem.word({ length: 10 }),
-            _.content = faker.lorem.paragraph(4);
-            _.notificationChannel = NotificationChannel.Default
-        });
+    test(`Save ${Notification.name} successfully ~ Upsert`, async() => {
+        const notification = initNotification();
+        await notificationRepository.save(notification);
+        await assertSavedNotification(notificationRepository, notification);
+    });
 
-        const result = await notificationRepository.save(notification);
-
+    test(`Insert ${Notification.name} successfully`, async() => {
+        const notification = initNotification();
+        await notificationRepository.insert(notification);
         await assertSavedNotification(notificationRepository, notification);
     });
 });
