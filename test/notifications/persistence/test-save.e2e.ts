@@ -29,6 +29,8 @@ const assertSavedNotification = async (repository: Repository<Notification>, not
     expect(savedNotification).toStrictEqual({
         ...notification
     } as Notification);
+
+    expect(savedNotification.createdAt).toBeTruthy();
 }
 
 describe(`Test persistence for Notifications-Module`, () => {

@@ -36,4 +36,5 @@ export const NotificationSchema = new EntitySchema<Notification>({
             nullable: false
         }
     }
+    
 });

@@ -10,5 +10,7 @@ export const DataSourceProperties = {
     namingStrategy: new SnakeNamingStrategy(),
     autoLoadEntities: true,
     migrationsTransactionMode: "all",
-    useUTC: true
+    useUTC: true,
+    dateStrings: ["timestamp without time zone"],
+    timezone: "UTC",
 } as TypeOrmModuleOptions;
