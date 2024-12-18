@@ -1,23 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, ValidateIf } from "class-validator";
+import { i18nValidationMessage } from "nestjs-i18n";
 
 class CreateProjectTaskPayload {
     @Expose()
-    @IsString()
+    @IsString({ message: 'validation.string'})
     @ApiProperty({ type: String, example: 'Task Name', required: true})
     taskName: string;
 }
 
 export class CreateProjectPayload {
     @Expose()
-    @IsString()
+    @IsString({ message: i18nValidationMessage('validation.string' )})
+    @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
     @ApiProperty({ type: String, example: 'Project Name', required: true })
     projectName: string;
 
     @Expose()
     @IsOptional()
-    @IsString()
+    @IsString({ message: 'validation.string'})
     @ApiProperty({ type: String, example: 'Project Name', required: false })
     externalMessageId?: string;
 

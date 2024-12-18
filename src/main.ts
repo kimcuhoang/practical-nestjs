@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
 import { LogLevel, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
 async function bootstrap() {
 
@@ -17,14 +18,21 @@ async function bootstrap() {
   const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [ 'error' ];
   app.useLogger(logLevels as LogLevel[]);
   
-  app.useGlobalPipes(new ValidationPipe({ 
-    whitelist: true, 
-    transform: true, 
-    validationError: { 
-      target: true,
-      value: true
-    }
-  }));
+  // app.useGlobalPipes(new ValidationPipe({ 
+  //   whitelist: true, 
+  //   transform: true, 
+  //   validationError: { 
+  //     target: true,
+  //     value: true
+  //   }
+  // }));
+
+  app.useGlobalPipes(new I18nValidationPipe());
+  app.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      detailedErrors: true,
+    })
+  );
 
   const options: SwaggerDocumentOptions = {
     deepScanRoutes: true
@@ -43,14 +51,7 @@ async function bootstrap() {
     explorer: true
   });
 
-  app.useGlobalPipes(new ValidationPipe({ 
-    whitelist: true, 
-    transform: true, 
-    validationError: { 
-      target: true,
-      value: true
-    }
-  }));
+  
   await app.listen(3000);
 }
 bootstrap();

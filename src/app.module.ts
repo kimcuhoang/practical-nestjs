@@ -13,6 +13,9 @@ import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import * as path from 'path';
+import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+
 const infrastructureModules = [
   DatabaseModule.register({
     getDatabaseModuleSettings(configService): DatabaseModuleSettings {
@@ -46,6 +49,38 @@ const featureModules = [
   imports: [
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
+    I18nModule.forRootAsync({
+      inject: [ConfigService],
+      resolvers: [
+        // { use: QueryResolver, options: ['lang', 'locale', 'l'] },
+        new HeaderResolver(['x-custom-lang', 'x-lang']),
+      ],
+      useFactory: (configService: ConfigService) => ({
+        throwOnMissingKey: true,
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
+        fallbacks: {
+          'vi': 'vi',
+          'vi-*': 'vi',
+          'en-*': 'en',
+          'fr-*': 'fr',
+          // 'pt-PT': 'pt-BR',
+          // 'pt': 'pt-BR'
+        },
+        logging: true,
+        validatorOptions: {
+          whitelist: true,
+          transform: true,
+          validationError: {
+            target: true,
+            value: true
+          }
+        },
+        loaderOptions: {
+          path: path.join(__dirname, '/locales/'),
+          watch: true,
+        }
+      }),
+    }),
     ...infrastructureModules,
     ...featureModules
   ],
