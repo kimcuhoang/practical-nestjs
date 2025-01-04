@@ -28,6 +28,8 @@ describe(`A ${ProjectCreated.name} event`, () => {
         });
         await eventBus.publish(event);
 
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         const notification = await notificationRepository.findOne({
             where: {
                 ownerIdentity: Equal(event.projectId)

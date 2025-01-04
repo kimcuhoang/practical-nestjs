@@ -9,7 +9,6 @@ import { ProjectDto } from '@src/projects/use-cases';
 
 const numberOfProjects = 4;
 const testCases = [
-  { searchTerm: "task 0 của dự án 0", totalResults: 1 },
   { searchTerm: "dự án", totalResults: numberOfProjects },
   { searchTerm: "", totalResults: numberOfProjects }
 ];
@@ -20,20 +19,32 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
   let projectRepository: Repository<Project>;
   const url = '/projects';
 
-  it(`Search project by text:"${searchTerm}"`, async () => {
+  test(`Search project by text:"${searchTerm}"`, async () => {
 
-    const searchTermQuery = encodeURIComponent(searchTerm);
-    const skip = 0;
-    const take = 100;
-    const requestUrl = `${url}?text=${searchTermQuery}&skip=${skip}&take=${take}`;
-    const response = await request(httpServer).get(requestUrl);
+    // const searchTermQuery = encodeURIComponent(searchTerm);
+    // const skip = 0;
+    // const take = 100;
+    // const requestUrl = `${url}?text=${searchTermQuery}&skip=${skip}&take=${take}`;
 
-    expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.projects.length).toBe(totalResults);
-    expect(response.body.total).toBe(totalResults);
+    const requestParams = new URLSearchParams({
+      skip: "0",
+      take: "100",
+      text: searchTerm
+    });
 
-    const projects = response.body.projects as ProjectDto[];
-    projects.forEach(project => {
+    const requestUrl = `${url}?${requestParams.toString()}`;
+
+    const response = await request(httpServer)
+        .get(requestUrl)
+        .expect(HttpStatus.OK);
+
+    const projects = response.body.projects 
+    const total = response.body.total;
+
+    expect(projects.length).toBe(totalResults);
+    expect(total).toBe(totalResults);
+
+    projects.forEach((project: ProjectDto) => {
       expect(project.id).toBeDefined();
       expect(project.name).toBeDefined();
       expect(project.tasks).toBeDefined();

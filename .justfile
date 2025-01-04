@@ -28,14 +28,13 @@ run-migration: b
     clear
     yarn typeorm:run-migrations
 
-
 e2e: b
     clear
     yarn test:e2e
 
 e2e-file: b
     clear
-    yarn test:e2e -f test/app.e2e.ts --all
+    yarn test:e2e -f test/notifications/event-handlers/project-created.handler.e2e.ts --all
 
 e2e-folder name: b
     clear

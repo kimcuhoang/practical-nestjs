@@ -9,6 +9,7 @@ import { Project } from '@projects/core';
 import { CreateProjectPayload } from '@projects/use-cases';
 import { Notification } from '@notifications/core';
 import { ProjectCreatedHandler } from '@src/notifications/event-handlers/project-created.handler';
+import { ValidationError } from 'class-validator';
 
 
 const assertSavedProject = async (repository: Repository<Project>, projectId: string, payload: CreateProjectPayload): Promise<void> => {
@@ -91,12 +92,16 @@ describe('ProjectsController (e2e)', () => {
   });
 
   test(`create-02: fail due to validations`, async () => {
-    const response = await request(httpServer).post(url).send({});
+    const response = await request(httpServer)
+            .post(url).send({})
+            .expect(HttpStatus.BAD_REQUEST);
 
-    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    const errors = response.body.message as ValidationError[];
 
-    const errors = response.body.message as string[];
-    expect(errors.find(e => e.startsWith('projectName'))).toBeDefined();
+    console.dir(errors);
+
+    const properties = errors.map(_ => { return _.property });
+    expect(properties).toContain('projectName');
   });
 
   test(`create-03: successfully create ${Project.name} & ${Notification.name}`, async () => {
@@ -108,8 +113,10 @@ describe('ProjectsController (e2e)', () => {
       ]
     };
 
-    const response = await request(httpServer).post(url).send(payload);
-    expect(response.status).toBe(HttpStatus.OK);
+    const response = await request(httpServer)
+      .post(url)
+      .send(payload)
+      .expect(HttpStatus.OK);
 
     const projectId = response.text;
     expect(projectId).toBeTruthy();
