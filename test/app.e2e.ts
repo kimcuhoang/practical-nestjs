@@ -27,6 +27,7 @@ describe('AppController (e2e)', () => {
                 .expect(HttpStatus.OK);
 
         console.log(response.text);
+        expect(response.text).toBeTruthy();
     });
 
     test.each([
