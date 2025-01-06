@@ -12,7 +12,7 @@ import { NotificationsModule } from './notifications';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LocalizationsModule } from './localizations';
+import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
 
 const infrastructureModules = [
   DatabaseModule.register({
@@ -24,7 +24,7 @@ const infrastructureModules = [
   RedisIoRedisModule.register(),
   RedisModule.register(),
   SolaceModule.register({
-    getSolaceModuleSettings(configService: ConfigService): SolaceModuleSettings{
+    getSolaceModuleSettings(configService: ConfigService): SolaceModuleSettings {
       return new SolaceModuleSettings({
         enabled: configService.get("SOLACE_ENABLED")?.toLowerCase() === "true",
         logLevel: configService.get("SOLACE_LOG_LEVEL"),
@@ -47,13 +47,27 @@ const featureModules = [
   imports: [
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    LocalizationsModule.register(),
+    LocalizationsModule.register(configService => {
+      return {
+        fallbackLanguage: configService.get<string>("I18N_FALLBACK_LANGUAGE"),
+        disableMiddleware: configService.get<string>("I18N_MIDDLEWARE_DISABLED")?.toLocaleLowerCase() === "true",
+        logging: configService.get<string>("I18N_LOGGING_ENABLED")?.toLocaleLowerCase() === "true",
+        fallbacks: {
+          'vi': 'vi',
+          'vi-*': 'vi',
+          'en-*': 'en',
+          // 'fr-*': 'fr',
+          // 'pt-PT': 'pt-BR',
+          // 'pt': 'pt-BR'
+        }
+      } as LocalizationsModuleOptions;
+    }),
     ...infrastructureModules,
     ...featureModules
   ],
   controllers: [AppController],
-  providers: [ AppService ],
+  providers: [AppService],
 })
 export class AppModule {
-  
+
 }

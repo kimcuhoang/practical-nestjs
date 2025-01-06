@@ -34,7 +34,13 @@ e2e: b
 
 e2e-file: b
     clear
-    yarn test:e2e -f test/app.e2e.ts --all
+    yarn test:e2e -f test/localizations/app.localizations.e2e.ts --all
+
+e2e-files: b
+    yarn test:e2e --findRelatedTests \
+                test/localizations/app.localizations.e2e.ts \
+                test/projects/create.e2e.ts \
+                --all
 
 e2e-folder name: b
     clear
