@@ -9,10 +9,11 @@ export class SolacePublisher {
     private readonly logger = new Logger(SolacePublisher.name);
 
     constructor(
-        private readonly solaceModuleSettings: SolaceModuleSettings
+        private readonly solaceModuleSettings: SolaceModuleSettings,
+        private readonly solaceSession: Session
     ){}
 
-    private StartPublishing(solaceSession: Session, destination: Destination, message: any): void
+    private StartPublishing(destination: Destination, message: any): void
     {
         const messageObj = SolclientFactory.createMessage();
 
@@ -20,10 +21,10 @@ export class SolacePublisher {
         messageObj.setBinaryAttachment(JSON.stringify(message));
         messageObj.setDeliveryMode(MessageDeliveryModeType.DIRECT);
 
-        solaceSession.send(messageObj);
+        this.solaceSession.send(messageObj);
     }
 
-    public PublishQueue(solaceSession: Session, queue: string, message: any) : void
+    public PublishQueue(queue: string, message: any) : void
     {
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -37,10 +38,10 @@ export class SolacePublisher {
 
         const destination = SolclientFactory.createDurableQueueDestination(queue);
 
-        this.StartPublishing(solaceSession, destination, message);
+        this.StartPublishing(destination, message);
     }
 
-    public PublishTopic(solaceSession: Session, topic: string, message: any): void
+    public PublishTopic(topic: string, message: any): void
     {
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -53,6 +54,6 @@ export class SolacePublisher {
         }
 
         const destination = SolclientFactory.createTopicDestination(topic);
-        this.StartPublishing(solaceSession, destination, message);
+        this.StartPublishing(destination, message);
     }
 }

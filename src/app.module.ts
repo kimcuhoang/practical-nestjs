@@ -1,7 +1,7 @@
 
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule, DatabaseModuleSettings } from '@building-blocks/infra/database';
 import { CachingModule } from '@building-blocks/infra/caching';
 import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';

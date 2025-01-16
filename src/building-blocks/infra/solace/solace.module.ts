@@ -1,7 +1,7 @@
 import { DynamicModule, Global, Module, Provider } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SolaceModuleSettings } from "./solace.module.settings";
-import { MessagePublisherAcknowledgeMode, SessionProperties, SolclientFactory, SolclientFactoryProfiles, SolclientFactoryProperties } from "solclientjs";
+import { MessagePublisherAcknowledgeMode, Session, SessionProperties, SolclientFactory, SolclientFactoryProfiles, SolclientFactoryProperties } from "solclientjs";
 import { Logger } from "testcontainers/build/common";
 import { SolaceSubscriber } from "./solace.subscriber";
 import { SolacePublisher } from "./solace.publisher";
@@ -26,9 +26,9 @@ export class SolaceModule {
                 }
             },
             {
-                provide: SessionProperties,
+                provide: Session,
                 inject: [SolaceModuleSettings],
-                useFactory: (settings: SolaceModuleSettings) => {
+                useFactory: (settings: SolaceModuleSettings): SessionProperties => {
 
                     if (!settings.enabled) {
                         logger.warn("Solace is disabled");
@@ -42,7 +42,7 @@ export class SolaceModule {
 
                     SolclientFactory.init(factoryProps);
 
-                    return new SessionProperties({
+                    const sessionProperties = new SessionProperties({
                         url: settings.solaceHost,
                         vpnName: settings.solaceMessageVpn,
                         userName: settings.solaceUsername,
@@ -58,6 +58,8 @@ export class SolaceModule {
                             acknowledgeMode: MessagePublisherAcknowledgeMode.PER_MESSAGE,
                         }
                     });
+
+                    return SolclientFactory.createSession(sessionProperties);
                 }
             }
         ];

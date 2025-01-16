@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModuleSettings } from './projects.module.settings';
 import { ConfigService } from '@nestjs/config';
 import * as moment from "moment";
-import { ProjectsModuleSubscriberTask } from './solace-integration/projects.module.subscriber.task';
 import { ProjectsModuleSchemas } from './persistence';
 import { ProjectsSolaceController } from './controllers/projects-solace.controller';
 import { ProjectsModuleSubscriber } from './solace-integration/projects.module.subscriber';
@@ -18,7 +17,6 @@ import { ProjectsModuleSubscriber } from './solace-integration/projects.module.s
     providers: [ 
         ...Handlers,
         ProjectsModuleSubscriber,
-        ProjectsModuleSubscriberTask,
         {
             provide: ProjectsModuleSettings,
             inject: [ConfigService],

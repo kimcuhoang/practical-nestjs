@@ -27,4 +27,8 @@ export class CreateProjectPayload {
     @IsOptional()
     @ApiProperty({ type: [CreateProjectTaskPayload], example: [{ taskName: 'Task Name' }], required: false})
     tasks: CreateProjectTaskPayload[] = [];
+
+    constructor(payload: Partial<CreateProjectPayload>) {
+        Object.assign(this, payload);
+    }
 }

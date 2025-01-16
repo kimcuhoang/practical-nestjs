@@ -3,6 +3,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import {
     ErrorSubcode,
     Message,
+    MessageConsumer,
     MessageConsumerAcknowledgeMode, MessageConsumerEvent, MessageConsumerEventName, MessageConsumerProperties,
     MessageType,
     OperationError,
@@ -16,25 +17,25 @@ export class SolaceSubscriber {
     private readonly logger = new Logger(SolaceSubscriber.name);
     
     constructor(
-        private readonly solaceModuleSettings: SolaceModuleSettings
+        private readonly solaceModuleSettings: SolaceModuleSettings,
+        private readonly solaceSession: Session
     ) { }
 
-    public SubscribeTopics(solaceSession: Session,
-                            topics: string[],
-                            actions: Record<string, (destination: string, message: any) => Promise<void>>,
-                            fallback: (destination: string, message: any) => Promise<void>): void {
+    public SubscribeTopics(topics: string[],
+                        actions: Record<string, (destination: string, message: any) => Promise<void>>,
+                        fallback: (destination: string, message: any) => Promise<void>): void {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
             return;
         }
 
-        solaceSession.on(SessionEventCode.UP_NOTICE, () => {
+        this.solaceSession.on(SessionEventCode.UP_NOTICE, () => {
 
             this.logger.log("=== Successfully connected and ready to subscribe. ===");
 
             topics?.filter(topic => topic).forEach(topic => {
-                solaceSession.subscribe(
+                this.solaceSession.subscribe(
                     SolclientFactory.createTopicDestination(topic),
                     true,
                     topic,
@@ -42,7 +43,7 @@ export class SolaceSubscriber {
             });
         });
 
-        solaceSession.on(SessionEventCode.MESSAGE, async (message: Message): Promise<void> => {
+        this.solaceSession.on(SessionEventCode.MESSAGE, async (message: Message): Promise<void> => {
 
             const content = message.getType() === MessageType.TEXT
                 ? message.getSdtContainer()?.getValue()
@@ -63,60 +64,62 @@ export class SolaceSubscriber {
         });
     }
 
-    public async SubscribeQueue(solaceSession: Session,
-                                queue: string,
-                                messageHandler: (message: Message, messageContent: any) => Promise<void>,
-                                configReplay?: (consumerProperties: MessageConsumerProperties) => void) {
+    public SubscribeQueue(queue: string,
+                        messageHandler: (message: Message, messageContent: any) => Promise<void>,
+                        configReplay?: (consumerProperties: MessageConsumerProperties) => void): MessageConsumer {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
-            return;
+            return null;
         }
 
         if (!queue) {
             this.logger.error('Queue is empty');
-            return;
+            return null;
         }
 
         const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.QUEUE, queue);
 
         configReplay && configReplay(messageConsumerProperties);
 
-        const messageConsumer = await this.CreateAndConfigureMessageConsumer(solaceSession, messageConsumerProperties, messageHandler);
+        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
 
         try {
             messageConsumer.connect();
         } catch (error) {
             this.logger.error(error.toString());
         }
+
+        return messageConsumer;
     }
 
-    public async SubscribeTopicEndpoint(solaceSession: Session,
-                                        topicEndpoint: string,
-                                        configReplay: (consumerProperties: MessageConsumerProperties) => Promise<void>,
-                                        messageHandler: (message: Message, messageContent: any) => Promise<void>): Promise<void> {
+    public SubscribeTopicEndpoint(topicEndpoint: string,
+                                configReplay: (consumerProperties: MessageConsumerProperties) => void,
+                                messageHandler: (message: Message, messageContent: any) => Promise<void>): MessageConsumer {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
-            return;
+            return null;
         }
 
         if (!topicEndpoint) {
             this.logger.error('Topic-Endpoint is empty');
-            return;
+            return null;
         }
 
         const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.TOPIC_ENDPOINT, topicEndpoint);
 
-        await configReplay(messageConsumerProperties);
+        configReplay(messageConsumerProperties);
 
-        const messageConsumer = await this.CreateAndConfigureMessageConsumer(solaceSession, messageConsumerProperties, messageHandler);
+        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
 
         try {
             messageConsumer.connect();
         } catch (error) {
             this.logger.error(error.toString());
         }
+
+        return messageConsumer;
     }
 
     private GetMessageConsumerProperties(queueType: QueueType, endpointName: string): MessageConsumerProperties {
@@ -136,9 +139,9 @@ export class SolaceSubscriber {
         return messageConsumerProperties;
     }
 
-    private async CreateAndConfigureMessageConsumer(solaceSession: Session, properties: MessageConsumerProperties, messageHandler: (message: Message, messageContent: any) => Promise<void>) {
+    private CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties, messageHandler: (message: Message, messageContent: any) => Promise<void>) {
 
-        const messageConsumer = solaceSession.createMessageConsumer(properties);
+        const messageConsumer = this.solaceSession.createMessageConsumer(properties);
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_ERROR, (error: MessageConsumerEvent): void => {
             this.logger.error(`Delivery of message with correlation key = ${error.subcode} rejected, info: ${error.reason}`);
@@ -180,6 +183,7 @@ export class SolaceSubscriber {
             });
 
             await messageHandler(message, content);
+            message.acknowledge();
         });
 
         return messageConsumer;

@@ -1,57 +1,50 @@
-import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
 import { ProjectsModuleSettings } from "../projects.module.settings";
-import { Message, MessageConsumerProperties, Session, SolclientFactory } from "solclientjs";
+import { Message, MessageConsumer, MessageConsumerProperties, SolclientFactory } from "solclientjs";
 import { CreateProjectPayload, CreateProjectRequest } from "../use-cases";
 import { CommandBus } from "@nestjs/cqrs";
 import { SolaceSubscriber } from "@src/building-blocks/infra/solace";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Project } from "../core";
 import { IsNull, Not, Repository } from "typeorm";
-import { SolaceProvider } from "@src/building-blocks/infra/solace/solace.provider";
 
 
 @Injectable()
-export class ProjectsModuleSubscriber implements OnModuleDestroy {
+export class ProjectsModuleSubscriber implements OnApplicationBootstrap {
 
     private readonly logger = new Logger(ProjectsModuleSubscriber.name);
-    private solaceSession: Session;
+    private solaceMessageConsumer: MessageConsumer;
 
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
         private readonly projectsModuleSettings: ProjectsModuleSettings,
         private readonly commandBus: CommandBus,
-        private readonly solaceProvider: SolaceProvider,
         private readonly solaceSubscriber: SolaceSubscriber
     ) { }
 
-    onModuleDestroy() {
-        this.solaceProvider.disconnect(this.solaceSession);
+    onApplicationBootstrap(): void {
+        this.switchToLiveMode();
     }
 
-    public async startLiveMode(): Promise<void> {
-        
-        this.solaceProvider.disconnect(this.solaceSession);
-        
-        this.solaceSession = this.solaceProvider.getSolaceSession();
+    public switchToLiveMode(): void {
 
-        this.solaceProvider.connect(this.solaceSession, async () => {
-            
-            this.logger.log("Welcome to Solace Live Mode");
+        this.logger.log("Welcome to Solace Live Mode");
 
-            this.solaceSubscriber.SubscribeQueue(
-                this.solaceSession,
-                this.projectsModuleSettings.projectsSolaceQueueName,
-                async (message: Message, messageContent: any) => await this.handleMessage(message, messageContent)
-            );
-        });
+        if (this.solaceMessageConsumer && !this.solaceMessageConsumer.disposed) {
+            this.solaceMessageConsumer.disconnect();
+            this.solaceMessageConsumer.dispose();
+        }
+
+        this.solaceMessageConsumer = this.solaceSubscriber.SubscribeQueue(
+            this.projectsModuleSettings.projectsSolaceQueueName,
+            async (message: Message, messageContent: any) => await this.handleMessage(message, messageContent)
+        );
     }
 
-    public async startReplayMode(): Promise<void> {
+    public switchToReplay(): void {
 
-        this.solaceProvider.disconnect(this.solaceSession);
-
-        this.solaceSession = this.solaceProvider.getSolaceSession();
+        this.logger.log("Welcome to Solace Replay Mode");
 
         // const latestProject = await this.projectRepository.findOne({
         //     where: {
@@ -64,26 +57,23 @@ export class ProjectsModuleSubscriber implements OnModuleDestroy {
 
         // var latestId = latestProject?.externalMessageId ?? this.projectsModuleSettings.startReplayFromLastMessageId;
 
-        this.solaceProvider.connect(this.solaceSession, async () => {
+        if (this.solaceMessageConsumer && !this.solaceMessageConsumer.disposed) {
+            this.solaceMessageConsumer.disconnect();
+            this.solaceMessageConsumer.dispose();
+        }
 
-            this.logger.log("Welcome to Solace Replay Mode");
+        this.solaceMessageConsumer = this.solaceSubscriber.SubscribeQueue(
+            this.projectsModuleSettings.projectsSolaceQueueName,
+            async (message: Message, messageContent: any) => await this.handleMessage(message, messageContent),
+            (consumerProperties: MessageConsumerProperties) => {
+                // consumerProperties.replayStartLocation = latestId
+                //     ? SolclientFactory.createReplicationGroupMessageId(latestId)
+                //     : this.projectsModuleSettings.startReplayFromDatetime
+                //         ? SolclientFactory.createReplayStartLocationDate(this.projectsModuleSettings.startReplayFromDatetime)
+                //         : SolclientFactory.createReplayStartLocationBeginning();
 
-            this.solaceSubscriber.SubscribeQueue(
-                this.solaceSession,
-                this.projectsModuleSettings.projectsSolaceQueueName,
-                async (message: Message, messageContent: any) => await this.handleMessage(message, messageContent),
-                (consumerProperties: MessageConsumerProperties) => {
-
-                    // consumerProperties.replayStartLocation = latestId
-                    //     ? SolclientFactory.createReplicationGroupMessageId(latestId)
-                    //     : this.projectsModuleSettings.startReplayFromDatetime
-                    //         ? SolclientFactory.createReplayStartLocationDate(this.projectsModuleSettings.startReplayFromDatetime)
-                    //         : SolclientFactory.createReplayStartLocationBeginning();
-
-                    consumerProperties.replayStartLocation = SolclientFactory.createReplayStartLocationBeginning();
-                }
-            );
-        });
+                consumerProperties.replayStartLocation = SolclientFactory.createReplayStartLocationBeginning();
+            });
     }
 
     private async handleMessage(message: Message, messageContent: any): Promise<void> {

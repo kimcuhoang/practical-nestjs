@@ -15,7 +15,6 @@ beforeAll(async () => {
     process.env.POSTGRES_DATABASE_URL = connectionString;
     process.env.POSTGRES_LOG_ENABLED = "false";
     process.env.FALLBACK_LANGUAGE = "en";
-
     process.env.SOLACE_ENABLED = "false";
 
     if (globalThis.redisEnabled) {
