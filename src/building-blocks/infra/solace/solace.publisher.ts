@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Destination, MessageDeliveryModeType, SolclientFactory } from "solclientjs";
+import { Destination, MessageDeliveryModeType, Session, SolclientFactory } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
-import { SolaceProvider } from "./solace.provider";
 
 
 @Injectable()
@@ -10,11 +9,10 @@ export class SolacePublisher {
     private readonly logger = new Logger(SolacePublisher.name);
 
     constructor(
-        private readonly solaceProvider: SolaceProvider,
         private readonly solaceModuleSettings: SolaceModuleSettings
     ){}
 
-    private StartPublishing(destination: Destination, message: any): void
+    private StartPublishing(solaceSession: Session, destination: Destination, message: any): void
     {
         const messageObj = SolclientFactory.createMessage();
 
@@ -22,10 +20,10 @@ export class SolacePublisher {
         messageObj.setBinaryAttachment(JSON.stringify(message));
         messageObj.setDeliveryMode(MessageDeliveryModeType.DIRECT);
 
-        this.solaceProvider.getSolaceSession().send(messageObj);
+        solaceSession.send(messageObj);
     }
 
-    public PublishQueue(queue: string, message: any) : void
+    public PublishQueue(solaceSession: Session, queue: string, message: any) : void
     {
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -38,10 +36,11 @@ export class SolacePublisher {
         }
 
         const destination = SolclientFactory.createDurableQueueDestination(queue);
-        this.StartPublishing(destination, message);
+
+        this.StartPublishing(solaceSession, destination, message);
     }
 
-    public PublishTopic(topic: string, message: any): void
+    public PublishTopic(solaceSession: Session, topic: string, message: any): void
     {
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -54,6 +53,6 @@ export class SolacePublisher {
         }
 
         const destination = SolclientFactory.createTopicDestination(topic);
-        this.StartPublishing(destination, message);
+        this.StartPublishing(solaceSession, destination, message);
     }
 }

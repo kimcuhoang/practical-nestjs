@@ -1,91 +1,89 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { OperationError, RequestError, Session, SessionEvent, SessionEventCode, SessionProperties, SolclientFactory } from "solclientjs";
 import { SolaceModuleSettings } from "./solace.module.settings";
 
 @Injectable()
-export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
+export class SolaceProvider {
 
     private readonly logger = new Logger(SolaceProvider.name);
 
     constructor(
         private readonly solaceModuleSettings: SolaceModuleSettings,
-        private readonly solaceSession: Session
+        private readonly solaceSessionProperties: SessionProperties
     ) {}
 
-    public getSolaceSession(): Session {
-        return this.solaceSession;
+    public getSolaceSession(): Session | null {
+
+        if (!this.solaceModuleSettings.enabled) {
+            this.logger.warn("Solace is disabled");
+            return null;
+        }
+
+        return SolclientFactory.createSession(this.solaceSessionProperties);
     }
 
-    public disconnect(dispose: boolean = false): void {
+    public disconnect(session: Session): void {
+
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
 
-        this.solaceSession.disconnect();
-
-        dispose && this.solaceSession.dispose();
+        session?.disconnect();
+        session?.dispose();
     }
 
-    
-
-    public connect(): void {
+    public connect(session: Session, afterConnected: () => Promise<void>) {
+        
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
 
-        this.solaceSession.on(SessionEventCode.CONNECT_FAILED_ERROR, (error: OperationError): void => {
+        session.on(SessionEventCode.CONNECT_FAILED_ERROR, (error: OperationError): void => {
             this.logger.error(`Connection failed to the message router: ${error.message} - check correct parameter values and connectivity!`);
         });
 
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError): void => {
+        session.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError): void => {
             this.logger.error(`Cannot add the subscription: ${error.message}`);
         });
 
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent): void => {
+        session.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent): void => {
             this.logger.log(`Subscription added successfully: ${sessionEvent.correlationKey}`);
         });
-        this.solaceSession.on(SessionEventCode.UP_NOTICE, () => {
+        session.on(SessionEventCode.UP_NOTICE, async () => {
             this.logger.log("=== Successfully connected and ready to subscribe. ===");
+            await afterConnected();
         });
 
-        this.solaceSession.on(SessionEventCode.DISCONNECTED, () => {
+        session.on(SessionEventCode.DISCONNECTED, () => {
             this.logger.log("Disconnected.");
         });
 
         //ACKNOWLEDGED MESSAGE implies that the broker has confirmed message receipt
-        this.solaceSession.on(SessionEventCode.ACKNOWLEDGED_MESSAGE, (sessionEvent: SessionEvent) => {
+        session.on(SessionEventCode.ACKNOWLEDGED_MESSAGE, (sessionEvent: SessionEvent) => {
             this.logger.log("Delivery of message with correlation key = " + sessionEvent.correlationKey + " confirmed.");
         });
 
         //REJECTED_MESSAGE implies that the broker has rejected the message
-        this.solaceSession.on(SessionEventCode.REJECTED_MESSAGE_ERROR, (error: RequestError) => {
+        session.on(SessionEventCode.REJECTED_MESSAGE_ERROR, (error: RequestError) => {
             this.logger.warn("Delivery of message with correlation key = " + error.subcode + " rejected, info: " + error.message);
         });
 
         //SUBSCRIPTION ERROR implies that there was an error in subscribing on a topic
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError) => {
+        session.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError) => {
             this.logger.error(`Cannot add the subscription: ${error.message}`);
         });
 
         //SUBSCRIPTION_OK implies that a subscription was successfully applied/removed from the broker
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent) => {
+        session.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent) => {
             this.logger.log(`Subscription added successfully: ${sessionEvent.correlationKey}`);
         });
         
         try {
-            this.solaceSession.connect();
+            session.connect();
         } catch (error) {
             this.logger.error(error.toString());
         }
-    }
-
-    onModuleInit(): void {
-        this.connect();
-    }
-
-    onModuleDestroy(): void {
-        this.disconnect(true);
     }
 }
