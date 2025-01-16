@@ -2,7 +2,7 @@ import { Controller, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ProjectsModuleSubscriber } from "../solace-integration/projects.module.subscriber";
 
-@ApiTags("Solaces")
+@ApiTags("Projects Management")
 @Controller("/projects/solace")
 export class ProjectsSolaceController {
     constructor(

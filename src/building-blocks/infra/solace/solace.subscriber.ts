@@ -52,7 +52,7 @@ export class SolaceSubscriber {
 
             const logMessage = `Received message: "${content}" on : ${destinationName}`;
 
-            this.logger.log(logMessage);
+            this.logger.debug(logMessage);
 
             try {
                 const action = actions[destinationName] || fallback;
@@ -168,7 +168,7 @@ export class SolaceSubscriber {
                 : message.getBinaryAttachment();
 
 
-            this.logger.log({
+            this.logger.debug({
                 applicationMessageId: message.getApplicationMessageId() ?? "nothing",
                 replicationGroupMessageId: message.getReplicationGroupMessageId().toString(),
                 isRedelivered: message.isRedelivered(),

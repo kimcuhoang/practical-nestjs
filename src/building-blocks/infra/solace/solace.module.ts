@@ -7,14 +7,11 @@ import { SolaceSubscriber } from "./solace.subscriber";
 import { SolacePublisher } from "./solace.publisher";
 import { SolaceProvider } from "./solace.provider";
 
-type SolaceModuleOptions = {
-    getSolaceModuleSettings(configService: ConfigService): SolaceModuleSettings;
-};
-
 @Global()
 @Module({})
 export class SolaceModule {
-    public static register(options: SolaceModuleOptions): DynamicModule {
+    public static register(configure: (configService: ConfigService) => SolaceModuleSettings): DynamicModule {
+
         const logger = new Logger(SolaceModule.name);
 
         const providers: Provider[] = [
@@ -25,7 +22,7 @@ export class SolaceModule {
                 provide: SolaceModuleSettings,
                 inject: [ConfigService],
                 useFactory: (configService: ConfigService) => {
-                    return options.getSolaceModuleSettings(configService);
+                    return configure(configService);
                 }
             },
             {

@@ -13,6 +13,7 @@ import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
+import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
 
 const infrastructureModules = [
   DatabaseModule.register({
@@ -23,9 +24,8 @@ const infrastructureModules = [
   CachingModule.register(),
   RedisIoRedisModule.register(),
   RedisModule.register(),
-  SolaceModule.register({
-    getSolaceModuleSettings(configService: ConfigService): SolaceModuleSettings {
-      return new SolaceModuleSettings({
+  SolaceModule.register(configService => {
+    return new SolaceModuleSettings({
         enabled: configService.get("SOLACE_ENABLED")?.toLowerCase() === "true",
         logLevel: configService.get("SOLACE_LOG_LEVEL"),
         clientName: configService.get("SOLACE_CLIENT_NAME"),
@@ -34,13 +34,17 @@ const infrastructureModules = [
         solaceUsername: configService.get("SOLACE_USERNAME"),
         solacePassword: configService.get("SOLACE_PASSWORD")
       });
-    }
   })
 ];
 
 const featureModules = [
   ProjectsModule,
-  NotificationsModule
+  NotificationsModule,
+  BusinessPartnersModule.register(configService => {
+    return new BusinessPartnersModuleOptions({
+      businessPartnerSolaceQueueName: configService.get<string>("BUSINESS_PARTNER_SOLACE_QUEUE")
+    });
+  })
 ];
 
 @Module({
