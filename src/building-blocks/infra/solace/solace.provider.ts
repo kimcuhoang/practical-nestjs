@@ -6,25 +6,34 @@ import { SolaceModuleSettings } from "./solace.module.settings";
 export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
 
     private readonly logger = new Logger(SolaceProvider.name);
-    private solaceSession: Session;
 
     constructor(
-        private readonly solaceSessionProperties: SessionProperties,
-        private readonly solaceModuleSettings: SolaceModuleSettings
-    ){}
+        private readonly solaceModuleSettings: SolaceModuleSettings,
+        private readonly solaceSession: Session
+    ) {}
 
     public getSolaceSession(): Session {
         return this.solaceSession;
     }
 
-    onModuleInit(): void {
-
+    public disconnect(dispose: boolean = false): void {
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
 
-        this.solaceSession = SolclientFactory.createSession(this.solaceSessionProperties);
+        this.solaceSession.disconnect();
+
+        dispose && this.solaceSession.dispose();
+    }
+
+    
+
+    public connect(): void {
+        if (!this.solaceModuleSettings.enabled) {
+            this.logger.warn("Solace is disabled");
+            return;
+        }
 
         this.solaceSession.on(SessionEventCode.CONNECT_FAILED_ERROR, (error: OperationError): void => {
             this.logger.error(`Connection failed to the message router: ${error.message} - check correct parameter values and connectivity!`);
@@ -56,7 +65,7 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
         });
 
         //SUBSCRIPTION ERROR implies that there was an error in subscribing on a topic
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error : RequestError) => {
+        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError) => {
             this.logger.error(`Cannot add the subscription: ${error.message}`);
         });
 
@@ -64,7 +73,7 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
         this.solaceSession.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent) => {
             this.logger.log(`Subscription added successfully: ${sessionEvent.correlationKey}`);
         });
-
+        
         try {
             this.solaceSession.connect();
         } catch (error) {
@@ -72,12 +81,11 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    onModuleInit(): void {
+        this.connect();
+    }
+
     onModuleDestroy(): void {
-        if (!this.solaceModuleSettings.enabled) {
-            this.logger.warn("Solace is disabled");
-            return;
-        }
-        this.solaceSession.disconnect();
-        this.solaceSession.dispose();
+        this.disconnect(true);
     }
 }

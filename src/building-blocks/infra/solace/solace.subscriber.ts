@@ -63,10 +63,10 @@ export class SolaceSubscriber {
         });
     }
 
-    public async SubscribeQueue(queue: string, 
-                                configReplay: (consumerProperties: MessageConsumerProperties) => Promise<void>,
-                                messageHandler: (message: Message, messageContent: any) => Promise<void>): Promise<void> {
-
+    public async SubscribeQueue(queue: string,
+                                    messageHandler: (message: Message, messageContent: any) => Promise<void>,
+                                    configReplay?: (consumerProperties: MessageConsumerProperties) => void) {
+         
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
             return;
@@ -78,7 +78,9 @@ export class SolaceSubscriber {
         }
 
         const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.QUEUE, queue);
-        await configReplay(messageConsumerProperties);
+
+        configReplay && configReplay(messageConsumerProperties);
+        
         const messageConsumer = await this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
 
         try {
@@ -115,7 +117,6 @@ export class SolaceSubscriber {
         }
     }
 
-
     private GetMessageConsumerProperties(queueType: QueueType, endpointName: string): MessageConsumerProperties {
 
         const messageConsumerProperties = new MessageConsumerProperties();
@@ -135,7 +136,11 @@ export class SolaceSubscriber {
 
     private async CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties, messageHandler: (message: Message, messageContent: any) => Promise<void>) {
         
-        const messageConsumer = this.solaceProvider.getSolaceSession().createMessageConsumer(properties);
+        this.solaceProvider.connect();
+
+        const session = this.solaceProvider.getSolaceSession();
+
+        const messageConsumer = session.createMessageConsumer(properties);
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_ERROR, (error: MessageConsumerEvent): void => {
             this.logger.error(`Delivery of message with correlation key = ${error.subcode} rejected, info: ${error.reason}`);

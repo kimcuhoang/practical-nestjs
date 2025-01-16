@@ -6,7 +6,7 @@ import {
     CreateProjectPayload, CreateProjectRequest, 
     FindByIdRequest, FindByIdResponse, 
     SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
-} from './use-cases';
+} from '../use-cases';
 
 @ApiTags('Projects Management')
 @Controller('projects')

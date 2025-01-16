@@ -1,13 +1,14 @@
 import { Global, Module } from '@nestjs/common';
 import { Handlers } from './use-cases';
-import { ProjectsController } from './projects.controller';
+import { ProjectsController } from './controllers/projects.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModuleSettings } from './projects.module.settings';
 import { ConfigService } from '@nestjs/config';
 import * as moment from "moment";
 import { ProjectsModuleSubscriberTask } from './solace-integration/projects.module.subscriber.task';
 import { ProjectsModuleSchemas } from './persistence';
-
+import { ProjectsSolaceController } from './controllers/projects-solace.controller';
+import { ProjectsModuleSubscriber } from './solace-integration/projects.module.subscriber';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { ProjectsModuleSchemas } from './persistence';
     ],
     providers: [ 
         ...Handlers,
+        ProjectsModuleSubscriber,
         ProjectsModuleSubscriberTask,
         {
             provide: ProjectsModuleSettings,
@@ -37,7 +39,7 @@ import { ProjectsModuleSchemas } from './persistence';
             }
         }
     ],
-    controllers: [ProjectsController]
+    controllers: [ProjectsController, ProjectsSolaceController]
 })
 
 export class ProjectsModule {}

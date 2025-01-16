@@ -46,6 +46,6 @@ e2e-folder name: b
     clear
     yarn test:e2e --testPathPattern=test/{{name}}
 
-start:
+s:
     clear
     yarn start:dev

@@ -1,7 +1,7 @@
 import { DynamicModule, Global, Module, Provider } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SolaceModuleSettings } from "./solace.module.settings";
-import { MessagePublisherAcknowledgeMode, SessionProperties, SolclientFactory, SolclientFactoryProfiles, SolclientFactoryProperties } from "solclientjs";
+import { MessagePublisherAcknowledgeMode, Session, SessionProperties, SolclientFactory, SolclientFactoryProfiles, SolclientFactoryProperties } from "solclientjs";
 import { Logger } from "testcontainers/build/common";
 import { SolaceSubscriber } from "./solace.subscriber";
 import { SolacePublisher } from "./solace.publisher";
@@ -61,6 +61,13 @@ export class SolaceModule {
                             acknowledgeMode: MessagePublisherAcknowledgeMode.PER_MESSAGE,
                         }
                     });
+                }
+            },
+            {
+                provide: Session,
+                inject: [ SessionProperties ],
+                useFactory: (sessionProperties: SessionProperties) => {
+                    return SolclientFactory.createSession(sessionProperties);
                 }
             }
         ];
