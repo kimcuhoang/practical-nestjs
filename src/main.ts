@@ -5,9 +5,13 @@ import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/
 import { LogLevel, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
 
 async function bootstrap() {
 
+  initializeTransactionalContext({
+    storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE
+  });
 
   const app = await NestFactory.create(AppModule, {
     abortOnError: true
@@ -18,15 +22,6 @@ async function bootstrap() {
   const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [ 'error' ];
   app.useLogger(logLevels as LogLevel[]);
   
-  // app.useGlobalPipes(new ValidationPipe({ 
-  //   whitelist: true, 
-  //   transform: true, 
-  //   validationError: { 
-  //     target: true,
-  //     value: true
-  //   }
-  // }));
-
   app.useGlobalPipes(new I18nValidationPipe());
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({

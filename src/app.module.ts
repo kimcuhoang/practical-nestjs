@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule, DatabaseModuleSettings } from '@building-blocks/infra/database';
+import { DatabaseModule } from '@building-blocks/infra/database';
 import { CachingModule } from '@building-blocks/infra/caching';
 import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';
 import { RedisModule } from '@building-blocks/infra/redis';
@@ -16,10 +16,8 @@ import { LocalizationsModule, LocalizationsModuleOptions } from './localizations
 import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
 
 const infrastructureModules = [
-  DatabaseModule.register({
-    getDatabaseModuleSettings(configService): DatabaseModuleSettings {
-      return getDatabaseModuleSettings(configService);
-    }
+  DatabaseModule.register(configService => {
+    return getDatabaseModuleSettings(configService);
   }),
   CachingModule.register(),
   RedisIoRedisModule.register(),

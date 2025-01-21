@@ -2,12 +2,12 @@ import 'dotenv/config';
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { ConfigService } from '@nestjs/config';
-import { DatabaseModuleSettings, DataSourceProperties } from './building-blocks/infra/database';
+import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
 import { ProjectsModuleSchemas } from './projects/persistence';
 import { NotificationsModuleSchemas } from './notifications/persistence';
 
-export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleSettings => {
-    return new DatabaseModuleSettings({
+export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
+    return new DatabaseModuleOptions({
         url: configService.get<string>("POSTGRES_DATABASE_URL"),
         enableForLog: configService.get<string>("POSTGRES_LOG_ENABLED")?.toLowerCase() === 'true',
         autoMigration: true,
@@ -22,7 +22,7 @@ export const getDatabaseModuleSettings = (configService: ConfigService) : Databa
 // =================
 const configService: ConfigService = new ConfigService();
 
-const databaseModuleSettings: DatabaseModuleSettings = getDatabaseModuleSettings(configService);
+const databaseModuleSettings: DatabaseModuleOptions = getDatabaseModuleSettings(configService);
 
 const pgConnectionOptions = {
     ...DataSourceProperties,

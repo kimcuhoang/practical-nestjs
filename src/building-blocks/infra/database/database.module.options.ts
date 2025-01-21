@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class DatabaseModuleSettings {
+export class DatabaseModuleOptions {
     url: string;
     enableForLog: boolean;
     migrations: any[] = [];
     autoMigration: boolean;
 
-    constructor(settings: Partial<DatabaseModuleSettings>){
+    constructor(settings: Partial<DatabaseModuleOptions>){
         Object.assign(this, settings);
     }
 }

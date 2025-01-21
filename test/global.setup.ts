@@ -5,7 +5,7 @@ import { RedisContainer } from '@testcontainers/redis';
 
 module.exports = async () => {
 
-    const postgresContainer = await new PostgreSqlContainer("postgres:alpine")
+    const postgresContainer = await new PostgreSqlContainer("postgres:alpine3.20")
         .withDatabase("practical-nestjs-testing")
         .withUsername("postgres")
         .withPassword("postgres")

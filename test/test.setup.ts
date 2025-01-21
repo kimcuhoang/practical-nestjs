@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
 import { ValidationError } from 'class-validator';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
 
 let app: INestApplication;
 let connectionString: string;
@@ -27,6 +28,10 @@ beforeAll(async () => {
         process.env.REDIS_HOST = globalThis.redisContainer.getHost();
         process.env.REDIS_PORT = globalThis.redisContainer.getFirstMappedPort().toString();
     }
+
+    initializeTransactionalContext({
+        storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE
+    });
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule]
@@ -52,6 +57,7 @@ beforeAll(async () => {
     const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [];
     app.useLogger(logLevels as LogLevel[]);
 
+    
     await app.init();
     httpServer = app.getHttpServer();
 });
