@@ -28,21 +28,24 @@ run-migration: b
     clear
     yarn typeorm:run-migrations
 
-e2e: b
+pre-test: b
+    yarn jest --clearCache
+
+e2e: pre-test
     clear
     yarn test:e2e
 
-e2e-file: b
+e2e-file: pre-test
     clear
     yarn test:e2e -f test/localizations/app.localizations.e2e.ts --all
 
-e2e-files: b
+e2e-files: pre-test
     yarn test:e2e --findRelatedTests \
                 test/localizations/app.localizations.e2e.ts \
                 test/projects/create.e2e.ts \
                 --all
 
-e2e-folder name: b
+e2e-folder name: pre-test
     clear
     yarn test:e2e --testPathPattern=test/{{name}}
 
