@@ -9,4 +9,6 @@ module.exports = async() => {
         remove: true,
         timeout: 50000
     });
+
+    await globalThis.nestApp.close();
 };

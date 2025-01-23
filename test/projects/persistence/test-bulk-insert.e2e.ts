@@ -3,18 +3,15 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { Project, Task } from "@src/projects/core";
 import { ProjectSchema } from "@src/projects/persistence/schemas/project.schema";
 import { TaskSchema } from "@src/projects/persistence/schemas/task.schema";
-import { app } from "@test/test.setup";
-import { EntityManager, Repository } from "typeorm";
-
+import { app, entityManager } from "@test/test.setup";
+import { Repository } from "typeorm";
 
 describe("Experiment with bulk insert", () => {
     let projectRepository: Repository<Project>;
-    let entityManager: EntityManager;
     let projects: Project[];
 
     beforeAll(() => {
         projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
-        entityManager = app.get<EntityManager>(EntityManager);
     });
 
     beforeEach(() => {
@@ -45,7 +42,7 @@ describe("Experiment with bulk insert", () => {
         expect(savedTasks).toHaveLength(projects.flatMap(p => p.tasks).length);
     };
 
-    xtest("Bulk insert projects using repository.save", async () => {
+    test("Bulk insert projects using repository.save", async () => {
 
         // There are 2 queries
         // 1. Select
@@ -94,7 +91,7 @@ describe("Experiment with bulk insert", () => {
         await assertProjects();
     });
 
-    test("Should rollback if error occurs", async () => {
+    xtest("Should rollback if error occurs", async () => {
         try {
             await entityManager.transaction(async transactionalEntityManager => {
                 await transactionalEntityManager.getRepository(Project.name).upsert(projects, {
