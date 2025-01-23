@@ -37,12 +37,11 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    yarn test:e2e -f test/localizations/app.localizations.e2e.ts --all
+    yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
 
 e2e-files: pre-test
     yarn test:e2e --findRelatedTests \
-                test/localizations/app.localizations.e2e.ts \
-                test/projects/create.e2e.ts \
+                test/projects/commands/test-bulk-insert-command.e2e.ts \
                 --all
 
 e2e-folder name: pre-test
