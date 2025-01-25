@@ -11,7 +11,6 @@ import { Transactional } from "typeorm-transactional";
 @CommandHandler(BulkInsertProjectsCommand)
 export class BulkInsertProjectHandler implements ICommandHandler<BulkInsertProjectsCommand, void> {
     constructor(
-        @InjectEntityManager()
         private readonly entityManager: EntityManager,
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,

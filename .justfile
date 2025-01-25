@@ -40,6 +40,7 @@ e2e-file: pre-test
     yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
 
 e2e-files: pre-test
+    clear
     yarn test:e2e --findRelatedTests \
                 test/projects/commands/test-bulk-insert-command.e2e.ts \
                 test/projects/persistence/test-bulk-insert.e2e.ts \
