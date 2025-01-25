@@ -42,11 +42,7 @@ describe(`Test ${BulkInsertProjectsCommand.name}`, () => {
 
     test.each<UseTransactionWith>([ "entity-manager", "repository"])("Bulk insert projects using %s", async (upsertType) => {
         const command = new BulkInsertProjectsCommand(upsertType, payload);
-
-        expect(command).toBeDefined();
-
-        const _ = await commandBus.execute(command);
-
+        await commandBus.execute(command);
         await assertProjects();
     });
 });

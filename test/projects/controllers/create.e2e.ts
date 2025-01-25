@@ -1,9 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as request from 'supertest';
 import { Guid } from 'guid-typescript';
-import { app, httpServer } from '@test/test.setup';
+import { app, httpRequest } from '@test/test.setup';
 import { faker } from '@faker-js/faker'
 import { Project } from '@projects/core';
 import { CreateProjectPayload } from '@projects/use-cases';
@@ -73,7 +72,7 @@ describe('ProjectsController (e2e)', () => {
     const eventHandler = app.get<ProjectCreatedHandler>(ProjectCreatedHandler);
     const spyInstance = jest.spyOn(eventHandler, "handle").mockRejectedValue(new Error("Expect this error must occur!!!"));
 
-    const response = await request(httpServer).post(url).send(payload);
+    const response = await httpRequest.post(url).send(payload);
     expect(response.status).toBe(HttpStatus.OK);
 
     await expect(spyInstance).rejects.toThrow(Error);
@@ -92,7 +91,7 @@ describe('ProjectsController (e2e)', () => {
   });
 
   test(`create-02: fail due to validations`, async () => {
-    const response = await request(httpServer)
+    const response = await httpRequest
             .post(url).send({})
             .expect(HttpStatus.BAD_REQUEST);
 
@@ -113,7 +112,7 @@ describe('ProjectsController (e2e)', () => {
       ]
     };
 
-    const response = await request(httpServer)
+    const response = await httpRequest
       .post(url)
       .send(payload)
       .expect(HttpStatus.OK);

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { BulkInsertProjectsCommand } from "./bulk-insert-project.command";
-import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, Repository } from "typeorm";
 import { Project, Task } from "@src/projects/core";
 import { ProjectSchema } from "@src/projects/persistence/schemas/project.schema";

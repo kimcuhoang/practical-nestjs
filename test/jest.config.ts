@@ -12,7 +12,7 @@ const jestConfig: Config.InitialOptions = {
         ".e2e.ts$"
     ],
     transform: {
-        "^.+\\.(t|j)s$": "ts-jest"
+        "^.+\\.(t|j)s$": [ "ts-jest", { isolatedModules: true} ]
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
