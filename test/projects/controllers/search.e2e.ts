@@ -1,9 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@src/projects/core/project';
-import { app, httpServer } from '@test/test.setup';
+import { app, request } from '@test/test.setup';
 import { faker } from '@faker-js/faker';
 import { ProjectDto } from '@src/projects/use-cases';
 
@@ -34,7 +33,7 @@ describe.each(testCases)('GET-projects?text=', ({ searchTerm, totalResults }) =>
 
     const requestUrl = `${url}?${requestParams.toString()}`;
 
-    const response = await request(httpServer)
+    const response = await request
         .get(requestUrl)
         .expect(HttpStatus.OK);
 

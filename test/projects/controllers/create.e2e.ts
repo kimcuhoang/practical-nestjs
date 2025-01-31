@@ -1,8 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as request from 'supertest';
-import { app, httpServer } from '@test/test.setup';
+import { app, request } from '@test/test.setup';
 import { faker } from '@faker-js/faker'
 import { Project } from '@projects/core';
 import { CreateProjectPayload } from '@projects/use-cases';
@@ -20,8 +19,8 @@ const assertSavedProject = async (repository: Repository<Project>, projectId: st
 
   expect(project).toBeTruthy();
   expect(project.name).toBe(payload.projectName);
-  
-  if (!payload.tasks || payload.tasks.length === 0)  return;
+
+  if (!payload.tasks || payload.tasks.length === 0) return;
 
   expect(project.tasks).toHaveLength(payload.tasks.length);
 
@@ -33,6 +32,9 @@ const assertSavedProject = async (repository: Repository<Project>, projectId: st
 };
 
 const assertSavedNotification = async (repository: Repository<Notification>, projectId: string, assert: (notification: Notification | undefined) => void = null): Promise<void> => {
+  
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
   const notification = await repository.findOne({
     where: {
       ownerIdentity: projectId
@@ -43,7 +45,7 @@ const assertSavedNotification = async (repository: Repository<Notification>, pro
     assert(notification);
     return;
   }
-  
+
   expect(notification).toBeTruthy();
   expect(notification).toMatchObject({} as Notification);
 
@@ -72,7 +74,7 @@ describe('ProjectsController (e2e)', () => {
     const eventHandler = app.get<ProjectCreatedHandler>(ProjectCreatedHandler);
     const spyInstance = jest.spyOn(eventHandler, "handle").mockRejectedValue(new Error("Expect this error must occur!!!"));
 
-    const response = await request(httpServer).post(url).send(payload);
+    const response = await request.post(url).send(payload);
     expect(response.status).toBe(HttpStatus.OK);
 
     await expect(spyInstance).rejects.toThrow(Error);
@@ -80,7 +82,7 @@ describe('ProjectsController (e2e)', () => {
     const projectId = response.text;
     expect(projectId).toBeTruthy();
     await assertSavedProject(projectRepository, projectId, payload as CreateProjectPayload);
-    
+
     await assertSavedNotification(notificationRepository, projectId, notification => {
       expect(notification).toBeFalsy();
     });
@@ -89,9 +91,9 @@ describe('ProjectsController (e2e)', () => {
   });
 
   test(`create-02: fail due to validations`, async () => {
-    const response = await request(httpServer)
-            .post(url).send({})
-            .expect(HttpStatus.BAD_REQUEST);
+    const response = await request
+      .post(url).send({})
+      .expect(HttpStatus.BAD_REQUEST);
 
     const errors = response.body.message as ValidationError[];
 
@@ -110,7 +112,7 @@ describe('ProjectsController (e2e)', () => {
       ]
     };
 
-    const response = await request(httpServer)
+    const response = await request
       .post(url)
       .send(payload)
       .expect(HttpStatus.OK);

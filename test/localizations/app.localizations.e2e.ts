@@ -1,12 +1,11 @@
 import { HttpStatus } from "@nestjs/common";
-import { httpServer } from "@test/test.setup";
-import * as request from "supertest";
+import { request } from "@test/test.setup";
 
 
 describe.each(["en", "vi", ""])(`Test translate to`, (code) => {
 
     test(`[x-custom-lang = ${code}] - Say-hi`, async() => {
-        const response = await request(httpServer)
+        const response = await request
                 .get("/say-hi")
                 .set({ "x-custom-lang": code })
                 .expect(HttpStatus.OK);
@@ -16,7 +15,7 @@ describe.each(["en", "vi", ""])(`Test translate to`, (code) => {
     });
 
     test(`[x-lang = ${code}] - Say-hi`, async() => {
-        const response = await request(httpServer)
+        const response = await request
                 .get("/say-hi")
                 .set({ "x-custom-lang": code })
                 .expect(HttpStatus.OK);

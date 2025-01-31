@@ -1,13 +1,15 @@
-import { INestApplication, ValidationPipe, LogLevel } from '@nestjs/common';
+import { INestApplication, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
+// import * as httpClient from 'supertest';
+import httpClient from 'supertest';
 
 let app: INestApplication;
 let connectionString: string;
-let httpServer: any | undefined;
+let request: any | undefined;
 
 beforeAll(async () => {
 
@@ -56,7 +58,7 @@ beforeAll(async () => {
 
     
     await app.init();
-    httpServer = app.getHttpServer();
+    request = httpClient(app.getHttpServer());
 });
 
 afterAll(async () => {
@@ -65,4 +67,4 @@ afterAll(async () => {
 
 // add some timeout until containers are up and working 
 jest.setTimeout(120000);
-export { app, httpServer };
+export { app, request };

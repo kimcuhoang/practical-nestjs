@@ -4,15 +4,24 @@ const jestConfig: Config.InitialOptions = {
     silent: false,
     verbose: true,
     restoreMocks: true,
+    cache: false,
     moduleFileExtensions: ["js", "json", "ts"],
+    extensionsToTreatAsEsm: [".ts"],
     rootDir: "..",
+    maxWorkers: '50%',
     testEnvironment: "node",
+    testPathIgnorePatterns: [
+        "/node_modules/",
+        "/dist/",
+        "/src/"
+    ],
     testRegex: [
         ".e2e-spec.ts$",
         ".e2e.ts$"
     ],
     transform: {
-        "^.+\\.(t|j)s$": "ts-jest"
+        "^.+\\.(t|j)s$": "@swc/jest",
+        // "^.+\\.(t|j)s$": "ts-jest"
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
@@ -20,7 +29,6 @@ const jestConfig: Config.InitialOptions = {
         "./test/test.setup.ts"
     ],
     setupFiles: [
-        "tsconfig-paths/register",
         "dotenv/config",
         "reflect-metadata"
     ],

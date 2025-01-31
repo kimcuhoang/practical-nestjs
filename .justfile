@@ -29,7 +29,7 @@ run-migration: b
     yarn typeorm:run-migrations
 
 pre-test: b
-    yarn jest --clearCache
+    # yarn jest --clearCache
 
 e2e: pre-test
     clear

@@ -1,9 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
 import { ILike, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@projects/core/project';
-import { app, httpServer } from '@test/test.setup';
+import { app, request } from '@test/test.setup';
 import { faker } from '@faker-js/faker';
 import { CachingProvider } from '@building-blocks/infra/caching/caching.provider';
 
@@ -14,7 +13,7 @@ describe('ProjectsController (e2e)', () => {
   const url = '/projects';
 
   beforeEach(async () => {
-    projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
+    projectRepository = app.get(getRepositoryToken(Project));
     project = Project.create(p => {
       p.name = faker.lorem.sentence(5);
       p.addTask(task => {
@@ -29,7 +28,7 @@ describe('ProjectsController (e2e)', () => {
   });
 
   it("GET-projects/id", async () => {
-    const response = await request(httpServer).get(`${url}/${project.id}`);
+    const response = await request.get(`${url}/${project.id}`);
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.body).toMatchObject({ id: project.id, name: project.name });
     expect(response.body.tasks).toHaveLength(project.tasks.length);
