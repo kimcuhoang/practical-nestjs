@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { getRepositoryToken } from "@nestjs/typeorm";
+import { getEntityManagerToken, getRepositoryToken } from "@nestjs/typeorm";
 import { Project, Task } from "@src/projects/core";
 import { ProjectSchema } from "@src/projects/persistence/schemas/project.schema";
 import { TaskSchema } from "@src/projects/persistence/schemas/task.schema";
@@ -14,7 +14,7 @@ describe("Experiment with bulk insert", () => {
 
     beforeAll(() => {
         projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
-        entityManager = app.get<EntityManager>(EntityManager);
+        entityManager = app.get(getEntityManagerToken());
     });
 
     beforeEach(() => {

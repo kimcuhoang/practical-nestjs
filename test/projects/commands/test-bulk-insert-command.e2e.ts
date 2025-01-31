@@ -14,7 +14,7 @@ describe(`Test ${BulkInsertProjectsCommand.name}`, () => {
 
     beforeAll(() => {
         commandBus = app.get<CommandBus>(CommandBus);
-        projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
+        projectRepository = app.get(getRepositoryToken(Project));
     });
 
     beforeEach(() => {
