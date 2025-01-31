@@ -16,8 +16,9 @@ export const NotificationSchema = new EntitySchema<Notification>({
             nullable: false,
         },
         ownerIdentity: {
-            type: 'uuid',
-            nullable: false
+            type: String,
+            nullable: false,
+            length: 26 // ulid length
         },
         ownerNotificationType: {
             type: String,

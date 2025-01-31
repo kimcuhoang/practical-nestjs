@@ -3,11 +3,12 @@ import { Repository } from "typeorm";
 import { Notification, NotificationChannel, OwnerNotificationType } from "@notifications/core";
 import { app } from "@test/test.setup";
 import { faker } from "@faker-js/faker";
+import { ulid } from "ulidx";
 
 const initNotification = () : Notification => {
     const notification = Notification.init(_ => {
         _.ownerType = "Project";
-        _.ownerIdentity = faker.string.uuid();
+        _.ownerIdentity = ulid();
         _.ownerNotificationType = OwnerNotificationType.Created,
         _.title = faker.lorem.word({ length: 10 }),
         _.content = faker.lorem.paragraph(4);
@@ -22,7 +23,7 @@ describe(`Test delete`, () => {
     let notification: Notification;
 
     beforeAll(() => {
-        notificationRepository = app.get<Repository<Notification>>(getRepositoryToken(Notification));
+        notificationRepository = app.get(getRepositoryToken(Notification));
     });
 
     beforeEach(async() => {

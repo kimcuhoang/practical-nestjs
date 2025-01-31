@@ -41,6 +41,7 @@ e2e-file: pre-test
 
 e2e-files: pre-test
     yarn test:e2e --findRelatedTests \
+                test/notifications/event-handlers/project-created.handler.e2e.ts \
                 test/projects/commands/test-bulk-insert-command.e2e.ts \
                 --all
 

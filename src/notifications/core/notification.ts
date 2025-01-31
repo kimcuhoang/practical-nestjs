@@ -1,5 +1,5 @@
 import { EntityBase } from "@building-blocks/domains/entity-base";
-import { Guid } from "guid-typescript";
+import { ulid } from "ulidx";
 
 
 export class Notification extends EntityBase {
@@ -16,7 +16,7 @@ export class Notification extends EntityBase {
     content: string;
 
     public static init(configure: (notification: Notification) => void) {
-        const notification = new Notification(Guid.create().toString())
+        const notification = new Notification(ulid());
         configure(notification);
         return notification;
     }

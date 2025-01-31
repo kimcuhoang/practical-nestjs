@@ -2,9 +2,10 @@ import { BeforeInsert, EntitySchemaColumnOptions } from "typeorm";
 
 export const EntityBaseSchema = {
     id: {
-        type: 'uuid',
+        type: String,
         primary: true,
-        nullable: false
+        nullable: false,
+        length: 26 // ULID length
     } as EntitySchemaColumnOptions,
 
     deleted: {

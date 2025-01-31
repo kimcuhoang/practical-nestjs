@@ -2,7 +2,6 @@ import { HttpStatus } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as request from 'supertest';
-import { Guid } from 'guid-typescript';
 import { app, httpServer } from '@test/test.setup';
 import { faker } from '@faker-js/faker'
 import { Project } from '@projects/core';
@@ -56,8 +55,8 @@ describe('ProjectsController (e2e)', () => {
   const url = '/projects';
 
   beforeAll(() => {
-    projectRepository = app.get<Repository<Project>>(getRepositoryToken(Project));
-    notificationRepository = app.get<Repository<Notification>>(getRepositoryToken(Notification));
+    projectRepository = app.get(getRepositoryToken(Project));
+    notificationRepository = app.get(getRepositoryToken(Notification));
   });
 
   afterEach(async () => {
@@ -80,8 +79,6 @@ describe('ProjectsController (e2e)', () => {
 
     const projectId = response.text;
     expect(projectId).toBeTruthy();
-    expect(projectId).not.toEqual(Guid.EMPTY.toString());
-
     await assertSavedProject(projectRepository, projectId, payload as CreateProjectPayload);
     
     await assertSavedNotification(notificationRepository, projectId, notification => {
@@ -120,7 +117,6 @@ describe('ProjectsController (e2e)', () => {
 
     const projectId = response.text;
     expect(projectId).toBeTruthy();
-    expect(projectId).not.toEqual(Guid.EMPTY.toString());
 
     await assertSavedProject(projectRepository, projectId, payload as CreateProjectPayload);
 

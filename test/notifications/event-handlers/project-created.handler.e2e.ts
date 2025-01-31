@@ -5,6 +5,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { Notification } from "@notifications/core";
 import { app } from "@test/test.setup";
 import { Equal, Repository } from "typeorm";
+import { ulid } from "ulidx";
 
 
 describe(`A ${ProjectCreated.name} event`, () => {
@@ -14,7 +15,7 @@ describe(`A ${ProjectCreated.name} event`, () => {
 
     beforeAll(() => {
         eventBus = app.get<EventBus>(EventBus);
-        notificationRepository = app.get<Repository<Notification>>(getRepositoryToken(Notification));
+        notificationRepository = app.get(getRepositoryToken(Notification));
     });
 
     afterEach(async() => {
@@ -23,7 +24,7 @@ describe(`A ${ProjectCreated.name} event`, () => {
 
     test("Should be handled correctly", async() => {
         event = new ProjectCreated({
-            projectId: faker.string.uuid(),
+            projectId: ulid(),
             projectName: faker.lorem.word(5)
         });
         await eventBus.publish(event);

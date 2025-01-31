@@ -6,6 +6,12 @@
   - Use Redis
   - Use [testcontainer](https://testcontainers.com/) to implement e2e tests
 
+## Notes:
+### To generate migrations for specific feature
+- `typeorm.datasource.ts` -> comment out all the features that we don't want to generate migration
+- run the following command `just gen-migration [feature's folder name] [name of migration]`
+- `typeorm.datasource.ts` -> uncomment
+
 ## Installation
 
 ```bash
