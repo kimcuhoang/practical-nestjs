@@ -4,7 +4,7 @@ import { ProjectsModuleSubscriber } from "../solace-integration/projects.module.
 import { SolacePublisher } from "@src/building-blocks/infra/solace";
 import { ProjectsModuleSettings } from "../projects.module.settings";
 import { faker } from "@faker-js/faker";
-import { CreateProjectPayload } from "../use-cases";
+import { CreateProjectPayload, CreateProjectTaskPayload } from "../use-cases";
 
 @ApiTags("Projects Management")
 @Controller("/projects/solace")
@@ -28,7 +28,11 @@ export class ProjectsSolaceController {
     @Put("/publish")
     public Publish(): void {
         this.solacePublisher.PublishQueue(this.options.projectsSolaceQueueName, new CreateProjectPayload({
-            projectName: faker.lorem.sentence(5)
+            projectName: faker.lorem.sentence(5),
+            tasks: [
+                new CreateProjectTaskPayload({ taskName: faker.lorem.sentence(5) }),
+                new CreateProjectTaskPayload({ taskName: faker.lorem.sentence(5) })
+            ]
         }));
     }
 }

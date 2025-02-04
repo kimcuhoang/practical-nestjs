@@ -11,6 +11,7 @@ export class SolaceModuleSettings {
     solaceMessageVpn: string;
     solaceUsername: string;
     solacePassword: string;
+    acknowledgeMessage: boolean;
 
     constructor(settings: Partial<SolaceModuleSettings>){
         Object.assign(this, settings);

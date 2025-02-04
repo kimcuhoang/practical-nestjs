@@ -21,18 +21,13 @@ import { ProjectsModuleSubscriber } from './solace-integration/projects.module.s
             provide: ProjectsModuleSettings,
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const startReplayFromDateTime = configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_FROM_DATETIME");
-                
-                const startReplayFromDateTimeFormat = configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_FROM_DATETIME_FORMAT");
-
                 return new ProjectsModuleSettings({
                     projectsSolaceQueueName: configService.get("SOLACE_PROJECTS_QUEUE"),
+                    topicCRT: configService.get("SOLACE_PROJECTS_QUEUE_TOPIC_CRT"),
+                    topicUPD: configService.get("SOLACE_PROJECTS_QUEUE_TOPIC_UPD"),
+                    topicCNL: configService.get("SOLACE_PROJECTS_QUEUE_TOPIC_CNL"),
                     enabledSubscribe: configService.get("SOLACE_PROJECTS_QUEUE_SUBSCRIBE_ENABLED")?.toLowerCase() === 'true',
-                    enabledReplay: configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_ENABLED")?.toLowerCase() === 'true',
-                    startReplayFromDatetime: !startReplayFromDateTime 
-                                    ? null 
-                                    : moment(startReplayFromDateTime, startReplayFromDateTimeFormat).toDate(),
-                    startReplayFromLastMessageId: configService.get("SOLACE_PROJECTS_QUEUE_REPLAY_FROM_MESSAGEID")
+                    enabledSubscribeTopics: configService.get("SOLACE_PROJECTS_QUEUE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true'
                 });
             }
         }

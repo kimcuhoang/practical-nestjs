@@ -15,15 +15,15 @@ import { SolaceModuleSettings } from "./solace.module.settings";
 export class SolaceSubscriber {
 
     private readonly logger = new Logger(SolaceSubscriber.name);
-    
+
     constructor(
         private readonly solaceModuleSettings: SolaceModuleSettings,
         private readonly solaceSession: Session
     ) { }
 
     public SubscribeTopics(topics: string[],
-                        actions: Record<string, (destination: string, message: any) => Promise<void>>,
-                        fallback: (destination: string, message: any) => Promise<void>): void {
+        actions: Record<string, (destination: string, message: any) => Promise<void>>,
+        fallback: (destination: string, message: any) => Promise<void>): void {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -65,8 +65,9 @@ export class SolaceSubscriber {
     }
 
     public SubscribeQueue(queue: string,
-                        messageHandler: (message: Message, messageContent: any) => Promise<void>,
-                        configReplay?: (consumerProperties: MessageConsumerProperties) => void): MessageConsumer {
+        topics: string[],
+        messageHandler: (message: Message, messageContent: any) => Promise<void>,
+        configReplay?: (consumerProperties: MessageConsumerProperties) => void): MessageConsumer | null {
 
         if (!this.solaceModuleSettings.enabled) {
             this.logger.warn('Solace is disabled');
@@ -82,44 +83,7 @@ export class SolaceSubscriber {
 
         configReplay && configReplay(messageConsumerProperties);
 
-        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
-
-        try {
-            messageConsumer.connect();
-        } catch (error) {
-            this.logger.error(error.toString());
-        }
-
-        return messageConsumer;
-    }
-
-    public SubscribeTopicEndpoint(topicEndpoint: string,
-                                configReplay: (consumerProperties: MessageConsumerProperties) => void,
-                                messageHandler: (message: Message, messageContent: any) => Promise<void>): MessageConsumer {
-
-        if (!this.solaceModuleSettings.enabled) {
-            this.logger.warn('Solace is disabled');
-            return null;
-        }
-
-        if (!topicEndpoint) {
-            this.logger.error('Topic-Endpoint is empty');
-            return null;
-        }
-
-        const messageConsumerProperties = this.GetMessageConsumerProperties(QueueType.TOPIC_ENDPOINT, topicEndpoint);
-
-        configReplay(messageConsumerProperties);
-
-        const messageConsumer = this.CreateAndConfigureMessageConsumer(messageConsumerProperties, messageHandler);
-
-        try {
-            messageConsumer.connect();
-        } catch (error) {
-            this.logger.error(error.toString());
-        }
-
-        return messageConsumer;
+        return this.CreateAndConfigureMessageConsumer(messageConsumerProperties, topics, messageHandler);
     }
 
     private GetMessageConsumerProperties(queueType: QueueType, endpointName: string): MessageConsumerProperties {
@@ -132,35 +96,84 @@ export class SolaceSubscriber {
             type: queueType
         });
 
-        if (queueType === QueueType.TOPIC_ENDPOINT) {
-            messageConsumerProperties.topicEndpointSubscription = SolclientFactory.createTopicDestination(endpointName);
-        }
-
         return messageConsumerProperties;
     }
 
-    private CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties, messageHandler: (message: Message, messageContent: any) => Promise<void>) {
+    private CreateAndConfigureMessageConsumer(properties: MessageConsumerProperties,
+                                                topics: string[],
+                                                messageHandler: (message: Message, messageContent: any) => Promise<void>): MessageConsumer {
 
-        const messageConsumer = this.solaceSession.createMessageConsumer(properties);
+        let messageConsumer = this.solaceSession.createMessageConsumer(properties);
+
+        messageConsumer.on(MessageConsumerEventName.CONNECT_FAILED_ERROR, (error: OperationError) => {
+            this.logger.error(`CONNECT_FAILED_ERROR: ${error.message}`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.ACTIVE, () => {
+            this.logger.warn(`Message Consumer is ACTIVE`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.INACTIVE, () => {
+            this.logger.warn(`Message Consumer is INACTIVE`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.GM_DISABLED, () => {
+            this.logger.warn(`Message Consumer is GM_DISABLED`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.RECONNECTED, () => {
+            this.logger.warn(`Message Consumer is RECONNECTED`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.RECONNECTING, (error: OperationError) => {
+            this.logger.error(`Message Consumer is RECONNECTING - ${error.message}`);
+        });
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_ERROR, (error: MessageConsumerEvent): void => {
-            this.logger.error(`Delivery of message with correlation key = ${error.subcode} rejected, info: ${error.reason}`);
+            this.logger.error(`SUBSCRIPTION_ERROR: Delivery of message with correlation key = ${error.subcode} rejected, info: ${error.reason}`);
         });
 
         messageConsumer.on(MessageConsumerEventName.SUBSCRIPTION_OK, (event: MessageConsumerEvent): void => {
-            this.logger.debug(`Delivery of message with correlation key = ${event.correlationKey} successfully`);
+            this.logger.warn(`SUBSCRIPTION_OK: Delivery of message with correlation key = ${event.correlationKey} successfully`);
+        });
+
+        messageConsumer.on(MessageConsumerEventName.UP, (): void => {
+
+            this.logger.warn(`Message Consumer was started - ${messageConsumer.getDestination().toString()}`);
+
+            topics.forEach(topic => {
+                messageConsumer.addSubscription(
+                    SolclientFactory.createTopicDestination(topic),
+                    topic,
+                    10_000 // 10 seconds timeout
+                );
+            });
+        });
+
+        messageConsumer.on(MessageConsumerEventName.DOWN, (): void => {
+            this.logger.warn(`Message Consumer was disconnected`);
+            messageConsumer.dispose();
+        });
+
+        messageConsumer.on(MessageConsumerEventName.DISPOSED, (): void => {
+            this.logger.warn(`Message Consumer was disposed.`);
         });
 
         messageConsumer.on(MessageConsumerEventName.DOWN_ERROR, (error: OperationError) => {
             switch (error.subcode) {
                 case ErrorSubcode.REPLAY_STARTED:
-                case ErrorSubcode.REPLAY_START_TIME_NOT_AVAILABLE:
-                case ErrorSubcode.REPLAY_FAILED:
-                case ErrorSubcode.REPLAY_CANCELLED:
-                case ErrorSubcode.REPLAY_LOG_MODIFIED:
-                case ErrorSubcode.REPLAY_MESSAGE_UNAVAILABLE:
-                case ErrorSubcode.REPLAY_MESSAGE_REJECTED: break;
-                default: this.logger.error(`Received "DOWN_ERROR" event - details: ${error}`);
+                    this.logger.error(error.message);
+                    const messageConsumerProperties = messageConsumer.getProperties();
+                    messageConsumerProperties.replayStartLocation = null;
+                    messageConsumer = this.solaceSession.createMessageConsumer(messageConsumerProperties);
+                    break;
+                // case ErrorSubcode.REPLAY_START_TIME_NOT_AVAILABLE:
+                // case ErrorSubcode.REPLAY_FAILED:
+                // case ErrorSubcode.REPLAY_CANCELLED:
+                // case ErrorSubcode.REPLAY_LOG_MODIFIED:
+                // case ErrorSubcode.REPLAY_MESSAGE_UNAVAILABLE:
+                // case ErrorSubcode.REPLAY_MESSAGE_REJECTED: break;
+                default: this.logger.error(`Received "DOWN_ERROR" event - details: ${error.subcode} - ${error.message}`);
             }
         });
 
@@ -170,20 +183,17 @@ export class SolaceSubscriber {
                 ? message.getSdtContainer()?.getValue()
                 : message.getBinaryAttachment();
 
-
-            this.logger.debug({
-                applicationMessageId: message.getApplicationMessageId() ?? "nothing",
-                replicationGroupMessageId: message.getReplicationGroupMessageId().toString(),
-                isRedelivered: message.isRedelivered(),
-                // guaranteedMessageId: message.getGuaranteedMessageId(),
-                // receiveTimestamp: message.getReceiverTimestamp(),
-                // senderId: message.getSenderId(),
-                // senderTimestamp: message.getSenderTimestamp(),
-                // sequenceNumber: message.getSequenceNumber()
-            });
-
-            await messageHandler(message, content);
-            message.acknowledge();
+            try {
+                await messageHandler(message, content);
+            } catch (error) {
+                this.logger.error({
+                    Destination: message.getDestination()?.getName(),
+                    solaceMessageId: message.getReplicationGroupMessageId()?.toString(),
+                    Error: error.toString()
+                });
+            } finally {
+                this.solaceModuleSettings.acknowledgeMessage && message.acknowledge();
+            }
         });
 
         return messageConsumer;

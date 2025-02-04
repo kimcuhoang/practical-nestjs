@@ -30,7 +30,8 @@ const infrastructureModules = [
         solaceHost: configService.get("SOLACE_HOST"),
         solaceMessageVpn: configService.get("SOLACE_MESSAGE_VPN"),
         solaceUsername: configService.get("SOLACE_USERNAME"),
-        solacePassword: configService.get("SOLACE_PASSWORD")
+        solacePassword: configService.get("SOLACE_PASSWORD"),
+        acknowledgeMessage: configService.get("SOLACE_ACKNOWLEDGE_MESSAGE")?.toLowerCase() === "true"
       });
   })
 ];
@@ -40,7 +41,9 @@ const featureModules = [
   NotificationsModule,
   BusinessPartnersModule.register(configService => {
     return new BusinessPartnersModuleOptions({
-      businessPartnerSolaceQueueName: configService.get<string>("BUSINESS_PARTNER_SOLACE_QUEUE")
+      businessPartnerSolaceQueueName: configService.get<string>("BUSINESS_PARTNER_SOLACE_QUEUE"),
+      enabledSubscribeTopics: configService.get("BUSINESS_PARTNER_SOLACE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true',
+      topicCRT: configService.get("BUSINESS_PARTNER_SOLACE_QUEUE_TOPIC_CRT")
     });
   })
 ];

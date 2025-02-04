@@ -8,13 +8,13 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(SolaceProvider.name);
 
     constructor(
-        private readonly solaceModuleSettings: SolaceModuleSettings,
+        private readonly options: SolaceModuleSettings,
         private readonly solaceSession: Session
     ) {}
 
     onModuleInit(): void {
         
-        if (!this.solaceModuleSettings.enabled) {
+        if (!this.options.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
@@ -24,60 +24,72 @@ export class SolaceProvider implements OnModuleInit, OnModuleDestroy {
 
     onModuleDestroy(): void {
 
-        if (!this.solaceModuleSettings.enabled) {
+        if (!this.options.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
 
         this.solaceSession.disconnect();
-        this.solaceSession.dispose();
     }
 
     public connect() {
         
-        if (!this.solaceModuleSettings.enabled) {
+        if (!this.options.enabled) {
             this.logger.warn("Solace is disabled");
             return;
         }
 
         this.solaceSession.on(SessionEventCode.CONNECT_FAILED_ERROR, (error: OperationError): void => {
-            this.logger.error(`Connection failed to the message router: ${error.message} - check correct parameter values and connectivity!`);
+            this.logger.error(`Connection failed to the message router: ${error.subcode}-${error.message}-${error.reason}`);
         });
 
         this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError): void => {
-            this.logger.error(`Cannot add the subscription: ${error.message}`);
+            this.logger.error(`Cannot add the subscription: ${error.subcode}-${error.message}-${error.reason}`);
         });
 
         this.solaceSession.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent): void => {
-            this.logger.log(`Subscription added successfully: ${sessionEvent.correlationKey}`);
+            this.logger.warn(`Subscription added successfully: ${sessionEvent.correlationKey}`);
         });
-        this.solaceSession.on(SessionEventCode.UP_NOTICE, async () => {
-            this.logger.log("=== Successfully connected and ready to subscribe. ===");
+
+        this.solaceSession.on(SessionEventCode.UP_NOTICE, () => {
+            this.logger.warn("=== Successfully connected and ready to subscribe. ===");
         });
 
         this.solaceSession.on(SessionEventCode.DISCONNECTED, () => {
-            this.logger.log("Disconnected.");
+            this.logger.warn("Session disconnected.");
+            this.solaceSession?.dispose();
         });
 
         //ACKNOWLEDGED MESSAGE implies that the broker has confirmed message receipt
         this.solaceSession.on(SessionEventCode.ACKNOWLEDGED_MESSAGE, (sessionEvent: SessionEvent) => {
-            this.logger.log("Delivery of message with correlation key = " + sessionEvent.correlationKey + " confirmed.");
+            this.logger.warn("Delivery of message with correlation key = " + sessionEvent.correlationKey + " confirmed.");
         });
 
         //REJECTED_MESSAGE implies that the broker has rejected the message
         this.solaceSession.on(SessionEventCode.REJECTED_MESSAGE_ERROR, (error: RequestError) => {
-            this.logger.warn("Delivery of message with correlation key = " + error.subcode + " rejected, info: " + error.message);
+            this.logger.error(`Session REJECTED_MESSAGE_ERROR: ${error.subcode}-${error.message}-${error.reason}`);
         });
 
-        //SUBSCRIPTION ERROR implies that there was an error in subscribing on a topic
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_ERROR, (error: RequestError) => {
-            this.logger.error(`Cannot add the subscription: ${error.message}`);
+        this.solaceSession.on(SessionEventCode.DOWN_ERROR, (error: OperationError) => {
+            this.logger.error(`Session DOWN_ERROR: ${error.subcode}-${error.reason}-${error.message}`);
         });
 
-        //SUBSCRIPTION_OK implies that a subscription was successfully applied/removed from the broker
-        this.solaceSession.on(SessionEventCode.SUBSCRIPTION_OK, (sessionEvent: SessionEvent) => {
-            this.logger.log(`Subscription added successfully: ${sessionEvent.correlationKey}`);
+        this.solaceSession.on(SessionEventCode.PROVISION_ERROR, () => {
+            this.logger.error(`Session PROVISION_ERROR`);
         });
+
+        this.solaceSession.on(SessionEventCode.RECONNECTING_NOTICE, (event: SessionEvent) => {
+            this.logger.warn(`Session RECONNECTING_NOTICE: ${event.correlationKey}-${event.errorSubcode}-${event.reason}`);
+        });
+
+        this.solaceSession.on(SessionEventCode.RECONNECTED_NOTICE, (event: SessionEvent) => {
+            this.logger.warn(`Session RECONNECTED_NOTICE: ${event.correlationKey}-${event.errorSubcode}-${event.reason}`);
+        });
+
+        this.solaceSession.on(SessionEventCode.GUARANTEED_MESSAGE_PUBLISHER_DOWN, (error: OperationError) => {
+            this.logger.error(`Session GUARANTEED_MESSAGE_PUBLISHER_DOWN: ${error.subcode}-${error.reason}-${error.message}`);
+        });
+
         
         try {
             this.solaceSession.connect();

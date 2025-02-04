@@ -3,11 +3,15 @@ import { Expose } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsString, ValidateIf } from "class-validator";
 import { i18nValidationMessage } from "nestjs-i18n";
 
-class CreateProjectTaskPayload {
+export class CreateProjectTaskPayload {
     @Expose()
     @IsString({ message: 'validation.string'})
     @ApiProperty({ type: String, example: 'Task Name', required: true})
     taskName: string;
+
+    constructor(payload: Partial<CreateProjectTaskPayload>) {
+        Object.assign(this, payload);
+    }
 }
 
 export class CreateProjectPayload {
