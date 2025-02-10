@@ -1,35 +1,63 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { DatabaseConfigurableModuleClass, DatabaseModuleOptions } from './database.module-definition';
+import { DynamicModule, Global, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigService } from '@nestjs/config';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { DatabaseModuleOptions } from "./database.module.options";
+import { DataSourceProperties } from "./datasource.properties";
+import { Logger } from "testcontainers/build/common";
+import { DataSource, DataSourceOptions } from "typeorm";
+import { addTransactionalDataSource } from "typeorm-transactional";
+
+// export type DatabaseModuleOptions = {
+//     getDatabaseModuleSettings(configService: ConfigService): DatabaseModuleSettings;
+// }
 
 @Global()
 @Module({})
-export class DatabaseModule extends DatabaseConfigurableModuleClass {
-
-    public static register(options: DatabaseModuleOptions): DynamicModule {
-
-        const typeOrmModule = TypeOrmModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                type: 'postgres',
-                url: configService.get<string>('DATABASE_URL'),
-                logging: configService.get<string>('LOG_ENABLED')?.toLowerCase() === 'true',
-                synchronize: false,
-                migrations: [
-                    ...options.migrations
-                ],
-                migrationsTableName: 'MigrationHistory',
-                namingStrategy: new SnakeNamingStrategy(),
-                autoLoadEntities: true,
-                migrationsRun: true,
-            })
-        });
-
+export class DatabaseModule {
+    public static register(configure: (configService: ConfigService) => DatabaseModuleOptions): DynamicModule {
+        const logger = new Logger(DatabaseModule.name);
         return {
             module: DatabaseModule,
-            imports: [typeOrmModule]
-        }
-    };
+            imports: [
+                TypeOrmModule.forRootAsync({
+                    inject: [DatabaseModuleOptions],
+                    useFactory: async (databaseSettings: DatabaseModuleOptions) => {
+
+                        const migrations = [
+                            ...new Set([
+                                        ...DataSourceProperties.migrations as any[],
+                                        ...databaseSettings.migrations ])
+                        ];
+
+                        return ({
+                            ...DataSourceProperties,
+                            url: databaseSettings.url,
+                            logging: databaseSettings.enableForLog,
+                            synchronize: false,
+                            migrationsRun: databaseSettings.autoMigration,
+                            migrations: migrations
+                        });
+                    },
+                    async dataSourceFactory(options?: DataSourceOptions) {
+                        if (!options) {
+                            throw new Error("DataSourceOptions is required");
+                        }
+                        return addTransactionalDataSource(new DataSource(options));
+                    }
+                })
+            ],
+            providers: [
+                {
+                    provide: DatabaseModuleOptions,
+                    inject: [ConfigService],
+                    useFactory: (configService: ConfigService) => {
+                        return configure(configService);
+                    }
+                }
+            ],
+            exports: [
+                DatabaseModuleOptions
+            ]
+        };
+    }
 }

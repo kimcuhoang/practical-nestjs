@@ -1,6 +1,6 @@
 import { EntityBase } from "@building-blocks/domains/entity-base";
-import { Guid } from "guid-typescript";
 import { Project } from "./project";
+import { ulid } from "ulidx";
 
 
 export class Task extends EntityBase {
@@ -14,7 +14,7 @@ export class Task extends EntityBase {
     }
 
     public static create(project: Project, callback: (task: Task) => void) : Task {
-        const task = new Task(Guid.create().toString());
+        const task = new Task(ulid());
         task.project = project;
         task.projectId = project.id;
         callback(task);

@@ -1,11 +1,11 @@
-import { DynamicModule, FactoryProvider, Global, Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { Redis } from "ioredis";
-import { RedisService } from "./redis.service";
-import { REDIS_CLIENT } from "./constants";
+import { DynamicModule, FactoryProvider, Global, LoggerService, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from './redis.service';
+import { REDIS_CLIENT, RedisClient } from './constants';
+import { createClient } from 'redis';
 
 /*
-yarn add ioredis -D
+yarn add redis -D
 */
 
 @Global()
@@ -13,50 +13,33 @@ yarn add ioredis -D
 export class RedisModule {
     public static register(): DynamicModule {
 
-        const redisClientFactory: FactoryProvider<Promise<Redis | undefined>> = {
+        const redisClientFactory: FactoryProvider<Promise<RedisClient | undefined>> = {
             provide: REDIS_CLIENT,
             inject: [ConfigService],
-            useFactory: async (configService: ConfigService): Promise<Redis | undefined> => {
+            useFactory: async (configService: ConfigService) => {
 
-                const redisHost = configService.get<string>('REDIS_HOST');
-                const redisPort = configService.get<number>('REDIS_PORT');
+                const redisUrl = configService.get<string>('REDIS_URL');
 
-                if (!redisHost || !redisPort) {
+                if (!redisUrl) {
                     return undefined;
                 }
 
-                const client = new Redis({
-                    host: redisHost,
-                    port: redisPort,
-                    db: 0,
-                    // keepAlive: 1000,
-                    // connectTimeout: 2000,
-                    showFriendlyErrorStack: true,
-                    lazyConnect: true,
-                    enableReadyCheck: true,
-                    reconnectOnError: (err: Error) => {
-                        console.log(`Redis Cache connection err: ${err}`);
-                        return true;
-                    }
-                })
-                .on('connect', () => {
-                    console.log(`Redis-Module: Connected to redis instance`)
-                })
-                .on('ready', () => {
-                    console.log(`Redis-Module: Redis instance is ready`)
+                const client = createClient({
+                    url: redisUrl,
+                    database: 0,
                 })
                 .on('error', (error) => {
-                    console.error(`Redis-Module: Error: ${error}`);
+                    console.error(error);
                 });
 
                 return client;
             },
-        }; 
+        };
 
         return {
             module: RedisModule,
-            providers: [redisClientFactory, RedisService],
-            exports: [RedisService],
+            providers: [ redisClientFactory, RedisService ],
+            exports: [ RedisService ],
         };
     }
 }

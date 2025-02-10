@@ -1,8 +1,8 @@
-import { Task } from "@projects/core/task";
-import { EntityBaseSchema } from "@building-blocks/infra/database/schemas/entity-base-schema";
+
 import { EntitySchema, EntitySchemaColumnOptions } from "typeorm";
-import { Project } from "@src/projects/core";
 import { ProjectSchema } from "./project.schema";
+import { EntityBaseSchema } from "@building-blocks/infra/database/schemas/entity-base-schema";
+import { Project, Task } from "@projects/core";
 
 const columns = {
     name: {

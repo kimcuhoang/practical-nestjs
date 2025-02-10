@@ -1,4 +1,9 @@
 {
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  },
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -17,12 +22,14 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "allowJs": true,
     "paths": {
       "@src/*": ["src/*"],
       "@building-blocks/*": ["src/building-blocks/*"],
+      "@integration-events/*": ["src/integration-events/*"],
       "@projects/*": ["src/projects/*"],
-      "@test/*": ["test/*"],
-      "@e2e-test/*": ["e2e-tests/*"],
+      "@notifications/*": ["src/notifications/*"],
+      "@test/*": ["test/*"]
     }
   },
 }
