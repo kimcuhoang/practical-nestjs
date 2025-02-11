@@ -1,12 +1,14 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { 
     CreateProjectPayload, CreateProjectRequest, 
     FindByIdRequest, FindByIdResponse, 
+    ImportByCsvCommand, 
     SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
 } from '../use-cases';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Projects Management')
 @Controller('projects')
@@ -45,5 +47,25 @@ export class ProjectsController {
         const request = new CreateProjectRequest(payload);
         const response = await this._commandBus.execute(request);
         return response;
+    }
+
+    @Post("/import-csv")
+    @HttpCode(HttpStatus.OK)
+    @UseInterceptors(FileInterceptor('file'))
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: "object",
+            properties: {
+                file: {
+                    type: "string",
+                    format: "binary"
+                }
+            }
+        }
+    })
+    public async import(@UploadedFile() file: Express.Multer.File) {
+        const command = new ImportByCsvCommand(file);
+        return await this._commandBus.execute(command);
     }
 }

@@ -1,7 +1,7 @@
 
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@building-blocks/infra/database';
 import { CachingModule } from '@building-blocks/infra/caching';
 import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';
@@ -14,6 +14,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
 import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
+import { MulterModule, MulterModuleOptions } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -33,6 +35,18 @@ const infrastructureModules = [
         solacePassword: configService.get("SOLACE_PASSWORD"),
         acknowledgeMessage: configService.get("SOLACE_ACKNOWLEDGE_MESSAGE")?.toLowerCase() === "true"
       });
+  }),
+  MulterModule.registerAsync({
+    inject: [ConfigService],
+    useFactory: (configService: ConfigService): MulterModuleOptions => {
+      const limitUploadFile = configService.get<number>("LIMIT_UPLOAD_FILE_SIZE_IN_MB") ?? 10;
+      return {
+        limits: {
+          fileSize: limitUploadFile * 1024 * 1024 // In Bytes
+        },
+        storage: memoryStorage()
+      } as MulterModuleOptions;
+    }
   })
 ];
 
