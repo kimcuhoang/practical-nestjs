@@ -4,10 +4,10 @@ import { ProjectsController } from './controllers/projects.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModuleSettings } from './projects.module.settings';
 import { ConfigService } from '@nestjs/config';
-import * as moment from "moment";
 import { ProjectsModuleSchemas } from './persistence';
 import { ProjectsSolaceController } from './controllers/projects-solace.controller';
 import { ProjectsModuleSubscriber } from './solace-integration/projects.module.subscriber';
+import { FileValidatorService } from '../building-blocks/services/file-validator.service';
 
 @Global()
 @Module({
@@ -16,6 +16,7 @@ import { ProjectsModuleSubscriber } from './solace-integration/projects.module.s
     ],
     providers: [ 
         ...Handlers,
+        FileValidatorService,
         ProjectsModuleSubscriber,
         {
             provide: ProjectsModuleSettings,
@@ -27,7 +28,8 @@ import { ProjectsModuleSubscriber } from './solace-integration/projects.module.s
                     topicUPD: configService.get("SOLACE_PROJECTS_QUEUE_TOPIC_UPD"),
                     topicCNL: configService.get("SOLACE_PROJECTS_QUEUE_TOPIC_CNL"),
                     enabledSubscribe: configService.get("SOLACE_PROJECTS_QUEUE_SUBSCRIBE_ENABLED")?.toLowerCase() === 'true',
-                    enabledSubscribeTopics: configService.get("SOLACE_PROJECTS_QUEUE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true'
+                    enabledSubscribeTopics: configService.get("SOLACE_PROJECTS_QUEUE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true',
+                    limitUploadFileSizeInMB: configService.get<number>("LIMIT_UPLOAD_FILE_SIZE_IN_MB") ?? 10
                 });
             }
         }

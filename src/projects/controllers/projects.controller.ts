@@ -9,6 +9,7 @@ import {
     SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
 } from '../use-cases';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CustomParseFilePipe } from '@src/building-blocks/infra/pipes/custom-parse-file.pipe';
 
 @ApiTags('Projects Management')
 @Controller('projects')
@@ -51,7 +52,6 @@ export class ProjectsController {
 
     @Post("/import-csv")
     @HttpCode(HttpStatus.OK)
-    @UseInterceptors(FileInterceptor('file'))
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -64,6 +64,7 @@ export class ProjectsController {
             }
         }
     })
+    @UseInterceptors(FileInterceptor('file'))
     public async import(@UploadedFile() file: Express.Multer.File) {
         const command = new ImportByCsvCommand(file);
         return await this._commandBus.execute(command);

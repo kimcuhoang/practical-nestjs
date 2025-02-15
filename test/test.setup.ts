@@ -20,6 +20,7 @@ beforeAll(async () => {
     process.env.FALLBACK_LANGUAGE = "en";
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";
+    process.env.LIMIT_UPLOAD_FILE_SIZE_IN_MB = "1";
 
     if (globalThis.redisEnabled) {
 

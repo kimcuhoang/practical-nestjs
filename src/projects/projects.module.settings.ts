@@ -8,6 +8,7 @@ export class ProjectsModuleSettings {
     topicCNL: string;
     enabledSubscribe: boolean;
     enabledSubscribeTopics: boolean;
+    limitUploadFileSizeInMB: number;
 
     constructor(settings: Partial<ProjectsModuleSettings>) {
         Object.assign(this, settings);

@@ -16,6 +16,8 @@ import { LocalizationsModule, LocalizationsModuleOptions } from './localizations
 import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
 import { MulterModule, MulterModuleOptions } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { CustomParseFilePipe } from './building-blocks/infra/pipes/custom-parse-file.pipe';
+import { FileValidatorService } from './building-blocks/services/file-validator.service';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -35,18 +37,6 @@ const infrastructureModules = [
         solacePassword: configService.get("SOLACE_PASSWORD"),
         acknowledgeMessage: configService.get("SOLACE_ACKNOWLEDGE_MESSAGE")?.toLowerCase() === "true"
       });
-  }),
-  MulterModule.registerAsync({
-    inject: [ConfigService],
-    useFactory: (configService: ConfigService): MulterModuleOptions => {
-      const limitUploadFile = configService.get<number>("LIMIT_UPLOAD_FILE_SIZE_IN_MB") ?? 10;
-      return {
-        limits: {
-          fileSize: limitUploadFile * 1024 * 1024 // In Bytes
-        },
-        storage: memoryStorage()
-      } as MulterModuleOptions;
-    }
   })
 ];
 
@@ -85,8 +75,6 @@ const featureModules = [
     ...featureModules
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [ AppService, FileValidatorService ],
 })
-export class AppModule {
-
-}
+export class AppModule { }
