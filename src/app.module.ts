@@ -14,10 +14,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
 import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
-import { MulterModule, MulterModuleOptions } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
-import { CustomParseFilePipe } from './building-blocks/infra/pipes/custom-parse-file.pipe';
-import { FileValidatorService } from './building-blocks/services/file-validator.service';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -75,6 +71,6 @@ const featureModules = [
     ...featureModules
   ],
   controllers: [AppController],
-  providers: [ AppService, FileValidatorService ],
+  providers: [ AppService ],
 })
 export class AppModule { }

@@ -9,7 +9,6 @@ import {
     SearchProjectsPayload, SearchProjectsRequest, SearchProjectsResponse
 } from '../use-cases';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CustomParseFilePipe } from '@src/building-blocks/infra/pipes/custom-parse-file.pipe';
 
 @ApiTags('Projects Management')
 @Controller('projects')
