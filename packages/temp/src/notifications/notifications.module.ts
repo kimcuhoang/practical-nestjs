@@ -1,7 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { NotificationsModuleSchemas } from "./persistence";
 import { NotificationsEventHandler } from "./event-handlers";
+import { NotificationsModuleSchemas } from "./persistence";
 
 @Global()
 @Module({
