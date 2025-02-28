@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "author": "Kim-CH <kim.cuhoang@gmail.com>",
   "license": "UNLICENSED",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/kimcuhoang/practical-nestjs"
   },
-  "private": true,
   "workspaces": [
     "packages/*"
   ]

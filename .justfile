@@ -1,54 +1,64 @@
 # use PowerShell instead of sh:
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
-i:
+default:
     clear
-    rm -rf node_modules
+    just --list
+
+init:
+    clear
+    rm -rf ./**/node_modules
+    rm -rf ./**/yarn.lock
     yarn install
 
-b: 
+ws workspace *command:
     clear
-    yarn build
+    yarn workspace @kch/{{workspace}} {{command}}
 
-db-create:
+ws-db-reset workspace:
     clear
-    yarn db:create
+    yarn workspace @kch/{{workspace}} db:drop
+    yarn workspace @kch/{{workspace}} db:create
 
-db-drop:
-    clear
-    yarn db:drop
+# db-create:
+#     clear
+#     yarn db:create
 
-db-reset: db-drop db-create
+# db-drop:
+#     clear
+#     yarn db:drop
 
-gen-migration feature name: b
-    clear
-    yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+# db-reset: db-drop db-create
 
-run-migration: b
-    clear
-    yarn typeorm:run-migrations
+# gen-migration feature name: b
+#     clear
+#     yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
 
-pre-test: b
-    # yarn jest --clearCache
+# run-migration: b
+#     clear
+#     yarn typeorm:run-migrations
 
-e2e: pre-test
-    clear
-    yarn test:e2e
+# pre-test: b
+#     # yarn jest --clearCache
 
-e2e-file: pre-test
-    clear
-    yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
+# e2e: pre-test
+#     clear
+#     yarn test:e2e
 
-e2e-files: pre-test
-    yarn test:e2e --findRelatedTests \
-                test/notifications/event-handlers/project-created.handler.e2e.ts \
-                test/projects/commands/test-bulk-insert-command.e2e.ts \
-                --all
+# e2e-file: pre-test
+#     clear
+#     yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
 
-e2e-folder name: pre-test
-    clear
-    yarn test:e2e --testPathPattern=test/{{name}}
+# e2e-files: pre-test
+#     yarn test:e2e --findRelatedTests \
+#                 test/notifications/event-handlers/project-created.handler.e2e.ts \
+#                 test/projects/commands/test-bulk-insert-command.e2e.ts \
+#                 --all
 
-s:
-    clear
-    yarn start:dev
+# e2e-folder name: pre-test
+#     clear
+#     yarn test:e2e --testPathPattern=test/{{name}}
+
+# s:
+#     clear
+#     yarn start:dev

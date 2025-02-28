@@ -4,7 +4,7 @@
   "description": "",
   "author": "Kim-CH",
   "license": "UNLICENSED",
-  
+  "private": true,
   "scripts": {
     "build": "nest build",
     "typeorm-ext": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs -d src/typeorm.datasource.ts",

@@ -4,8 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
-// import * as httpClient from 'supertest';
-import httpClient from 'supertest';
+import * as httpClient from 'supertest';
 
 let app: INestApplication;
 let connectionString: string;

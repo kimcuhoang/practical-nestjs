@@ -20,8 +20,8 @@ const jestConfig: Config.InitialOptions = {
         ".e2e.ts$"
     ],
     transform: {
-        "^.+\\.(t|j)s$": "@swc/jest",
-        // "^.+\\.(t|j)s$": "ts-jest"
+        // "^.+\\.(t|j)s$": "@swc/jest",
+        "^.+\\.(t|j)s$": "ts-jest"
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",

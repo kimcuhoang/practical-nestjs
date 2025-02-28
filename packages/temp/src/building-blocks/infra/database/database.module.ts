@@ -38,12 +38,12 @@ export class DatabaseModule {
                             migrations: migrations
                         });
                     },
-                    async dataSourceFactory(options?: DataSourceOptions) {
-                        if (!options) {
-                            throw new Error("DataSourceOptions is required");
-                        }
-                        return addTransactionalDataSource(new DataSource(options));
-                    }
+                    // async dataSourceFactory(options?: DataSourceOptions) {
+                    //     if (!options) {
+                    //         throw new Error("DataSourceOptions is required");
+                    //     }
+                    //     return addTransactionalDataSource(new DataSource(options));
+                    // }
                 })
             ],
             providers: [
