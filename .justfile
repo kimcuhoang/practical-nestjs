@@ -20,6 +20,11 @@ ws-db-reset workspace:
     yarn workspace @kch/{{workspace}} db:drop
     yarn workspace @kch/{{workspace}} db:create
 
+ws-test-pre workspace:
+    clear
+    yarn workspace @kch/{{workspace}} test:pre
+    
+
 # db-create:
 #     clear
 #     yarn db:create
