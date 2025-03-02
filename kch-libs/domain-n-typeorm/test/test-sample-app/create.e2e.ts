@@ -1,11 +1,10 @@
-import { AnEntity } from "@src/sample-app/entities/an-entity";
+import { AnEntity } from "@test/sample-app/entities/an-entity";
 import { Repository } from "typeorm";
-import { app } from "./test.setup";
+import { app } from "../test.setup";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { ulid } from "ulidx";
 
-
-describe(`Save ${AnEntity.name}`, () => {
+describe(`Create a new "${AnEntity.name}"`, () => {
 
     let anEntityRepository: Repository<AnEntity>;
 
@@ -17,12 +16,15 @@ describe(`Save ${AnEntity.name}`, () => {
         await anEntityRepository.delete({});
     });
 
-    it(`should save ${AnEntity.name}`, async () => {
+    it(`should be success`, async () => {
         const anEntity = new AnEntity(ulid(), { name: "test" });
         await anEntityRepository.save(anEntity);
 
         const result = await anEntityRepository.findOne({ where: { id: anEntity.id } });
         expect(result).toEqual(anEntity);
+        expect(result.createdAtUtc).toBeTruthy();
+        expect(result.updatedAtUtc).toBeTruthy();
+        expect(result.deletedAtUtc).toBeFalsy();
     });
     
 });

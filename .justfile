@@ -1,6 +1,8 @@
 # use PowerShell instead of sh:
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
+registry-url := "http://localhost:4873"
+
 default:
     clear
     just --list
@@ -23,6 +25,27 @@ ws-db-reset workspace:
 ws-test-pre workspace:
     clear
     yarn workspace @kch/{{workspace}} test:pre
+
+nest-new project:
+    clear
+    nest new {{project}}
+
+publish workspace:
+    clear
+    yarn workspace @kch/{{workspace}} build
+    yarn workspace @kch/{{workspace}} publish --registry {{registry-url}}
+
+unpublish package:
+    clear
+    npm unpublish --registry {{registry-url}} @kch/{{package}} --force
+
+y-add workspace package:
+    clear
+    yarn workspace @kch/{{workspace}} add @kch/{{package}} --registry {{registry-url}}
+
+y-remove workspace package:
+    clear
+    yarn workspace @kch/{{workspace}} remove @kch/{{package}}
     
 
 # db-create:

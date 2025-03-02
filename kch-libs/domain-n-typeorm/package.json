@@ -3,8 +3,12 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
-  "private": true,
   "license": "UNLICENSED",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -13,18 +17,13 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-
-    
-
-    "test:typeorm:ext": "ts-node --project tsconfig.json ./node_modules/.bin/typeorm-extension -d src/sample-app/test.datasource.ts",
-
+    "test:typeorm:ext": "ts-node --project tsconfig.json ./node_modules/.bin/typeorm-extension -d test/sample-app/test.datasource.ts",
     "test:db:create": "yarn test:typeorm:ext db:create --synchronize no",
     "test:db:drop": "yarn test:typeorm:ext db:drop",
     "test:db:reset": "yarn test:db:drop && yarn test:db:create",
-
-    "test:typeorm": "typeorm-ts-node-commonjs -d src/sample-app/test.datasource.ts",
-    "test:gen:migration": "rm -rf ./test/migrations/*.ts && yarn build && yarn test:typeorm migration:generate",
-    "test:pre": "yarn test:db:reset && yarn test:gen:migration test/migrations/init",
+    "test:typeorm": "typeorm-ts-node-commonjs -d test/sample-app/test.datasource.ts",
+    "test:gen:migration": "rm -rf ./test/sample-app/persistence/migrations/*.ts && yarn build && yarn test:typeorm migration:generate",
+    "test:pre": "yarn test:db:reset && yarn test:gen:migration ./test/sample-app/persistence/migrations/init && yarn test:db:drop",
     "test": "jest --runInBand --config ./test/jest.config.ts",
     "test:e2e": "yarn test"
   },

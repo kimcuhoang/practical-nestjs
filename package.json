@@ -9,6 +9,6 @@
     "url": "https://github.com/kimcuhoang/practical-nestjs"
   },
   "workspaces": [
-    "packages/*"
+    "kch-libs/*"
   ]
 }

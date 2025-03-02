@@ -1,5 +1,5 @@
 import { EntityBase } from "@src/domain";
-import { Column, Entity, Table } from "typeorm";
+import { Column, Entity } from "typeorm";
 
 @Entity()
 export class AnEntity extends EntityBase {

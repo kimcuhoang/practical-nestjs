@@ -3,7 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
 import * as httpClient from 'supertest';
-import { DatabaseOptions, TypeOrmModuleConfigure } from '@src/persistence';
+import { DatabaseOptions, ConfigurableTypeOrmModule } from '@src/persistence';
+import { AnEntity } from '@test/sample-app/entities/an-entity';
+import { SampleAppModule } from './sample-app/sample-app.module';
 
 let app: INestApplication;
 let request: any | undefined;
@@ -20,17 +22,16 @@ beforeAll(async () => {
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [
-            ConfigModule.forRoot({}),
-            TypeOrmModuleConfigure((configService: ConfigService): DatabaseOptions => {
+            ConfigModule.forRoot(),
+            ConfigurableTypeOrmModule((configService: ConfigService): DatabaseOptions => {
                 return {
-                    url: configService.get("POSTGRES_DATABASE_URL"),
+                    entities: [ AnEntity ],
                     migrations: [
                         "test/**/migrations/*.ts"
                     ],
-                    migrationsRun: true,
-                    logging: configService.get("POSTGRES_LOG_ENABLED")?.toLowerCase() === "true",
                 };
-            })
+            }),
+            SampleAppModule
         ]
     }).compile();
 
