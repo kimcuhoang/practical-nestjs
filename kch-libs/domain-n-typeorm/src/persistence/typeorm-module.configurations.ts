@@ -1,4 +1,4 @@
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { DatabaseOptions, DefaultDatasourceOptions, getDatabaseOptions } from "./typeorm-datasource.configurations";
 import { DataSource, DataSourceOptions } from "typeorm";
@@ -7,7 +7,6 @@ import { addTransactionalDataSource } from "typeorm-transactional";
 
 export const ConfigurableTypeOrmModule = (configure: (configService: ConfigService) => DatabaseOptions) => {
     return TypeOrmModule.forRootAsync({
-        imports: [ConfigModule],
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => {
             return {

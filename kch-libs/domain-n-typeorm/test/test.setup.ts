@@ -22,7 +22,7 @@ beforeAll(async () => {
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [
-            ConfigModule.forRoot(),
+            ConfigModule.forRoot({ isGlobal: true }),
             ConfigurableTypeOrmModule((configService: ConfigService): DatabaseOptions => {
                 return {
                     entities: [ AnEntity ],
