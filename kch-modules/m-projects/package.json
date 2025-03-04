@@ -4,7 +4,9 @@
   "description": "",
   "author": "",
   "license": "UNLICENSED",
-  "files": [ "dist" ],
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -23,10 +25,11 @@
     "test:gen:migration": "rm -rf ./test/persistence/migrations/*.ts && yarn build && yarn test:typeorm migration:generate",
     "test:pre": "yarn test:db:reset && yarn test:gen:migration ./test/persistence/migrations/init && yarn test:db:drop",
     "test": "jest --runInBand --config ./test/jest.config.ts",
-    "test:e2e": "yarn test"
+    "test:e2e": "yarn test",
+    "dev:pack": "yarn build && yarn pack && mv ./*.tgz ../../.zzz/"
   },
   "dependencies": {
-    "@kch/domain-n-typeorm": "^0.0.1"
+    "@kch/domain-n-typeorm": "../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz"
   },
   "devDependencies": {
     "typeorm-extension": "^3.7.0"
