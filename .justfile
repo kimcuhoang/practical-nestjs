@@ -46,7 +46,31 @@ y-add workspace package:
 y-remove workspace package:
     clear
     yarn workspace @kch/{{workspace}} remove @kch/{{package}}
-    
+
+#### Initial Setup
+
+clean-up-dependencies:
+    clear
+    rm -rf ./**/node_modules
+    rm -rf ./**/yarn.lock
+    yarn cache clean
+    yarn workspace @kch/m-projects remove \
+        @kch/domain-n-typeorm \
+
+
+build-kch-libs: 
+    clear
+    yarn install
+    yarn workspace @kch/domain-n-typeorm dev:pack
+
+install-dependencies: 
+    clear
+    yarn workspace @kch/m-projects add \
+        ../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz
+
+build-kch-modules: clean-up-dependencies build-kch-libs install-dependencies
+    clear
+    yarn workspace @kch/m-projects dev:pack
 
 # db-create:
 #     clear
