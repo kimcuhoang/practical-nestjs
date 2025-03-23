@@ -1,7 +1,8 @@
 import { CreateDateColumn, DeleteDateColumn, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Identifiable } from "./identifiable";
 
 
-export abstract class EntityBase {
+export abstract class EntityBase implements Identifiable<string> {
 
     @PrimaryColumn({ type: 'varchar', length: 26 })
     public readonly id: string;
