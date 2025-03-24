@@ -2,10 +2,10 @@ import { INestApplication, LogLevel } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
-import * as httpClient from 'supertest';
 import { DatabaseOptions, ConfigurableTypeOrmModule } from '@src/persistence';
-import { AnEntity } from '@test/sample-app/entities/an-entity';
 import { SampleAppModule } from './sample-app/sample-app.module';
+import { Entities } from './sample-app/entities';
+import * as httpClient from 'supertest';
 
 let app: INestApplication;
 let request: any | undefined;
@@ -25,7 +25,7 @@ beforeAll(async () => {
             ConfigModule.forRoot({ isGlobal: true }),
             ConfigurableTypeOrmModule((configService: ConfigService): DatabaseOptions => {
                 return {
-                    entities: [ AnEntity ],
+                    entities: [ ...Entities ],
                     migrations: [
                         "test/**/migrations/*.ts"
                     ],

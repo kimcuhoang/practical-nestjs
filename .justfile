@@ -55,8 +55,9 @@ clean-up-dependencies:
     rm -rf ./**/yarn.lock
     yarn cache clean
     yarn workspace @kch/m-projects remove \
-        @kch/domain-n-typeorm \
-
+        @kch/domain-n-typeorm
+    yarn workspace @kch/m-people remove \
+        @kch/domain-n-typeorm
 
 build-kch-libs: 
     clear
@@ -67,10 +68,13 @@ install-dependencies:
     clear
     yarn workspace @kch/m-projects add \
         ../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz
+    yarn workspace @kch/m-people add \
+        ../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz
 
 build-kch-modules: clean-up-dependencies build-kch-libs install-dependencies
     clear
     yarn workspace @kch/m-projects dev:pack
+    yarn workspace @kch/m-people dev:pack
 
 # db-create:
 #     clear

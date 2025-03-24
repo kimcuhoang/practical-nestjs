@@ -1,12 +1,11 @@
 import { Identifiable } from "@src/domain";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
 export class YanEntity implements Identifiable<number> {
 
-    constructor(id: number, entity: Partial<YanEntity>) {
-        this.id = id;
+    constructor(entity: Partial<YanEntity>) {
         Object.assign(this, entity);
     }
 
@@ -15,4 +14,7 @@ export class YanEntity implements Identifiable<number> {
 
     @Column({ type: "varchar", length: 100 })
     name: string;
+
+    @CreateDateColumn({ nullable: false })
+    createdAtUtc: Date;
 }

@@ -1,8 +1,8 @@
 import { AnEntity } from "@test/sample-app/entities/an-entity";
 import { Repository } from "typeorm";
-import { app } from "../test.setup";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { ulid } from "ulidx";
+import { app } from "@test/test.setup";
 
 describe(`Create a new "${AnEntity.name}"`, () => {
 

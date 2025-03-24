@@ -656,7 +656,7 @@
 
 "@kch/domain-n-typeorm@../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz":
   version "0.0.1"
-  resolved "../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz#ff8ee59c1fde5467e80e83ea66b8f98202b48033"
+  resolved "../../.zzz/kch-domain-n-typeorm-v0.0.1.tgz#7a352945739dae125eb054913c2c224f9adc3d49"
   dependencies:
     "@nestjs/common" "^10.0.0"
     "@nestjs/core" "^10.0.0"
