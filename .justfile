@@ -8,46 +8,46 @@ i:
 
 b: 
     clear
-    yarn build
+    npx yarn build
 
 db-create:
     clear
-    yarn db:create
+    npx yarn db:create
 
 db-drop:
     clear
-    yarn db:drop
+    npx yarn db:drop
 
 db-reset: db-drop db-create
 
 gen-migration feature name: b
     clear
-    yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+    npx yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
 
 run-migration: b
     clear
-    yarn typeorm:run-migrations
+    npx yarn typeorm:run-migrations
 
 pre-test: b
     # yarn jest --clearCache
 
 e2e: pre-test
     clear
-    yarn test:e2e
+    npx yarn test:e2e
 
 e2e-file: pre-test
     clear
-    yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
+    npx yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
 
 e2e-files: pre-test
-    yarn test:e2e --findRelatedTests \
+    npx yarn test:e2e --findRelatedTests \
                 test/notifications/event-handlers/project-created.handler.e2e.ts \
                 test/projects/commands/test-bulk-insert-command.e2e.ts \
                 --all
 
 e2e-folder name: pre-test
     clear
-    yarn test:e2e --testPathPattern=test/{{name}}
+    npx yarn test:e2e --testPathPattern=test/{{name}}
 
 s:
     clear

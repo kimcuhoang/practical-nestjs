@@ -14,6 +14,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
 import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
+import { TariffsModule } from './tariffs';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -45,7 +46,8 @@ const featureModules = [
       enabledSubscribeTopics: configService.get("BUSINESS_PARTNER_SOLACE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true',
       topicCRT: configService.get("BUSINESS_PARTNER_SOLACE_QUEUE_TOPIC_CRT")
     });
-  })
+  }),
+  TariffsModule
 ];
 
 @Module({

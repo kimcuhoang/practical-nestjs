@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
 import { ProjectsModuleSchemas } from './projects/persistence';
 import { NotificationsModuleSchemas } from './notifications/persistence';
+import { TariffSchemas } from './tariffs/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({
@@ -30,7 +31,8 @@ const pgConnectionOptions = {
     url: databaseModuleSettings.url,
     entities: [
         ...ProjectsModuleSchemas,
-        ...NotificationsModuleSchemas
+        ...NotificationsModuleSchemas,
+        ...TariffSchemas
     ]
 } as PostgresConnectionOptions;
 
