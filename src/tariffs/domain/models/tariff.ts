@@ -5,14 +5,22 @@ import { ulid } from "ulidx";
 
 
 export class Tariff extends EntityBase {
+
+    constructor(partial?: Partial<Tariff>) {
+        super(partial?.id ?? ulid());
+        Object.assign(this, partial);
+        this.validities = [];
+        this.surchages = [];
+    }
+
     name: string;
+
+    @Type(() => StandardChargeValidity)
+    validities: StandardChargeValidity[];
 
     @Type(() => Surcharge)
     surchages: Surcharge[];
 
-    @Type(() => StandardChargeValidity)
-    validities: StandardChargeValidity[];
-    
     public addValidity(partial: Partial<StandardChargeValidity>): Tariff {
         const validity = new StandardChargeValidity(this, partial);
         this.validities.push(validity);
@@ -28,9 +36,10 @@ export class Tariff extends EntityBase {
 
 export class StandardChargeValidity extends EntityBase {
 
-    readonly tariffId: string;
+    tariffId: string;
+
     @Type(() => Tariff)
-    readonly tariff: Tariff;
+    tariff: Tariff;
 
     @Type(() => Date)
     startDate: Date;
@@ -41,8 +50,8 @@ export class StandardChargeValidity extends EntityBase {
     @Type(() => Number)
     amount: number;
 
-    constructor(tariff: Tariff, partial: Partial<StandardChargeValidity>) {
-        super(partial.id ?? ulid());
+    constructor(tariff: Tariff, partial?: Partial<StandardChargeValidity>) {
+        super(partial?.id ?? ulid());
         Object.assign(this, partial);
         this.tariff = tariff;
         this.tariffId = tariff.id;

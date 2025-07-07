@@ -2,6 +2,7 @@ import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/en
 import { Surcharge, SurchargeArguments } from "@src/tariffs/domain/models/surcharge.entities";
 import { Tariff } from "@src/tariffs/domain/models/tariff";
 import { EntitySchema } from "typeorm";
+import { snakeCase } from "typeorm/util/StringUtils";
 
 const SurchargeArgumentsSchema = new EntitySchema<SurchargeArguments>({
     name: SurchargeArguments.name,
@@ -23,7 +24,7 @@ const SurchargeArgumentsSchema = new EntitySchema<SurchargeArguments>({
 
 export const SurchargeSchema = new EntitySchema<Surcharge>({
     name: Surcharge.name,
-    target: Surcharge,
+    tableName: snakeCase("Surcharges"),
     columns: {
         ...EntityBaseSchema,
         surchargeType: {
@@ -33,6 +34,11 @@ export const SurchargeSchema = new EntitySchema<Surcharge>({
         amount: {
             type: Number,
             nullable: false,
+        },
+        tariffId: {
+            type: String,
+            nullable: false,
+            length: 26, // ulid length
         },
     },
     embeddeds: {
@@ -45,7 +51,14 @@ export const SurchargeSchema = new EntitySchema<Surcharge>({
         tariff: {
             type: "many-to-one",
             target: Tariff.name,
-            inverseSide: "surcharges"
+            inverseSide: "surcharges",
+            joinColumn: {
+                name: "tariffId",
+                referencedColumnName: "id",
+                foreignKeyConstraintName: 'FK_Surcharge_Tariff'
+            },
+            onDelete: "CASCADE"
+        }
     }
 });
 

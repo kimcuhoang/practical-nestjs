@@ -49,8 +49,7 @@ e2e-file: pre-test
 
 e2e-files: pre-test
     npx yarn test:e2e --findRelatedTests \
-                test/notifications/event-handlers/project-created.handler.e2e.ts \
-                test/projects/commands/test-bulk-insert-command.e2e.ts \
+                test/tariffs-module/tariffs/save.e2e.ts \
                 --all
 
 e2e-folder name: pre-test

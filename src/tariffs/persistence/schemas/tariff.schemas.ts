@@ -7,7 +7,6 @@ import { snakeCase } from "typeorm/util/StringUtils";
 
 export const TariffSchema = new EntitySchema<Tariff>({
     name: Tariff.name,
-    target: Tariff,
     tableName: snakeCase("Tariffs"),
     columns: {
         ...EntityBaseSchema,
@@ -22,6 +21,7 @@ export const TariffSchema = new EntitySchema<Tariff>({
             type: "one-to-many",
             target: Surcharge.name,
             inverseSide: "tariff",
+            // below to make the save action work correctly
             cascade: true,
             onDelete: "CASCADE"
         },
@@ -29,6 +29,7 @@ export const TariffSchema = new EntitySchema<Tariff>({
             type: "one-to-many",
             target: StandardChargeValidity.name,
             inverseSide: "tariff",
+            // below to make the save action work correctly
             cascade: true,
             onDelete: "CASCADE"
         }
@@ -37,7 +38,6 @@ export const TariffSchema = new EntitySchema<Tariff>({
 
 export const StandardChargeValiditySchema = new EntitySchema<StandardChargeValidity>({
     name: StandardChargeValidity.name,
-    target: StandardChargeValidity,
     tableName: snakeCase("StandardChargeValidities"),
     columns: {
         ...EntityBaseSchema,
@@ -52,13 +52,24 @@ export const StandardChargeValiditySchema = new EntitySchema<StandardChargeValid
         endDate: {
             type: Date,
             nullable: true
+        },
+        tariffId: {
+            type: String,
+            nullable: false,
+            length: 26, // ulid length
         }
     },
     relations: {
         tariff: {
             type: "many-to-one",
             target: Tariff.name,
-            inverseSide: "validities"
+            inverseSide: "validities",
+            joinColumn: {
+                name: "tariffId",
+                referencedColumnName: "id",
+                foreignKeyConstraintName: 'FK_StandardChargeValidity_Tariff'
+            },
+            onDelete: "CASCADE"
         }
     }
 });
