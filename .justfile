@@ -1,6 +1,10 @@
 # use PowerShell instead of sh:
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
+default:
+    clear
+    just --list
+
 i:
     clear
     rm -rf node_modules
@@ -27,6 +31,10 @@ gen-migration feature name: b
 run-migration: b
     clear
     npx yarn typeorm:run-migrations
+
+revert-migration: b
+    clear
+    npx yarn typeorm:revert-migration
 
 pre-test: b
     # yarn jest --clearCache

@@ -1,14 +1,12 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { SignatureSchema, ESignatureSchema, PaymentSignatureSchema } from "./persistence/schemas/signature.schemas";
+import { TariffSchemas } from "./persistence";
 
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            SignatureSchema,
-            ESignatureSchema,
-            PaymentSignatureSchema,
+            ...TariffSchemas
         ]),
     ],
     controllers: [],
