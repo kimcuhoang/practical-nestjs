@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { BusinessPatnersModuleSubscriber } from "./solace-integration/business-partners.module.subscriber";
+import { BusinessPartnersModuleSubscriber } from "./solace-integration/business-partners.module.subscriber";
 import { BusinessPartnersSolaceController } from "./controllers/business-partners.solace.controller";
 import { ConfigService } from "@nestjs/config";
 import { BusinessPartnersModuleOptions } from "./business-partners.module.options";
@@ -11,7 +11,7 @@ export class BusinessPartnersModule {
         return {
             module: BusinessPartnersModule,
             providers: [ 
-                BusinessPatnersModuleSubscriber,
+                BusinessPartnersModuleSubscriber,
                 {
                     provide: BusinessPartnersModuleOptions,
                     inject: [ConfigService],

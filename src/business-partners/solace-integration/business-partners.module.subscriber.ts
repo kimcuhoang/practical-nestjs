@@ -5,9 +5,9 @@ import { BusinessPartnersModuleOptions } from "../business-partners.module.optio
 
 
 @Injectable()
-export class BusinessPatnersModuleSubscriber implements OnApplicationBootstrap {
+export class BusinessPartnersModuleSubscriber implements OnApplicationBootstrap {
 
-    private readonly logger = new Logger(BusinessPatnersModuleSubscriber.name);
+    private readonly logger = new Logger(BusinessPartnersModuleSubscriber.name);
     private solaceMessageConsumer: MessageConsumer;
     private readonly topics: string[] = [];
 

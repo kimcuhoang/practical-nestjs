@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Put } from "@nestjs/common";
-import { BusinessPatnersModuleSubscriber } from "../solace-integration/business-partners.module.subscriber";
+import { BusinessPartnersModuleSubscriber } from "../solace-integration/business-partners.module.subscriber";
 import { ApiTags } from "@nestjs/swagger";
 import { BusinessPartnersModuleOptions } from "../business-partners.module.options";
 import { SolacePublisher } from "@src/building-blocks/infra/solace";
@@ -10,7 +10,7 @@ import { faker } from "@faker-js/faker";
 export class BusinessPartnersSolaceController {
 
     constructor(
-        private readonly businessPartnersSolaceSubscriber: BusinessPatnersModuleSubscriber,
+        private readonly businessPartnersSolaceSubscriber: BusinessPartnersModuleSubscriber,
         private readonly solacePublisher: SolacePublisher,
         private readonly options: BusinessPartnersModuleOptions
     ) { }
