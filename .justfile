@@ -56,6 +56,10 @@ e2e-folder name: pre-test
     clear
     npx yarn test:e2e --testPathPattern=test/{{name}}
 
+e2e-new: pre-test
+    clear
+    npx yarn test:e2e --testPathPattern=test/new-app-tests
+
 s:
     clear
     yarn start:dev

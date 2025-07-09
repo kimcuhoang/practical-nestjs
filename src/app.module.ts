@@ -11,6 +11,7 @@ import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OldAppModule } from './old-sources/old-app.module';
+import { NewAppModule } from './new';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -39,7 +40,8 @@ const infrastructureModules = [
     ...infrastructureModules,
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    OldAppModule
+    OldAppModule,
+    NewAppModule
   ],
   controllers: [AppController],
   providers: [AppService],
