@@ -3,9 +3,9 @@ import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
-import { ProjectsModuleSchemas } from './projects/persistence';
-import { NotificationsModuleSchemas } from './notifications/persistence';
-import { TariffSchemas } from './tariffs/persistence';
+import { ProjectsModuleSchemas } from './old-sources/projects/persistence';
+import { NotificationsModuleSchemas } from './old-sources/notifications/persistence';
+import { TariffSchemas } from './old-sources/tariffs/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({

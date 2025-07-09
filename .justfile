@@ -45,7 +45,7 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    npx yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
+    npx yarn test:e2e -f test/app.e2e.ts --all
 
 e2e-files: pre-test
     npx yarn test:e2e --findRelatedTests \

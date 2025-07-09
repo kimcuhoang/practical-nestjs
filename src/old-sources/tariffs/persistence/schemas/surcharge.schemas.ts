@@ -1,0 +1,64 @@
+import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/entity-base-schema";
+import { Surcharge, SurchargeArguments } from "@src/old-sources/tariffs/domain/models/surcharge.entities";
+import { Tariff } from "@src/old-sources/tariffs/domain/models/tariff";
+import { EntitySchema } from "typeorm";
+import { snakeCase } from "typeorm/util/StringUtils";
+
+const SurchargeArgumentsSchema = new EntitySchema<SurchargeArguments>({
+    name: SurchargeArguments.name,
+    columns: {
+        maxAmountOfStops: {
+            type: Number,
+            nullable: true,
+        },
+        peakSeasonStart: {
+            type: Date,
+            nullable: true,
+        },
+        peakSeasonEnd: {
+            type: Date,
+            nullable: true,
+        },
+    }
+});
+
+export const SurchargeSchema = new EntitySchema<Surcharge>({
+    name: Surcharge.name,
+    tableName: snakeCase("Surcharges"),
+    columns: {
+        ...EntityBaseSchema,
+        surchargeType: {
+            type: String,
+            nullable: false,
+        },
+        amount: {
+            type: Number,
+            nullable: false,
+        },
+        tariffId: {
+            type: String,
+            nullable: false,
+            length: 26, // ulid length
+        },
+    },
+    embeddeds: {
+        arguments: {
+            schema: SurchargeArgumentsSchema,
+            prefix: "",
+        }
+    },
+    relations: {
+        tariff: {
+            type: "many-to-one",
+            target: Tariff.name,
+            inverseSide: "surcharges",
+            joinColumn: {
+                name: "tariffId",
+                referencedColumnName: "id",
+                foreignKeyConstraintName: 'FK_Surcharge_Tariff'
+            },
+            onDelete: "CASCADE"
+        }
+    }
+});
+
