@@ -85,12 +85,12 @@ describe('tariffs module - save tariff', () => {
                 id: result.id
             },
             relations: {
-                surchages: true
+                surcharges: true
             }
         });
         expect(savedTariff).toBeTruthy();
         expect(savedTariff.name).toBe('Test Tariff with Surcharges');
-        expect(savedTariff.surchages).toHaveLength(newTariff.surchages.length);
+        expect(savedTariff.surcharges).toHaveLength(newTariff.surcharges.length);
     });
 
     it('should save a new tariff with both validities and surcharges', async () => {
@@ -118,13 +118,13 @@ describe('tariffs module - save tariff', () => {
             },
             relations: {
                 validities: true,
-                surchages: true
+                surcharges: true
             }
         });
 
         expect(savedTariff).toBeTruthy();
         expect(savedTariff.name).toBe('Test Tariff with Validities and Surcharges');
         expect(savedTariff.validities).toHaveLength(newTariff.validities.length);
-        expect(savedTariff.surchages).toHaveLength(newTariff.surchages.length);
+        expect(savedTariff.surcharges).toHaveLength(newTariff.surcharges.length);
     });
 });

@@ -6,6 +6,7 @@ import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/i
 import { ProjectsModuleSchemas } from './old-sources/projects/persistence';
 import { NotificationsModuleSchemas } from './old-sources/notifications/persistence';
 import { TariffSchemas } from './old-sources/tariffs/persistence';
+import { BizPartnerSchemas } from './new/m-biz-partners/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({
@@ -32,7 +33,8 @@ const pgConnectionOptions = {
     entities: [
         ...ProjectsModuleSchemas,
         ...NotificationsModuleSchemas,
-        ...TariffSchemas
+        ...TariffSchemas,
+        ...BizPartnerSchemas
     ]
 } as PostgresConnectionOptions;
 

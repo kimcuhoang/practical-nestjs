@@ -17,7 +17,7 @@ export const TariffSchema = new EntitySchema<Tariff>({
         }
     },
     relations: {
-        surchages: {
+        surcharges: {
             type: "one-to-many",
             target: Surcharge.name,
             inverseSide: "tariff",

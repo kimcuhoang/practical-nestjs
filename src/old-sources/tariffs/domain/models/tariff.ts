@@ -10,7 +10,7 @@ export class Tariff extends EntityBase {
         super(partial?.id ?? ulid());
         Object.assign(this, partial);
         this.validities = [];
-        this.surchages = [];
+        this.surcharges = [];
     }
 
     name: string;
@@ -19,7 +19,7 @@ export class Tariff extends EntityBase {
     validities: StandardChargeValidity[];
 
     @Type(() => Surcharge)
-    surchages: Surcharge[];
+    surcharges: Surcharge[];
 
     public addValidity(partial: Partial<StandardChargeValidity>): Tariff {
         const validity = new StandardChargeValidity(this, partial);
@@ -29,7 +29,7 @@ export class Tariff extends EntityBase {
 
     public addSurcharge(partial: Partial<Surcharge>): Tariff {
         const surcharge = new Surcharge(this, partial);
-        this.surchages.push(surcharge);
+        this.surcharges.push(surcharge);
         return this;
     }
 }
