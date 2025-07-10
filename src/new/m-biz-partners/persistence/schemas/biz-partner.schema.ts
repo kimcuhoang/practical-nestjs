@@ -2,10 +2,11 @@ import { EntitySchema } from "typeorm";
 import { BizPartner } from "../../models";
 import { snakeCase } from "typeorm/util/StringUtils";
 import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/entity-base-schema";
+import { BizPartnerLocation } from "../../models/biz-partner-location";
+import { BizPartnerCommunication } from "../../models/biz-partner-communication";
 
 export const BizPartnerSchema =  new EntitySchema<BizPartner>({
     name: BizPartner.name,
-    target: BizPartner,
     tableName: snakeCase("BizPartners"),
     columns: {
         ...EntityBaseSchema,
@@ -21,10 +22,17 @@ export const BizPartnerSchema =  new EntitySchema<BizPartner>({
         },
     },
     relations: {
-        // locations: {
-        //     type: "one-to-many",
-        //     target: BizPartnerLocation.name,
-        //     inverseSide: "bizPartner"
-        // }
+        locations: {
+            type: "one-to-many",
+            target: BizPartnerLocation.name,
+            inverseSide: "bizPartner",
+            cascade: true
+        },
+        communications: {
+            type: "one-to-many",
+            target: BizPartnerCommunication.name,
+            inverseSide: "bizPartner",
+            cascade: true
+        }
     },
 });
