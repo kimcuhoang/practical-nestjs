@@ -1,15 +1,13 @@
 import { Global, Module } from "@nestjs/common";
 import { NewAppController } from "./new-app.controller";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { BizPartnerSchemas } from "./m-biz-partners/persistence";
+import { MainAppModule } from "./m-main-app/main-app.module";
 
 @Global()
 @Module({
     imports: [
-        TypeOrmModule.forFeature([...BizPartnerSchemas])
+        MainAppModule.register()
     ],
     exports: [
-        TypeOrmModule
     ],
     controllers: [NewAppController]
 })
