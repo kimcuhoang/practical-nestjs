@@ -1,10 +1,11 @@
 import { BizPartner } from "@src/new/m-biz-partners/models/biz-partner";
-import { BaseBizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { BizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
 
 
-export class CustomBizPartnerVerificationService extends BaseBizPartnerVerificationService {
+export class CustomBizPartnerVerificationService extends BizPartnerVerificationService {
     
-    public async verifyWhenAdding(bizPartner: BizPartner): Promise<boolean> {
+    public override async verifyWhenAdding(bizPartner: BizPartner): Promise<boolean> {
+        await super.verifyWhenAdding(bizPartner);
         const prefixes = await Promise.resolve([ "ABC", "DEF", "GHI" ]);
         return prefixes.some(prefix => bizPartner.bizPartnerKey.startsWith(prefix));
     }

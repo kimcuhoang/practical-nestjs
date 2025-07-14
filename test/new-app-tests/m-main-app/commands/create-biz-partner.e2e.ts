@@ -26,6 +26,21 @@ describe(`Create ${BizPartner.name} via command`, () => {
         await bizPartnerRepository.delete({});
     })
 
+    test("without biz partner key should be failed", async () => {
+        const payload  = {
+            bizPartnerKey: "",
+            name: faker.company.name(),
+            locations: faker.helpers.multiple(() => {
+                return {
+                    locationKey: faker.string.alphanumeric(10).toUpperCase(),
+                    address: faker.location.streetAddress({ useFullAddress: true })
+                } satisfies CreateBizPartnerLocationPayload
+            }, { count: 4 })
+        } satisfies CreateBizPartnerPayload;
+
+        await expect(commandBus.execute(new CreateBizPartnerCommand(payload))).rejects.toThrow("BizPartnerKey is required");
+    });
+
     test.each(["ABC", "DEF", "GHI"])("should be success when biz partner key starts with %s", async (prefix) => {
         const payload  = {
             bizPartnerKey: `${prefix}${faker.string.alphanumeric(10).toUpperCase()}`,

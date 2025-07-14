@@ -1,13 +1,14 @@
-import { Injectable } from "@nestjs/common";
 import { BizPartner } from "../models";
 
 export abstract class BaseBizPartnerVerificationService {
     abstract verifyWhenAdding(bizPartner: BizPartner): Promise<boolean>;
 }
 
-@Injectable()
 export class BizPartnerVerificationService extends BaseBizPartnerVerificationService {
-    public async verifyWhenAdding(bizPartner: BizPartner): Promise<boolean> {
+    public override async verifyWhenAdding(bizPartner: BizPartner): Promise<boolean> {
+        if (!bizPartner.bizPartnerKey) {
+            throw new Error("BizPartnerKey is required");
+        }
         return Promise.resolve(true)
     }
 }
