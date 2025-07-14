@@ -5,7 +5,7 @@ import { BizPartner, BizPartnerLocation } from "@src/new/m-biz-partners/models";
 import { plainToInstance } from "class-transformer";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BadRequestException, Inject } from "@nestjs/common";
-import { BaseBizPartnerVerificationService, BizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { IBizPartnerVerificationService, BizPartnerVerificationService, IBizPartnerVerificationServiceSymbol } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
 
 @CommandHandler(CreateBizPartnerCommand)
 export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartnerCommand, string> {
@@ -13,8 +13,8 @@ export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartner
     constructor(
         @InjectRepository(BizPartner)
         private readonly bizPartnerRepository: Repository<BizPartner>,
-        @Inject(BaseBizPartnerVerificationService)
-        private readonly bizPartnerVerificationService: BaseBizPartnerVerificationService
+        @Inject(IBizPartnerVerificationServiceSymbol)
+        private readonly bizPartnerVerificationService: IBizPartnerVerificationService
     ) {}
 
     public async execute(command: CreateBizPartnerCommand): Promise<string> {

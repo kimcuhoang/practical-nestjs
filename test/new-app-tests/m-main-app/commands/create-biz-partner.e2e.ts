@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { BizPartner } from "@src/new/m-biz-partners/models";
-import { BaseBizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { IBizPartnerVerificationService, IBizPartnerVerificationServiceSymbol } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
 import { CreateBizPartnerCommand, CreateBizPartnerLocationPayload, CreateBizPartnerPayload } from "@src/new/m-biz-partners/usecases/commands/create-biz-partner/create-biz-partner.command";
 import { CustomBizPartnerVerificationService } from "@src/new/m-main-app/services/custom-biz-partner-verification.service";
 import { app } from "@test/test.setup";
@@ -11,13 +11,13 @@ import { Repository } from "typeorm";
 
 describe(`Create ${BizPartner.name} via command`, () => {
     let bizPartnerRepository: Repository<BizPartner>;
-    let bizPartnerVerificationService: BaseBizPartnerVerificationService;
+    let bizPartnerVerificationService: IBizPartnerVerificationService;
     let commandBus: CommandBus;
 
     beforeAll(() => {
         bizPartnerRepository = app.get(getRepositoryToken(BizPartner));
         commandBus = app.get(CommandBus);
-        bizPartnerVerificationService = app.get(BaseBizPartnerVerificationService);
+        bizPartnerVerificationService = app.get(IBizPartnerVerificationServiceSymbol);
 
         expect(bizPartnerVerificationService).toBeInstanceOf(CustomBizPartnerVerificationService);
     })

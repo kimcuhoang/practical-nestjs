@@ -2,10 +2,10 @@ import { DynamicModule, Global, Module, Provider } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BizPartnerSchemas } from "./persistence";
 import { CqrsCommandHandlers } from "./usecases/commands";
-import { BaseBizPartnerVerificationService, BizPartnerVerificationService } from "./services/biz-partner-verification.service";
+import { IBizPartnerVerificationService, BizPartnerVerificationService, IBizPartnerVerificationServiceSymbol } from "./services/biz-partner-verification.service";
 
 export type BizPartnersModuleOptions = {
-    bizPartnerVerificationService?: Provider<BaseBizPartnerVerificationService>;
+    bizPartnerVerificationService?: Provider<IBizPartnerVerificationService>;
 };
 
 @Global()
@@ -15,7 +15,7 @@ export class BizPartnersModule {
         const providers: Provider[] = [ 
             ...CqrsCommandHandlers,
             options?.bizPartnerVerificationService || {
-                provide: BaseBizPartnerVerificationService,
+                provide: IBizPartnerVerificationServiceSymbol,
                 useClass: BizPartnerVerificationService
             }
         ]
