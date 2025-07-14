@@ -1,9 +1,7 @@
-import { faker } from "@faker-js/faker";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { SurchargeArguments, SurchargeType } from "@src/old-sources/tariffs/domain/models/surcharge.entities";
 import { Tariff } from "@src/old-sources/tariffs/domain/models/tariff";
-import { app } from "@test/test.setup";
-import moment from "moment";
+import { app, moment } from "@test/test.setup";
 import { Repository } from "typeorm";
 
 

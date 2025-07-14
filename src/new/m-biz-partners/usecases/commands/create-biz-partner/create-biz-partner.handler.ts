@@ -5,7 +5,7 @@ import { BizPartner, BizPartnerLocation } from "@src/new/m-biz-partners/models";
 import { plainToInstance } from "class-transformer";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BadRequestException, Inject } from "@nestjs/common";
-import { BizPartnerVerificationService, BizPartnerVerificationServiceSymbol } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { BaseBizPartnerVerificationService, BizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
 
 @CommandHandler(CreateBizPartnerCommand)
 export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartnerCommand, string> {
@@ -13,10 +13,9 @@ export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartner
     constructor(
         @InjectRepository(BizPartner)
         private readonly bizPartnerRepository: Repository<BizPartner>,
-        @Inject(BizPartnerVerificationServiceSymbol)
-        private readonly bizPartnerVerificationService: BizPartnerVerificationService
-    ) {
-    }
+        @Inject(BaseBizPartnerVerificationService)
+        private readonly bizPartnerVerificationService: BaseBizPartnerVerificationService
+    ) {}
 
     public async execute(command: CreateBizPartnerCommand): Promise<string> {
         const payload = command.payload;
@@ -33,7 +32,8 @@ export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartner
             });
         }
 
-        if (!this.bizPartnerVerificationService.verifyWhenAdding(bizPartner)) {
+        const canAddBizPartner = await this.bizPartnerVerificationService.verifyWhenAdding(bizPartner);
+        if (!canAddBizPartner) {
             throw new BadRequestException(`The Business-Partner-Key has not been allowed to add`);
         }
 
