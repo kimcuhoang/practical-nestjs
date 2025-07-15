@@ -12,6 +12,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OldAppModule } from './old-sources/old-app.module';
 import { NewAppModule } from './new-sources';
+import { SaleOrdersModule } from './w-hra-modules';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -41,7 +42,8 @@ const infrastructureModules = [
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     OldAppModule,
-    NewAppModule
+    NewAppModule,
+    SaleOrdersModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

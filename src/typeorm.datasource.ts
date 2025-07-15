@@ -8,6 +8,7 @@ import { NotificationsModuleSchemas } from './old-sources/notifications/persiste
 import { TariffSchemas } from './new-sources/tariffs/persistence';
 import { BizPartnerSchemas } from './new-sources/m-biz-partners/persistence';
 import { LocationSchemas } from './new-sources/m-locations/persistence';
+import { WhraModuleSchemas } from './w-hra-modules';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({
@@ -36,7 +37,8 @@ const pgConnectionOptions = {
         ...NotificationsModuleSchemas,
         ...TariffSchemas,
         ...BizPartnerSchemas,
-        ...LocationSchemas
+        ...LocationSchemas,
+        ...WhraModuleSchemas
     ]
 } as PostgresConnectionOptions;
 

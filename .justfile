@@ -56,9 +56,9 @@ e2e-folder name: pre-test
     clear
     npx yarn test:e2e --testPathPattern=test/{{name}}
 
-e2e-new: pre-test
+e2e-w-hra-modules: pre-test
     clear
-    npx yarn test:e2e --testPathPattern=test/new-app-tests
+    npx yarn test:e2e --testPathPattern=test/w-hra-modules
 
 s:
     clear
