@@ -1,6 +1,6 @@
 import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/entity-base-schema";
-import { Surcharge, SurchargeArguments } from "@src/old-sources/tariffs/domain/models/surcharge.entities";
-import { Tariff } from "@src/old-sources/tariffs/domain/models/tariff";
+import { Surcharge, SurchargeArguments } from "@src/new-sources/tariffs/domain/models/surcharge.entities";
+import { Tariff } from "@src/new-sources/tariffs/domain/models/tariff";
 import { EntitySchema } from "typeorm";
 import { snakeCase } from "typeorm/util/StringUtils";
 

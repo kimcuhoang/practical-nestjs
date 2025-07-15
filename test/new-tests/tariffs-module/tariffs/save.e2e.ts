@@ -1,6 +1,6 @@
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { SurchargeArguments, SurchargeType } from "@src/old-sources/tariffs/domain/models/surcharge.entities";
-import { Tariff } from "@src/old-sources/tariffs/domain/models/tariff";
+import { SurchargeArguments, SurchargeType } from "@src/new-sources/tariffs/domain/models/surcharge.entities";
+import { Tariff } from "@src/new-sources/tariffs/domain/models/tariff";
 import { app, moment } from "@test/test.setup";
 import { Repository } from "typeorm";
 

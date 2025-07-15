@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { BizPartner } from "@src/new/m-biz-partners/models";
-import { BizPartnerLocation } from "@src/new/m-biz-partners/models/biz-partner-location";
+import { BizPartner } from "@src/new-sources/m-biz-partners/models";
+import { BizPartnerLocation } from "@src/new-sources/m-biz-partners/models/biz-partner-location";
 import { app } from "@test/test.setup";
 import { Repository } from "typeorm";
 

@@ -1,5 +1,5 @@
 import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/entity-base-schema";
-import { ESignature, PaymentSignature, Signature, SignatureType } from "@src/old-sources/tariffs/domain/models/signatures";
+import { ESignature, PaymentSignature, Signature, SignatureType } from "@src/new-sources/tariffs/domain/models/signatures";
 import { EntitySchema } from "typeorm";
 import { snakeCase } from "typeorm/util/StringUtils";
 

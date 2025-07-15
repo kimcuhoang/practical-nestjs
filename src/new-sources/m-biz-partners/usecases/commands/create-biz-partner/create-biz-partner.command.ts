@@ -1,6 +1,6 @@
 import { ICommand } from "@nestjs/cqrs";
 import { PickType } from "@nestjs/swagger";
-import { BizPartner, BizPartnerLocation } from "@src/new/m-biz-partners/models";
+import { BizPartner, BizPartnerLocation } from "@src/new-sources/m-biz-partners/models";
 import { Type } from "class-transformer";
 
 export class CreateBizPartnerLocationPayload 

@@ -1,4 +1,4 @@
-import { BeforeInsert, EntitySchemaColumnOptions } from "typeorm";
+import { EntitySchemaColumnOptions } from "typeorm";
 
 export const EntityBaseSchema = {
     id: {

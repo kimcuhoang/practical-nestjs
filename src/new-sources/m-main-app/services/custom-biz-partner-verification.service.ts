@@ -1,5 +1,5 @@
-import { BizPartner } from "@src/new/m-biz-partners/models/biz-partner";
-import { BizPartnerVerificationService } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { BizPartner } from "@src/new-sources/m-biz-partners/models/biz-partner";
+import { BizPartnerVerificationService } from "@src/new-sources/m-biz-partners/services/biz-partner-verification.service";
 
 
 export class CustomBizPartnerVerificationService extends BizPartnerVerificationService {

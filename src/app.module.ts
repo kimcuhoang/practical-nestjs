@@ -11,7 +11,7 @@ import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OldAppModule } from './old-sources/old-app.module';
-import { NewAppModule } from './new';
+import { NewAppModule } from './new-sources';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {

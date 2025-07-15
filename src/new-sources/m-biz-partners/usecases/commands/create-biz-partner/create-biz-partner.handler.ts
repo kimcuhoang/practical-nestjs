@@ -1,11 +1,11 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { CreateBizPartnerCommand } from "./create-biz-partner.command";
 import { Repository } from "typeorm";
-import { BizPartner, BizPartnerLocation } from "@src/new/m-biz-partners/models";
+import { BizPartner, BizPartnerLocation } from "@src/new-sources/m-biz-partners/models";
 import { plainToInstance } from "class-transformer";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BadRequestException, Inject } from "@nestjs/common";
-import { IBizPartnerVerificationService, BizPartnerVerificationService, IBizPartnerVerificationServiceSymbol } from "@src/new/m-biz-partners/services/biz-partner-verification.service";
+import { IBizPartnerVerificationService, BizPartnerVerificationService, IBizPartnerVerificationServiceSymbol } from "@src/new-sources/m-biz-partners/services/biz-partner-verification.service";
 
 @CommandHandler(CreateBizPartnerCommand)
 export class CreateBizPartnerHandler implements ICommandHandler<CreateBizPartnerCommand, string> {

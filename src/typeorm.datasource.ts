@@ -5,9 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
 import { ProjectsModuleSchemas } from './old-sources/projects/persistence';
 import { NotificationsModuleSchemas } from './old-sources/notifications/persistence';
-import { TariffSchemas } from './old-sources/tariffs/persistence';
-import { BizPartnerSchemas } from './new/m-biz-partners/persistence';
-import { LocationSchemas } from './new/m-locations/persistence';
+import { TariffSchemas } from './new-sources/tariffs/persistence';
+import { BizPartnerSchemas } from './new-sources/m-biz-partners/persistence';
+import { LocationSchemas } from './new-sources/m-locations/persistence';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({

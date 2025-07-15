@@ -1,4 +1,4 @@
-import { NewAppController } from "@src/new/new-app.controller";
+import { NewAppController } from "@src/new-sources/new-app.controller";
 import { request } from "@test/test.setup";
 
 

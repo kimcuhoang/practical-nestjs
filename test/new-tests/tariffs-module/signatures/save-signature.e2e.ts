@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { ESignature, PaymentSignature, Signature, SignatureType } from "@src/old-sources/tariffs/domain/models/signatures";
+import { ESignature, PaymentSignature, Signature, SignatureType } from "@src/new-sources/tariffs/domain/models/signatures";
 import { app } from "@test/test.setup";
 import { Repository } from "typeorm";
 
