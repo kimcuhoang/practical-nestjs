@@ -1,28 +1,23 @@
 import { faker } from "@faker-js/faker";
-import { CommandBus } from "@nestjs/cqrs";
+import { HttpStatus } from "@nestjs/common";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
-import { CreateSaleOrderCommand, CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
-import { CreateSaleOrderHandler } from "@src/w-hra-modules/sale-orders/use-cases/commands/create/create-sale-order.handler";
+import { CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
 import { BizUnit } from "@src/w-hra-modules/shipments/domain";
-import { app, TestHelpers } from "@test/test.setup";
+import { SaleOrdersController } from "@src/w-hra-planning/controllers/sale-orders.controller";
+import { app, request, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 
-const genCode = () => faker.string.alphanumeric(10).toUpperCase();
 
-
-describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
+describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
     let saleOrderRepository: Repository<SaleOrder>;
     let bizUnitRepository: Repository<BizUnit>;
-    let commandBus: CommandBus;
-
     const regionCode = "ES";
     let bizUnit: BizUnit;
 
     beforeAll(() => {
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
-        commandBus = app.get(CommandBus);
     });
 
     beforeEach(async () => {
@@ -38,34 +33,37 @@ describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
         expect(bizUnit).toBeTruthy();
     });
 
-    afterEach(async() => {
+    afterEach(async () => {
         await saleOrderRepository.delete({});
         await bizUnitRepository.delete({});
     });
 
-    test(`should be success`, async() => {
+    test(`should be success`, async () => {
         const payload = {
-            saleOrderCode: genCode(),
-            sourceGeographicalKey: genCode(),
-            destinationGeographicalKey: genCode(),
+            saleOrderCode: TestHelpers.genCode(),
+            sourceGeographicalKey: TestHelpers.genCode(),
+            destinationGeographicalKey: TestHelpers.genCode(),
             regionCode: regionCode,
             items: faker.helpers.multiple(() => ({
-                productKey: genCode(),
+                productKey: TestHelpers.genCode(),
                 quantity: faker.number.int({ min: 10, max: 100 })
-            } satisfies CreateSaleOrderItemPayload), { count: 3 } )
+            } satisfies CreateSaleOrderItemPayload), { count: 3 })
         } satisfies CreateSaleOrderPayload;
 
-        const saleOrderId = await commandBus.execute(new CreateSaleOrderCommand(payload));
+        const response = await request
+            .post(`/sale-orders`)
+            .send(payload)
+            .expect(HttpStatus.CREATED);
 
+        const saleOrderId = response.text;
         expect(saleOrderId).toBeTruthy();
 
-        const saleOrder = await saleOrderRepository.findOne({
+        const saleOrder = await saleOrderRepository.findOne({ 
             where: { id: saleOrderId },
             relations: {
                 items: true
             }
         });
-
         expect(saleOrder).toBeTruthy();
         expect(saleOrder.saleOrderCode).toBe(payload.saleOrderCode);
         expect(saleOrder.sourceGeographicalKey).toBe(payload.sourceGeographicalKey);

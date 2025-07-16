@@ -1,4 +1,4 @@
-import { INestApplication, LogLevel } from '@nestjs/common';
+import { INestApplication, LogLevel, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
@@ -46,7 +46,12 @@ beforeAll(async () => {
         bodyParser: true
     });
 
-    app.useGlobalPipes(new I18nValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(new I18nValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true
+    }));
+    
     app.useGlobalFilters(
         new I18nValidationExceptionFilter({
             detailedErrors: true
@@ -57,7 +62,7 @@ beforeAll(async () => {
     const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [];
     app.useLogger(logLevels as LogLevel[]);
 
-    
+
     await app.init();
     request = httpClient(app.getHttpServer());
 });

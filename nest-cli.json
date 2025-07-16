@@ -4,8 +4,21 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
+    "plugins": [
+      {
+        "name": "@nestjs/swagger/plugin",
+        "options": {
+          "introspectComments": true,
+          "classValidatorShim": true,
+          "dtoKeyOfComment": "description",
+          "controllerKeyOfComment": "summary",
+          "dtoFileNameSuffix": [".payload.ts", ".dto.ts"],
+          "controllerFileNameSuffix": ".controller.ts"
+        }
+      }
+    ],
     "assets": [
-      { "include": "localizations/resources/**/*", "watchAssets": true }
+      { "include": "old-sources/localizations/resources/**/*", "watchAssets": true }
     ]
   }
 }

@@ -9,7 +9,7 @@ export class AppController {
     private readonly appService: AppService,
   ) {}
 
-  @Get("")
+  @Get()
   @ApiExcludeEndpoint(true)
   @Redirect("/swagger", HttpStatus.MOVED_PERMANENTLY)
   

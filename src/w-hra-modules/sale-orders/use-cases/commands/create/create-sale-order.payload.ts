@@ -1,14 +1,38 @@
-import { PickType } from "@nestjs/swagger";
-import { SaleOrder, SaleOrderItem } from "@src/w-hra-modules/sale-orders/domain";
 import { Type } from "class-transformer";
+import { IsArray, IsInt, IsNotEmpty, IsString, Min } from "class-validator";
 
 
-export class CreateSaleOrderPayload 
-    extends PickType(SaleOrder, ["saleOrderCode", "sourceGeographicalKey", "destinationGeographicalKey", "regionCode"] as const) {
+export class CreateSaleOrderItemPayload
+{
+    @IsString()
+    @IsNotEmpty()
+    productKey!: string;
 
-    @Type(() => CreateSaleOrderItemPayload)
-    items: CreateSaleOrderItemPayload[];
+    @IsInt()
+    @Min(1)
+    quantity!: number;
 }
 
-export class CreateSaleOrderItemPayload 
-    extends PickType(SaleOrderItem, [ "productKey", "quantity" ] as const) { }
+export class CreateSaleOrderPayload
+{
+    @IsString()
+    @IsNotEmpty()
+    saleOrderCode!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    sourceGeographicalKey!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    destinationGeographicalKey!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    regionCode!: string;
+
+    @IsArray()
+    @IsNotEmpty()
+    @Type(() => CreateSaleOrderItemPayload)
+    items!: CreateSaleOrderItemPayload[];    
+}
