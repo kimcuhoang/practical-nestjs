@@ -1,16 +1,18 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { SaleOrderModuleSchemas } from "./persistence";
+import { ShipmentsModuleSchemas } from "./persistence";
 import { CqrsCommandHandlers } from "./use-cases/commands";
 
 
 @Module({})
-export class SaleOrdersModule {
+export class ShipmentsModule {
     public static forRoot(): DynamicModule {
         return {
-            module: SaleOrdersModule,
+            module: ShipmentsModule,
             imports: [
-                TypeOrmModule.forFeature([ ...SaleOrderModuleSchemas ])
+                TypeOrmModule.forFeature([
+                    ...ShipmentsModuleSchemas
+                ])
             ],
             providers: [
                 ...CqrsCommandHandlers

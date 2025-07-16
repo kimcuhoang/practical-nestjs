@@ -6,6 +6,7 @@ import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
 import * as httpClient from 'supertest';
 import * as moment from "moment";
+import * as TestHelpers from "@test/test-helpers";
 
 let app: INestApplication;
 let connectionString: string;
@@ -67,4 +68,4 @@ afterAll(async () => {
 
 // add some timeout until containers are up and working 
 jest.setTimeout(120000);
-export { app, request, moment };
+export { app, request, moment, TestHelpers };
