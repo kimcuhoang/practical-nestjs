@@ -50,6 +50,8 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
             } satisfies CreateSaleOrderItemPayload), { count: 3 })
         } satisfies CreateSaleOrderPayload;
 
+        console.log(JSON.stringify(payload));
+
         const response = await request
             .post(`/sale-orders`)
             .send(payload)

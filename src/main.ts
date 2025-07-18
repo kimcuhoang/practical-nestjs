@@ -14,15 +14,24 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule, {
-    abortOnError: true
+    abortOnError: true,
+    bodyParser: true
   });
 
   const configService = app.get<ConfigService>(ConfigService);
 
-  const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [ 'error' ];
+  const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? ['error'];
   app.useLogger(logLevels as LogLevel[]);
-  
-  app.useGlobalPipes(new I18nValidationPipe());
+
+  app.useGlobalPipes(new I18nValidationPipe({
+    whitelist: false,
+    transform: true,
+    stopAtFirstError: true,
+    always: true,
+    transformOptions: {
+      enableImplicitConversion: true,
+    }
+  }));
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({
       detailedErrors: true,
@@ -46,7 +55,7 @@ async function bootstrap() {
     explorer: true
   });
 
-  
+
   await app.listen(3000);
 }
 bootstrap();

@@ -47,9 +47,14 @@ beforeAll(async () => {
     });
 
     app.useGlobalPipes(new I18nValidationPipe({
-        whitelist: true,
+        whitelist: false,
         transform: true,
-        forbidNonWhitelisted: true
+        forbidNonWhitelisted: true,
+        stopAtFirstError: true,
+        always: true,
+        transformOptions: {
+            enableImplicitConversion: true,
+        }
     }));
     
     app.useGlobalFilters(

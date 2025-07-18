@@ -8,7 +8,7 @@ default:
 i:
     clear
     rm -rf node_modules
-    yarn install
+    npx yarn install
 
 b: 
     clear
@@ -62,4 +62,4 @@ e2e-w-hra-modules: pre-test
 
 s:
     clear
-    yarn start:dev
+    npx yarn start:dev
