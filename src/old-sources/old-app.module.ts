@@ -1,7 +1,6 @@
 
 import { Module } from '@nestjs/common';
 import { OldAppController } from './old-app.controller';
-import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
 import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
 import { NotificationsModule } from './notifications';
 import { ProjectsModule } from './projects';
@@ -10,13 +9,6 @@ import { ProjectsModule } from './projects';
 const featureModules = [
   ProjectsModule,
   NotificationsModule,
-  BusinessPartnersModule.register(configService => {
-    return new BusinessPartnersModuleOptions({
-      businessPartnerSolaceQueueName: configService.get<string>("BUSINESS_PARTNER_SOLACE_QUEUE"),
-      enabledSubscribeTopics: configService.get("BUSINESS_PARTNER_SOLACE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true',
-      topicCRT: configService.get("BUSINESS_PARTNER_SOLACE_QUEUE_TOPIC_CRT")
-    });
-  })
 ];
 
 @Module({

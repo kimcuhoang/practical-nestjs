@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { LogLevel } from "solclientjs";
 
-
 @Injectable()
-export class SolaceModuleSettings {
+export class SolaceQueueOptions {
     enabled: boolean;
     logLevel: string;
     clientName: string;
@@ -12,8 +11,9 @@ export class SolaceModuleSettings {
     solaceUsername: string;
     solacePassword: string;
     acknowledgeMessage: boolean;
+    messageConsumerWindowSize?: number;
 
-    constructor(settings: Partial<SolaceModuleSettings>){
+    constructor(settings: Partial<SolaceQueueOptions>){
         Object.assign(this, settings);
     }
 

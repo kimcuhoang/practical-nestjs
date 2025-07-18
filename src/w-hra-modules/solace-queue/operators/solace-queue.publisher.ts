@@ -1,15 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { SolaceQueueOptions } from "../solace-queue.options";
 import { Destination, MessageDeliveryModeType, Session, SolclientFactory } from "solclientjs";
-import { SolaceModuleSettings } from "./solace.module.settings";
-
 
 @Injectable()
-export class SolacePublisher {
-
-    private readonly logger = new Logger(SolacePublisher.name);
+export class SolaceQueuePublisher {
+    private readonly logger = new Logger(SolaceQueuePublisher.name);
 
     constructor(
-        private readonly solaceModuleSettings: SolaceModuleSettings,
+        private readonly options: SolaceQueueOptions,
         private readonly solaceSession: Session
     ){}
 
@@ -26,7 +24,7 @@ export class SolacePublisher {
 
     public PublishQueue(queue: string, message: any) : void
     {
-        if (!this.solaceModuleSettings.enabled) {
+        if (!this.options.enabled) {
             this.logger.warn('Solace is disabled');
             return;
         }
@@ -43,7 +41,7 @@ export class SolacePublisher {
 
     public PublishTopic(topic: string, message: any): void
     {
-        if (!this.solaceModuleSettings.enabled) {
+        if (!this.options.enabled) {
             this.logger.warn('Solace is disabled');
             return;
         }
