@@ -1,14 +1,12 @@
 import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { SolaceQueueSubscriber } from "./operators/solace-queue.subscriber";
 import { SolaceQueuePublisher } from "./operators/solace-queue.publisher";
-import { ISubscriptionInstanceBootstrap } from "./instances/subscription-instance.bootstrap";
 import { SolaceQueueOptions } from "./solace-queue.options";
 import { ConfigService } from "@nestjs/config";
 import { MessagePublisherAcknowledgeMode, Session, SessionProperties, SolclientFactory, SolclientFactoryProfiles, SolclientFactoryProperties } from "solclientjs";
 import { SolaceQueueProvider } from "./solace-queue.provider";
 
 export type SolaceQueueModuleSettings = {
-    subscriptionInstances?: Provider<ISubscriptionInstanceBootstrap[]>;
     additionalProviders?: Provider[];
 }
 
@@ -17,6 +15,7 @@ export class SolaceQueueModule {
     public static forRoot(settings?: SolaceQueueModuleSettings): DynamicModule {
 
         const providers: Provider[] = [
+            ...settings?.additionalProviders || [],
             SolaceQueueProvider,
             SolaceQueueSubscriber,
             SolaceQueuePublisher,
@@ -79,12 +78,7 @@ export class SolaceQueueModule {
 
         return {
             module: SolaceQueueModule,
-            providers: [
-                ...providers, 
-                ...(settings?.subscriptionInstances ? [settings.subscriptionInstances] : []), 
-                ...(settings?.additionalProviders || []),
-            ],
-            exports: [...providers]
+            providers: [ ...providers ]
         } as DynamicModule;
     }
 }

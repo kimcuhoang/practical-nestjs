@@ -1,17 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { SubscriptionInstanceOptions } from "@src/w-hra-modules/solace-queue/instances/subscription-instance.options";
+
 
 @Injectable()
-export class SaleOrderQueueOptions {
-    enabledSubscribeFromQueue: boolean;
-    enabledRecordMessage: boolean;
-    enabledRecordInvalidMessage: boolean;
-    enabledSubscribeFromTopics: boolean;
-
-    queueName: string;
-    topicTemplates: string[] = [];
-    topicActions: string[] = [];
-
+export class SaleOrderQueueOptions extends SubscriptionInstanceOptions {
+    
     constructor(options: Partial<SaleOrderQueueOptions>) {
+        super();
         Object.assign(this, options);
     }
 }

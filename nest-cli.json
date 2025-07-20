@@ -18,7 +18,7 @@
       }
     ],
     "assets": [
-      { "include": "old-sources/localizations/resources/**/*", "watchAssets": true }
+      { "include": "/old-sources/localizations/resources/**/*", "watchAssets": true }
     ]
   }
 }
