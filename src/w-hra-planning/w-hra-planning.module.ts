@@ -9,6 +9,7 @@ import { ISubscriptionInstanceBootstrap, SubscriptionInstanceBootstrapsSymbol } 
 import { SaleOrderQueueIntegrationService } from "./services/solace-queue-integrations/sale-orders/sale-order-queue-integration.service";
 import { SaleOrderQueueOptions } from "./services/solace-queue-integrations/sale-orders/sale-order-queue.options";
 import { ConfigService } from "@nestjs/config";
+import { BizUnitsControllers } from "./controllers/biz-units.controller";
 
 
 @Module({})
@@ -63,9 +64,9 @@ export class WhraPlanningModule {
             providers: [
                 ...solaceSubscriptionInstances,
                 ...internalProviders
-
             ],
             controllers: [
+                BizUnitsControllers,
                 SaleOrdersController
             ]
         } as DynamicModule;

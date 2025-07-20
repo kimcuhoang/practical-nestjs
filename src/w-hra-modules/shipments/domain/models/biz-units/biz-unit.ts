@@ -5,13 +5,13 @@ import { BizUnitSettings } from "./biz-unit-settings";
 
 
 export class BizUnit extends EntityBase {
-    bizUnitCode: string;
+    bizUnitCode!: string;
 
     @Type(() => BizUnitSettings)
-    settings: BizUnitSettings;
+    settings!: BizUnitSettings;
 
     @Type(() => BizUnitRegion)
-    regions: BizUnitRegion[];
+    regions!: BizUnitRegion[];
 
     constructor() {
         super();

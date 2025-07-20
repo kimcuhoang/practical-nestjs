@@ -1,10 +1,24 @@
-import { PickType } from "@nestjs/swagger";
-import { BizUnit, BizUnitRegion } from "@src/w-hra-modules/shipments/domain";
 import { Type } from "class-transformer";
+import { ValidateNested } from "class-validator";
 
-export class CreateBizUnitRegionPayload extends PickType(BizUnitRegion, ["regionCode"] as const) {}
+export class CreateBizUnitSettingsPayload {
+    countryCode!: string;
+    timeZone!: string;
+}
 
-export class CreateBizUnitPayload extends PickType(BizUnit, ["bizUnitCode", "settings"] as const) { 
+export class CreateBizUnitRegionPayload {
+    regionCode!: string;
+}
+
+export class CreateBizUnitPayload { 
+
+    bizUnitCode!: string;
+
+    @ValidateNested()
+    @Type(() => CreateBizUnitSettingsPayload)
+    settings!: CreateBizUnitSettingsPayload
+
+    @ValidateNested({ each: true })
     @Type(() => CreateBizUnitRegionPayload)
-    regions: CreateBizUnitRegionPayload[];
+    regions!: CreateBizUnitRegionPayload[];
 }

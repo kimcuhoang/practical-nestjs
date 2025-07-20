@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { Min } from "class-validator";
+import { IsArray, Min, ValidateNested } from "class-validator";
 
 export class CreateSaleOrderItemPayload
 {
@@ -16,6 +16,7 @@ export class CreateSaleOrderPayload
     destinationGeographicalKey!: string;
     regionCode!: string;
 
+    @ValidateNested({ each: true })
     @Type(() => CreateSaleOrderItemPayload)
     items!: CreateSaleOrderItemPayload[];    
 }

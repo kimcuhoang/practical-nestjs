@@ -47,7 +47,9 @@ beforeAll(async () => {
     });
 
     app.useGlobalPipes(new I18nValidationPipe({
-        whitelist: false,
+        //since we don't config @nestjs/swagger CLI plugin
+        // TODO: config ts-jest within @nestjs/swagger
+        whitelist: false, 
         transform: true,
         forbidNonWhitelisted: true,
         stopAtFirstError: true,

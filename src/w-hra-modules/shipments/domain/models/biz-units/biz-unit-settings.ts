@@ -1,6 +1,6 @@
 
 
 export class BizUnitSettings {
-    countryCode: string;
-    timeZone: string;
+    countryCode!: string;
+    timeZone!: string;
 }

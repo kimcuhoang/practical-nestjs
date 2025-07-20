@@ -1,8 +1,7 @@
-import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
-import { LogLevel, ValidationPipe } from '@nestjs/common';
+import { LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';

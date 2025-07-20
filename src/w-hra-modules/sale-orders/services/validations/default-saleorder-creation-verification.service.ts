@@ -13,7 +13,7 @@ export class DefaultSaleOrderCreationValidationService implements ISaleOrderCrea
                         && !!saleOrder.saleOrderCode
                         && !!saleOrder.regionCode
                         && !!saleOrder.items.length;
-            resolve(isValid);
+            return resolve(isValid);
         });
     }
 }
