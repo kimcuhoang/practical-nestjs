@@ -1,42 +1,41 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { CommandBus } from "@nestjs/cqrs";
+import { SolaceReplayRequest } from "@src/w-hra-modules/solace-queue/instances/solace-replay.request";
 import { SubscriptionInstanceBase } from "@src/w-hra-modules/solace-queue/instances/subscription-instance.base";
 import { SolaceQueueSubscriber } from "@src/w-hra-modules/solace-queue/operators/solace-queue.subscriber";
 import { SolaceQueueOptions } from "@src/w-hra-modules/solace-queue/solace-queue.options";
-import { SolaceReplayRequest } from "@src/w-hra-modules/solace-queue/instances/solace-replay.request";
-import { SaleOrderQueueOptions } from "./sale-order-queue.options";
-import { CreateSaleOrderCommand, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
-import { CommandBus } from "@nestjs/cqrs";
-
+import { ShipmentsQueueOptions } from "./shipments-queue.options";
+import { CreateShipmentCommand, CreateShipmentPayload } from "@src/w-hra-modules/shipments/use-cases/commands";
 
 @Injectable()
-export class SaleOrderQueueIntegrationService extends SubscriptionInstanceBase {
+export class ShipmentsQueueIntegrationService extends SubscriptionInstanceBase {
     protected readonly logger: Logger;
 
     constructor(
         protected readonly solaceQueueOptions: SolaceQueueOptions,
         protected readonly solaceSubscription: SolaceQueueSubscriber,
-        private readonly saleOrderQueueOptions: SaleOrderQueueOptions,
+        private readonly shipmentsQueueOptions: ShipmentsQueueOptions,
         private readonly commandBus: CommandBus
     ) {
-        const logger = new Logger(SaleOrderQueueIntegrationService.name);
+        const logger = new Logger(ShipmentsQueueIntegrationService.name);
         super(solaceQueueOptions, solaceSubscription, logger);
         this.logger = logger;
     }
 
     protected allowSubscribing(): boolean {
-        return this.saleOrderQueueOptions.enabledSubscribeFromQueue;
+        return this.shipmentsQueueOptions.enabledSubscribeFromQueue;
     }
 
     protected async getTopics(): Promise<string[]> {
-        return await Promise.resolve(this.saleOrderQueueOptions.getTopics());
+        return await Promise.resolve(this.shipmentsQueueOptions.getTopics());
     }
 
     protected async handleMessage(message: any, messageContent: any): Promise<void> {
-        const payload = JSON.parse(messageContent) as CreateSaleOrderPayload;
-        const saleOrderId = await this.commandBus.execute(new CreateSaleOrderCommand(payload));
+        const payload = JSON.parse(messageContent) as CreateShipmentPayload;
+        const shipmentId = await this.commandBus.execute(new CreateShipmentCommand(payload));
         this.logger.log(JSON.stringify({
             message: messageContent,
-            saleOrderId: saleOrderId
+            shipmentId: shipmentId
         }));
     }
 
@@ -45,15 +44,17 @@ export class SaleOrderQueueIntegrationService extends SubscriptionInstanceBase {
     }
 
     public async startLiveMode(): Promise<void> {
-        await this.doStartLiveMode(this.saleOrderQueueOptions.queueName);
+        await this.doStartLiveMode(this.shipmentsQueueOptions.queueName);
         if (this.allowSubscribing()) {
-            this.logger.warn("Solace - SaleOrder - Live Mode");
+            this.logger.warn("Solace - Shipments - Live Mode");
         }
     }
+
     public async startReplayMode(replayRequest?: SolaceReplayRequest): Promise<void> {
-        await this.doStartReplayMode(this.saleOrderQueueOptions.queueName, replayRequest);
+        await this.doStartReplayMode(this.shipmentsQueueOptions.queueName, replayRequest);
         if (this.allowSubscribing()) {
-            this.logger.warn("Solace - SaleOrder - Replay Mode");
+            this.logger.warn("Solace - Shipments - Replay Mode");
         }
     }
+
 }
