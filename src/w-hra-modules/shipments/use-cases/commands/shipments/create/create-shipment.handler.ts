@@ -3,6 +3,9 @@ import { CreateShipmentCommand } from "./create-shipment.command";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Shipment } from "@src/w-hra-modules/shipments/domain";
 import { Repository } from "typeorm";
+import { Inject } from "@nestjs/common";
+import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
+import { Transactional } from "typeorm-transactional";
 
 @CommandHandler(CreateShipmentCommand)
 export class CreateShipmentHandler implements ICommandHandler<CreateShipmentCommand, string> {
@@ -10,10 +13,20 @@ export class CreateShipmentHandler implements ICommandHandler<CreateShipmentComm
     constructor(
         @InjectRepository(Shipment)
         private readonly shipmentRepository: Repository<Shipment>,
+        @Inject(SHIPMENT_ASSIGNMENT_SERVICE)
+        private readonly shipmentAssignmentService: IShipmentAssignmentService
     ) { }
 
+    @Transactional()
     public async execute(command: CreateShipmentCommand): Promise<string> {
         const payload = command.payload;
+
+        const saleOrderKeys = payload.saleOrders.map(so => so.saleOrderCode);
+
+        const invalidSaleOrders = await this.shipmentAssignmentService.ensureSaleOrdersIsValid(saleOrderKeys);
+        if (invalidSaleOrders.length > 0) {
+            throw new Error(`Invalid sale orders: ${invalidSaleOrders.join(", ")}`);
+        }
 
         const shipment = new Shipment(s => {
             s.shipmentCode = payload.shipmentCode;
@@ -41,6 +54,7 @@ export class CreateShipmentHandler implements ICommandHandler<CreateShipmentComm
         });
 
         const saveShipmentResult = await this.shipmentRepository.save(shipment);
+        await this.shipmentAssignmentService.assignShipmentToSaleOrders(saveShipmentResult.shipmentCode, saleOrderKeys);
         return saveShipmentResult.id;
     }
 }

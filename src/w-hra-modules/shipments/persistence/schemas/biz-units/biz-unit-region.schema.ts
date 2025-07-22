@@ -22,7 +22,7 @@ export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({
             inverseSide: "regions",
             onDelete: "CASCADE",
             joinColumn: {
-                name: "bizUnitId",
+                name: snakeCase("bizUnitId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: "FK_BizUnitRegion_BizUnit"
             }

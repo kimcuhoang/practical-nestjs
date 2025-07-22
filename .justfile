@@ -45,11 +45,14 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    npx yarn test:e2e -f test/w-hra-planning/sale-orders-controller/create.e2e.ts --all
+    npx yarn test:e2e -f test/w-hra-planning/shipments-controller/create.e2e.ts --all
 
 e2e-files: pre-test
     npx yarn test:e2e --findRelatedTests \
-                test/tariffs-module/tariffs/save.e2e.ts \
+                test/w-hra-planning/sale-orders-controller/create.e2e.ts \
+                # test/w-hra-modules/shipments/use-cases/commands/shipments/create/create.e2e.ts \
+                # test/w-hra-modules/shipments/use-cases/commands/shipments/create/another.create.e2e.ts \
+                # test/w-hra-planning/shipments-controller/create.e2e.ts \
                 --all
 
 e2e-folder name: pre-test

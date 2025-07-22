@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Shipment } from "@src/w-hra-modules/shipments/domain";
+import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
 import { CreateShipmentPayload, CreateShipmentSaleOrderPayload, CreateShipmentSaleOrderItemPayload, CreateShipmentCommand } from "@src/w-hra-modules/shipments/use-cases/commands";
 import { CreateShipmentHandler } from "@src/w-hra-modules/shipments/use-cases/commands/shipments/create/create-shipment.handler";
 import { app, moment, TestHelpers } from "@test/test.setup";
@@ -11,14 +12,24 @@ import { Repository } from "typeorm";
 describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     let shipmentRepository: Repository<Shipment>;
     let commandBus: CommandBus;
+    let mockShipmentAssignmentService: jest.Mocked<IShipmentAssignmentService>;
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));
         commandBus = app.get(CommandBus);
+        mockShipmentAssignmentService = app.get(SHIPMENT_ASSIGNMENT_SERVICE);
+    });
+
+    beforeEach(() => {
+        jest.spyOn(mockShipmentAssignmentService, 'ensureSaleOrdersIsValid')
+            .mockResolvedValue([]);
+        jest.spyOn(mockShipmentAssignmentService, 'assignShipmentToSaleOrders')
+            .mockResolvedValue(undefined);
     });
 
     afterEach(async () => {
         await shipmentRepository.delete({});
+        jest.clearAllMocks();
     });
 
     test(`should be success`, async () => {

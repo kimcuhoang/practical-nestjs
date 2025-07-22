@@ -26,7 +26,7 @@ export const ShipmentSaleOrderItemSchema = new EntitySchema<ShipmentSaleOrderIte
             inverseSide: "items",
             onDelete: "CASCADE",
             joinColumn: { 
-                name: "saleOrderId",
+                name: snakeCase("saleOrderId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: "FK_ShipmentSaleOrderItem_ShipmentSaleOrder" 
             },

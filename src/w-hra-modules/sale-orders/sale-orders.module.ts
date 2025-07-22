@@ -2,11 +2,12 @@ import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SaleOrderModuleSchemas } from "./persistence";
 import { CqrsCommandHandlers } from "./use-cases/commands";
-import { DefaultSaleOrderCreationValidationService, ISaleOrderCreationValidationService, SaleOrderCreationValidationServiceSymbol } from "./services";
+import { EventHandlers } from "./integrations";
+import { CqrsQueryHandlers } from "./use-cases/queries";
 
 export type SaleOrdersModuleSettings = {
     additionalSchemas?: any[],
-    saleOrderCreationValidationServiceProvider?: Provider<ISaleOrderCreationValidationService>,
+    additionalProviders?: Provider[],
 };
 
 @Module({})
@@ -19,14 +20,14 @@ export class SaleOrdersModule {
             ],
             providers: [
                 ...CqrsCommandHandlers,
-                settings?.saleOrderCreationValidationServiceProvider || {
-                    provide: SaleOrderCreationValidationServiceSymbol,
-                    useClass: DefaultSaleOrderCreationValidationService
-                }
+                ...CqrsQueryHandlers,
+                ...EventHandlers,
+                ...(settings?.additionalProviders || [])
             ],
             exports: [
                 TypeOrmModule,
-                ...CqrsCommandHandlers
+                ...CqrsCommandHandlers,
+                ...CqrsQueryHandlers
             ]
         } as DynamicModule;
     }

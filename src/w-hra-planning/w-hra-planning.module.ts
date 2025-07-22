@@ -7,6 +7,9 @@ import { ShipmentsModuleSchemas } from "@src/w-hra-modules/shipments/persistence
 import { SolaceQueueModule } from "@src/w-hra-modules/solace-queue";
 import { BizUnitsControllers } from "./controllers/biz-units.controller";
 import { SolaceQueueIntegrationProviders } from "./services/solace-queue-integrations/solace-queue-integration.providers";
+import { SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
+import { shipmentAssignmentService } from "./services/shipments/shipment-assignment.service";
+import { ShipmentsController } from "./controllers/shipments.controller";
 
 
 @Module({})
@@ -17,22 +20,34 @@ export class WhraPlanningModule {
             module: WhraPlanningModule,
             imports: [
                 SolaceQueueModule.forRoot({
-                    additionalProviders: [ ...SolaceQueueIntegrationProviders ]
+                    additionalProviders: [ 
+                        ...SolaceQueueIntegrationProviders
+                    ]
                 }),
                 SaleOrdersModule.forRoot({
                     additionalSchemas: [
                         ...ShipmentsModuleSchemas
                     ],
-                    saleOrderCreationValidationServiceProvider: {
-                        provide: SaleOrderCreationValidationServiceSymbol,
-                        useClass: SaleOrderCreationValidationService
-                    }
+                    additionalProviders: [
+                        {
+                            provide: SaleOrderCreationValidationServiceSymbol,
+                            useClass: SaleOrderCreationValidationService
+                        }
+                    ]
                 }),
-                ShipmentsModule.forRoot()
+                ShipmentsModule.forRoot({
+                    additionalProviders: [
+                        {
+                            provide: SHIPMENT_ASSIGNMENT_SERVICE,
+                            useClass: shipmentAssignmentService
+                        }
+                    ]
+                })
             ],
             controllers: [
                 BizUnitsControllers,
-                SaleOrdersController
+                SaleOrdersController,
+                ShipmentsController
             ]
         } as DynamicModule;
     }
