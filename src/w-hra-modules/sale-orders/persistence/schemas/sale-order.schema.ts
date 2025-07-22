@@ -6,6 +6,7 @@ import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/en
 
 export const SaleOrderSchema = new EntitySchema<SaleOrder>({
     name: SaleOrder.name,
+    target: SaleOrder,
     tableName: snakeCase("SaleOrders"),
     columns: {
         ...EntityBaseSchema,

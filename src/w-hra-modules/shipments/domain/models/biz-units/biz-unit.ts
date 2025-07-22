@@ -11,16 +11,19 @@ export class BizUnit extends EntityBase {
     settings!: BizUnitSettings;
 
     @Type(() => BizUnitRegion)
-    regions!: BizUnitRegion[];
+    regions: BizUnitRegion[];
 
     constructor() {
         super();
-        this.regions = [];
     }
 
     public addBizUnitRegion(regionCode: string): BizUnit {
         const bizUnitRegion = new BizUnitRegion(this);
         bizUnitRegion.regionCode = regionCode;
+
+        if (!this.regions?.length) {
+            this.regions = [];
+        }
         this.regions.push(bizUnitRegion);
         return this;
     }

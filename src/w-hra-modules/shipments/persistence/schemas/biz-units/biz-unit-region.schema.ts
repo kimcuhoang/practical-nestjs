@@ -6,6 +6,7 @@ import { snakeCase } from "typeorm/util/StringUtils";
 
 export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({
     name: BizUnitRegion.name,
+    target: BizUnitRegion,
     tableName: snakeCase("BizUnitRegions"),
     columns: {
         ...EntityBaseSchema,
@@ -24,7 +25,7 @@ export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({
             joinColumn: {
                 name: snakeCase("bizUnitId"),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: "FK_BizUnitRegion_BizUnit"
+                foreignKeyConstraintName: snakeCase("FK_BizUnitRegion_BizUnit")
             }
         }
     }

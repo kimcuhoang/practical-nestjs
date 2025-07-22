@@ -2,55 +2,46 @@ import { faker } from "@faker-js/faker";
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
+import { ISaleOrderCreationValidationService, SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { CreateSaleOrderCommand, CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
 import { CreateSaleOrderHandler } from "@src/w-hra-modules/sale-orders/use-cases/commands/create/create-sale-order.handler";
 import { BizUnit } from "@src/w-hra-modules/shipments/domain";
 import { app, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 
-const genCode = () => faker.string.alphanumeric(10).toUpperCase();
-
-
 describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
     let saleOrderRepository: Repository<SaleOrder>;
     let bizUnitRepository: Repository<BizUnit>;
     let commandBus: CommandBus;
+    let saleOrderCreationValidationService: ISaleOrderCreationValidationService;
+    // jest.Mocked<ISaleOrderCreationValidationService>;
 
-    const regionCode = "ES";
-    let bizUnit: BizUnit;
 
     beforeAll(() => {
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
         commandBus = app.get(CommandBus);
+        saleOrderCreationValidationService = app.get(SaleOrderCreationValidationServiceSymbol);
     });
 
-    beforeEach(async () => {
-        bizUnit = new BizUnit();
-        bizUnit.bizUnitCode = TestHelpers.genCode();
-        bizUnit.settings = {
-            countryCode: "ES",
-            timeZone: "GMT+1",
-        };
-        bizUnit.addBizUnitRegion(regionCode);
-
-        await bizUnitRepository.save(bizUnit);
-        expect(bizUnit).toBeTruthy();
+    beforeEach(() => {
+        jest.spyOn(saleOrderCreationValidationService, "canCreateSaleOrder")
+            .mockResolvedValue(true);
     });
 
     afterEach(async() => {
         await saleOrderRepository.delete({});
-        await bizUnitRepository.delete({});
+        jest.clearAllMocks();
     });
 
     test(`should be success`, async() => {
         const payload = {
-            saleOrderCode: genCode(),
-            sourceGeographicalKey: genCode(),
-            destinationGeographicalKey: genCode(),
-            regionCode: regionCode,
+            saleOrderCode: TestHelpers.genCode(),
+            sourceGeographicalKey: TestHelpers.genCode(),
+            destinationGeographicalKey: TestHelpers.genCode(),
+            regionCode: TestHelpers.genCode(2),
             items: faker.helpers.multiple(() => ({
-                productKey: genCode(),
+                productKey: TestHelpers.genCode(),
                 quantity: faker.number.int({ min: 10, max: 100 })
             } satisfies CreateSaleOrderItemPayload), { count: 3 } )
         } satisfies CreateSaleOrderPayload;

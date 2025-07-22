@@ -10,9 +10,11 @@ export class SaleOrderShipmentHistory extends EntityBase {
 
     shipmentKey!: string;
 
-    constructor(saleOrder: SaleOrder) {
+    constructor(saleOrder?: SaleOrder) {
         super();
-        this.saleOrder = saleOrder;
-        this.saleOrderId = saleOrder.id;
+        if (!!saleOrder) {
+            this.saleOrder = saleOrder;
+            this.saleOrderId = saleOrder.id;
+        }
     }
 }

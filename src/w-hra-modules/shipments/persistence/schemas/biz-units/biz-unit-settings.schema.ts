@@ -4,6 +4,7 @@ import { EntitySchema } from "typeorm";
 
 export const BizUnitSettingsSchema = new EntitySchema<BizUnitSettings>({
     name: BizUnitSettings.name,
+    target: BizUnitSettings,
     columns: {
         countryCode: {
             type: String,

@@ -5,6 +5,7 @@ import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/en
 
 export const SaleOrderItemSchema = new EntitySchema<SaleOrderItem>({
     name: SaleOrderItem.name,
+    target: SaleOrderItem,
     tableName: snakeCase("SaleOrderItems"),
     columns: {
         ...EntityBaseSchema,
@@ -32,7 +33,7 @@ export const SaleOrderItemSchema = new EntitySchema<SaleOrderItem>({
             joinColumn: {
                 name: snakeCase("saleOrderId"),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: "FK_SaleOrderLineItem_SaleOrder"
+                foreignKeyConstraintName: snakeCase("FK_SaleOrderLineItem_SaleOrder")
             }
         }
     }

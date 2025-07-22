@@ -11,9 +11,12 @@ export class ShipmentSaleOrderItem extends EntityBase {
     productCode: string;
     quantity: number;
 
-    constructor(shipmentSaleOrder: ShipmentSaleOrder) {
+    constructor(shipmentSaleOrder?: ShipmentSaleOrder) {
         super();
-        this.saleOrder = shipmentSaleOrder;
-        this.saleOrderId = shipmentSaleOrder.id;
+
+        if (shipmentSaleOrder) {
+            this.saleOrder = shipmentSaleOrder;
+            this.saleOrderId = shipmentSaleOrder.id;
+        }
     }
 }

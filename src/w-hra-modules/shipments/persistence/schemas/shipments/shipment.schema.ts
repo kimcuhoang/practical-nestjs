@@ -6,6 +6,7 @@ import { snakeCase } from "typeorm/util/StringUtils";
 
 export const ShipmentSchema = new EntitySchema<Shipment>({
     name: Shipment.name,
+    target: Shipment,
     tableName: snakeCase("Shipments"),
     columns: {
         ...EntityBaseSchema,

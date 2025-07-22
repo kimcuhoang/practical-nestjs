@@ -7,6 +7,7 @@ import { BizUnitSettingsSchema } from "./biz-unit-settings.schema";
 
 export const BizUnitSchema = new EntitySchema<BizUnit>({
     name: BizUnit.name,
+    target: BizUnit,
     tableName: snakeCase("BizUnits"),
     columns: {
         ...EntityBaseSchema,

@@ -12,7 +12,8 @@ import { Repository } from "typeorm";
 describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     let shipmentRepository: Repository<Shipment>;
     let commandBus: CommandBus;
-    let mockShipmentAssignmentService: jest.Mocked<IShipmentAssignmentService>;
+    let mockShipmentAssignmentService: IShipmentAssignmentService;
+        //jest.Mocked<IShipmentAssignmentService>;
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));

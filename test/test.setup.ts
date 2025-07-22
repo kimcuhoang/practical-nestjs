@@ -17,7 +17,7 @@ beforeAll(async () => {
     connectionString = globalThis.postgresContainer.getConnectionUri();
 
     process.env.POSTGRES_DATABASE_URL = connectionString;
-    process.env.POSTGRES_LOG_ENABLED = "true";
+    process.env.POSTGRES_LOG_ENABLED = "!true";
     process.env.FALLBACK_LANGUAGE = "en";
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";

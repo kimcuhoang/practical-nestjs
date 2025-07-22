@@ -19,13 +19,16 @@ export class Shipment extends EntityBase {
 
     constructor(configure?: (shipment: Shipment) => void) {
         super();
-        this.saleOrders = [];
         configure?.(this);
     }
 
     public addSaleOrder(configure: (order: ShipmentSaleOrder) => void): Shipment {
         const saleOrder = new ShipmentSaleOrder(this);
         configure(saleOrder);
+
+        if (!this.saleOrders?.length) {
+            this.saleOrders = [];
+        }
         this.saleOrders.push(saleOrder);
         return this;
     }

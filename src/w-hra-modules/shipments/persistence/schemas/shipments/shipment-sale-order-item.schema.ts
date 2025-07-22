@@ -6,6 +6,7 @@ import { snakeCase } from "typeorm/util/StringUtils";
 
 export const ShipmentSaleOrderItemSchema = new EntitySchema<ShipmentSaleOrderItem>({
     name: ShipmentSaleOrderItem.name,
+    target: ShipmentSaleOrderItem,
     tableName: snakeCase("ShipmentSaleOrderItems"),
     columns: {
         ...EntityBaseSchema,
@@ -28,7 +29,7 @@ export const ShipmentSaleOrderItemSchema = new EntitySchema<ShipmentSaleOrderIte
             joinColumn: { 
                 name: snakeCase("saleOrderId"),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: "FK_ShipmentSaleOrderItem_ShipmentSaleOrder" 
+                foreignKeyConstraintName: snakeCase("FK_ShipmentSaleOrderItem_ShipmentSaleOrder")
             },
         }
     }

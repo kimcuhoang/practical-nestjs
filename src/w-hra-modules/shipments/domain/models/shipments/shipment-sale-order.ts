@@ -16,16 +16,21 @@ export class ShipmentSaleOrder extends EntityBase {
     @Type(() => ShipmentSaleOrderItem)
     items: ShipmentSaleOrderItem[];
 
-    constructor(shipment: Shipment) {
+    constructor(shipment?: Shipment) {
         super();
-        this.shipment = shipment;
-        this.shipmentId = shipment.id;
-        this.items = [];
+        if (shipment) {
+            this.shipment = shipment;
+            this.shipmentId = shipment.id;
+        }
     }
 
     public addItem(configure: (item: ShipmentSaleOrderItem) => void): ShipmentSaleOrderItem {
         const item = new ShipmentSaleOrderItem(this);
         configure(item);
+
+        if (!this.items?.length) {
+            this.items = [];
+        }
         this.items.push(item);
         return item;
     }

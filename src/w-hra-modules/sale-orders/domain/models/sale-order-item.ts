@@ -11,9 +11,11 @@ export class SaleOrderItem extends EntityBase {
     productKey: string;
     quantity: number;
 
-    constructor(saleOrder: SaleOrder) {
+    constructor(saleOrder?: SaleOrder) {
         super();
-        this.saleOrder = saleOrder;
-        this.saleOrderId = saleOrder.id;
+        if (!!saleOrder) {
+            this.saleOrder = saleOrder;
+            this.saleOrderId = saleOrder.id;
+        }
     }
 }

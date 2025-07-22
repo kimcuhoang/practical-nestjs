@@ -5,12 +5,12 @@ import { SaleOrderShipmentHistory } from "./sale-order-shipment-history";
 
 
 export class SaleOrder extends EntityBase {
-    saleOrderCode: string;
+    saleOrderCode!: string;
     
-    sourceGeographicalKey: string;
-    destinationGeographicalKey: string;
+    sourceGeographicalKey!: string;
+    destinationGeographicalKey!: string;
 
-    regionCode: string;
+    regionCode!: string;
 
     shipmentKey?: string | null = null;
 
@@ -22,13 +22,15 @@ export class SaleOrder extends EntityBase {
 
     constructor() {
         super();
-        this.items = [];
-        this.shipmentHistories = [];
     }
 
     public addItem(partial: Partial<SaleOrderItem>): SaleOrder {
         const saleOrderItem = new SaleOrderItem(this);
         Object.assign(saleOrderItem, partial);
+        
+        if (!this.items?.length){
+            this.items = [];
+        }
         this.items.push(saleOrderItem);
         return this;
     }
@@ -37,6 +39,10 @@ export class SaleOrder extends EntityBase {
         this.shipmentKey = shipmentKey;
         const shipmentHistory = new SaleOrderShipmentHistory(this);
         shipmentHistory.shipmentKey = shipmentKey;
+
+        if (!this.shipmentHistories?.length) {
+            this.shipmentHistories = [];
+        }
         this.shipmentHistories.push(shipmentHistory);
     }
 }
