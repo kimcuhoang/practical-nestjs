@@ -7,6 +7,10 @@
   - Use [testcontainer](https://testcontainers.com/) to implement e2e tests
 
 ## Notes:
+
+### TypeORM
+- [Avoid relation property initializers](https://typeorm.io/docs/relations/relations-faq/#avoid-relation-property-initializers)
+
 ### To generate migrations for specific feature
 - `typeorm.datasource.ts` -> comment out all the features that we don't want to generate migration
 - run the following command `just gen-migration [feature's folder name] [name of migration]`
@@ -24,35 +28,4 @@
 
 - Disable whitelist: Set whitelist to false in your ValidationPipe configuration. This will prevent class-transformer from stripping out properties that lack decorators.
 
-- 
-
-## Installation
-
-```bash
-$ yarn install
-```
-
-## Running the app
-
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
-```
-
-## Test
-
-```bash
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
 

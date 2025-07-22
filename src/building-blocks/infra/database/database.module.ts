@@ -5,11 +5,7 @@ import { DatabaseModuleOptions } from "./database.module.options";
 import { DataSourceProperties } from "./datasource.properties";
 import { Logger } from "testcontainers/build/common";
 import { DataSource, DataSourceOptions } from "typeorm";
-import { addTransactionalDataSource } from "typeorm-transactional";
-
-// export type DatabaseModuleOptions = {
-//     getDatabaseModuleSettings(configService: ConfigService): DatabaseModuleSettings;
-// }
+import { addTransactionalDataSource, getDataSourceByName } from "typeorm-transactional";
 
 @Global()
 @Module({})
@@ -42,7 +38,8 @@ export class DatabaseModule {
                         if (!options) {
                             throw new Error("DataSourceOptions is required");
                         }
-                        return addTransactionalDataSource(new DataSource(options));
+                        return getDataSourceByName('default') 
+                                || addTransactionalDataSource(new DataSource(options));
                     }
                 })
             ],
