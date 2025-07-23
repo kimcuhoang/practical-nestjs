@@ -1,291 +1,575 @@
 # W-HRA System Architecture
 
-## Overview
+This document describes the architecture of the W-HRA (Warehouse Human Resource Allocation) Planning Module system.
 
-The W-HRA system is a modular NestJS application designed with Domain-Driven Design (DDD) principles, CQRS pattern, and enterprise messaging capabilities through Solace queue integration.
+## Table of Contents
 
-## Architecture Diagram
+1. [System Overview](#system-overview)
+2. [Architecture Principles](#architecture-principles)
+3. [Layer Structure](#layer-structure)
+4. [Architecture Diagrams](#architecture-diagrams)
+5. [Architecture Layers](#architecture-layers)
+6. [Design Patterns & Principles](#design-patterns--principles)
+7. [External Integrations](#external-integrations)
+8. [Data Flow](#data-flow)
+9. [Key Benefits](#key-benefits)
+10. [Configuration](#configuration)
+
+## System Overview
+
+The W-HRA (Warehouse Human Resource Allocation) Planning Module is a sophisticated system designed to manage warehouse operations including sale orders, shipments, and business unit coordination. The system provides efficient resource allocation and planning capabilities for warehouse management.
+
+### Core Capabilities
+- **Sale Order Management**: Complete lifecycle management of sales orders
+- **Shipment Planning**: Efficient shipment creation and tracking
+- **Business Unit Administration**: Multi-region business unit management
+- **Resource Allocation**: Intelligent warehouse resource planning
+- **Real-time Integration**: Asynchronous communication with external systems
+
+## Architecture Principles
+
+The W-HRA system is built on several key architectural principles:
+
+### Clean Architecture
+- **Dependency Inversion**: Dependencies point inward toward the domain
+- **Layer Isolation**: Each layer has clear responsibilities and boundaries
+- **Framework Independence**: Business logic is independent of external frameworks
+
+### Domain-Driven Design (DDD)
+- **Ubiquitous Language**: Consistent terminology across the system
+- **Bounded Contexts**: Clear module boundaries for different business areas
+- **Rich Domain Models**: Business logic encapsulated in domain entities
+
+### Event-Driven Architecture
+- **Loose Coupling**: Components communicate through events
+- **Scalability**: Asynchronous processing for better performance
+- **Resilience**: Fault tolerance through message queuing
+
+## Layer Structure
+
+The system follows a four-layer architecture with clear dependency directions:
+
+### Layer Hierarchy
+
+```
+┌─────────────────────────────────────┐
+│         External Systems            │
+│    (HTTP Clients, Solace, DB)      │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│        Application Layer            │
+│   (Controllers, Services)           │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│      Domain & Use Cases Layer       │
+│   (Entities, Commands, Handlers)    │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│       Infrastructure Layer          │
+│  (Repositories, Messaging, ORM)     │
+└─────────────────────────────────────┘
+```
+
+### Dependency Graph
+
+```mermaid
+graph TD
+    subgraph "🌐 External Systems"
+        EXT_HTTP[📱 HTTP Clients]
+        EXT_SOLACE[📮 Solace Message Broker]
+        EXT_DB[(🗄️ PostgreSQL Database)]
+        EXT_ENV[⚙️ Environment Config]
+    end
+
+    subgraph "🚪 Application Layer"
+        APP_CTRL[🎮 Controllers]
+        APP_SERV[⚙️ Application Services]
+        APP_VAL[✅ Validation Services]
+        APP_QUEUE[📮 Queue Integration Services]
+    end
+
+    subgraph "🧠 Domain & Use Cases Layer"
+        DOM_ENT[🏗️ Domain Entities]
+        DOM_VO[📦 Value Objects]
+        DOM_CMD[📝 Commands]
+        DOM_HAND[⚡ Command Handlers]
+        DOM_SERV[🔧 Domain Services]
+    end
+
+    subgraph "🔧 Infrastructure Layer"
+        INF_REPO[📚 Repositories]
+        INF_ORM[🗄️ TypeORM]
+        INF_MSG[📮 Message Providers]
+        INF_CQRS[📡 CQRS Infrastructure]
+        INF_MIG[📋 Database Migrations]
+    end
+
+    %% External to Application Dependencies
+    EXT_HTTP --> APP_CTRL
+    
+    %% Application Layer Dependencies
+    APP_CTRL --> APP_SERV
+    APP_CTRL --> APP_VAL
+    APP_SERV --> APP_QUEUE
+    APP_SERV --> DOM_CMD
+    APP_VAL --> DOM_SERV
+    APP_QUEUE --> DOM_CMD
+
+    %% Domain Layer Dependencies
+    DOM_CMD --> DOM_HAND
+    DOM_HAND --> DOM_ENT
+    DOM_HAND --> DOM_VO
+    DOM_HAND --> DOM_SERV
+    DOM_ENT --> DOM_VO
+    DOM_SERV --> DOM_ENT
+
+    %% Infrastructure Dependencies to Domain
+    DOM_HAND --> INF_REPO
+    DOM_HAND --> INF_CQRS
+    INF_REPO --> DOM_ENT
+    
+    %% Infrastructure Internal Dependencies
+    INF_REPO --> INF_ORM
+    INF_ORM --> INF_MIG
+    INF_MSG --> EXT_SOLACE
+    INF_ORM --> EXT_DB
+    INF_MSG --> EXT_ENV
+    INF_ORM --> EXT_ENV
+
+    %% Queue Integration
+    APP_QUEUE --> INF_MSG
+    DOM_HAND --> INF_MSG
+
+    %% Styling
+    classDef external fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef application fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef domain fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef infrastructure fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+
+    class EXT_HTTP,EXT_SOLACE,EXT_DB,EXT_ENV external
+    class APP_CTRL,APP_SERV,APP_VAL,APP_QUEUE application
+    class DOM_ENT,DOM_VO,DOM_CMD,DOM_HAND,DOM_SERV domain
+    class INF_REPO,INF_ORM,INF_MSG,INF_CQRS,INF_MIG infrastructure
+```
+
+### Dependency Rules
+
+The architecture follows these strict dependency rules:
+
+#### ✅ Allowed Dependencies
+- **Application Layer** → **Domain Layer**: Controllers and services can use domain commands and services
+- **Domain Layer** → **Infrastructure Layer**: Domain handlers can use repositories and messaging
+- **Infrastructure Layer** → **External Systems**: Infrastructure components integrate with databases and message brokers
+- **External Systems** → **Application Layer**: HTTP clients call controllers
+
+#### ❌ Forbidden Dependencies
+- **Domain Layer** ❌ **Application Layer**: Domain logic must not depend on application concerns
+- **Infrastructure Layer** ❌ **Domain Layer**: Infrastructure must implement domain interfaces, not reference domain directly
+- **Domain Layer** ❌ **External Systems**: Domain must remain isolated from external dependencies
+
+### Layer Responsibilities
+
+1. **External Systems**: Third-party services and clients
+   - HTTP clients for API consumption
+   - Message brokers for event processing
+   - Databases for data persistence
+   - Configuration providers
+
+2. **Application Layer**: HTTP endpoints and application services
+   - RESTful API controllers
+   - Application orchestration services
+   - Input validation and transformation
+   - External system integration coordination
+
+3. **Domain Layer**: Core business logic and use cases
+   - Business entities and value objects
+   - Domain services and business rules
+   - Commands and command handlers
+   - Use case implementations
+
+4. **Infrastructure Layer**: Technical implementations and external integrations
+   - Database repositories and ORM
+   - Message broker implementations
+   - CQRS infrastructure
+   - Configuration management
+
+### Dependency Inversion Examples
+
+```typescript
+// ✅ Good: Domain defines interface, Infrastructure implements
+// Domain Layer
+interface SaleOrderRepository {
+  save(saleOrder: SaleOrder): Promise<void>;
+  findById(id: string): Promise<SaleOrder>;
+}
+
+// Infrastructure Layer implements domain interface
+class TypeOrmSaleOrderRepository implements SaleOrderRepository {
+  // Implementation details
+}
+
+// ✅ Good: Application depends on domain abstractions
+// Application Layer
+class SaleOrderController {
+  constructor(
+    private commandBus: CommandBus, // Domain abstraction
+    private validationService: ValidationService // Domain service
+  ) {}
+}
+```
+
+This dependency structure ensures:
+- **Testability**: Easy to mock dependencies for unit testing
+- **Flexibility**: Can swap implementations without affecting business logic
+- **Maintainability**: Changes in outer layers don't affect inner layers
+- **Independence**: Domain logic remains pure and framework-agnostic
+
+## Architecture Diagrams
+
+### High-Level System Overview
 
 ```mermaid
 graph TB
-    subgraph "Application Layer"
-        subgraph "W-HRA Planning Module"
-            PC[Planning Controllers]
-            PS[Planning Services]
-            PV[Validation Services]
-            PSQ[Solace Queue Integrations]
-        end
+    subgraph "🌐 External"
+        Client[📱 HTTP Clients]
+        Broker[📮 Solace Broker]
+        Database[(🗄️ PostgreSQL)]
     end
-
-    subgraph "Domain & Use Cases Layer"
-        subgraph "Sale Orders Module"
-            SO[Sale Orders Domain]
-            SOUC[Sale Orders Use Cases]
-            SOV[Sale Order Validation]
-        end
-
-        subgraph "Shipments Module"
-            SH[Shipments Domain]
-            SHUC[Shipments Use Cases]
-            BU[Biz Units Domain]
-            BUUC[Biz Units Use Cases]
-        end
+    
+    subgraph "🏗️ W-HRA System"
+        API[🚪 REST API]
+        Services[⚙️ Business Services]
+        Domain[🧠 Domain Logic]
+        Data[💾 Data Layer]
     end
-
-    subgraph "Infrastructure Layer"
-        subgraph "Persistence"
-            SOP[Sale Orders Persistence]
-            SHP[Shipments Persistence]
-            BUP[Biz Units Persistence]
-        end
-
-        subgraph "Messaging"
-            SQ[Solace Queue Provider]
-            SQS[Queue Subscriber]
-            SQP[Queue Publisher]
-            SQI[Subscription Instances]
-        end
-
-        subgraph "Building Blocks"
-            CQRS[CQRS Infrastructure]
-            ORM[TypeORM Schemas]
-            BASE[Entity Base Classes]
-            MIGRATION[Database Migrations]
-        end
-    end
-
-    subgraph "External Systems"
-        SOLACE[Solace Message Broker]
-        DB[(PostgreSQL Database)]
-        ENV[Environment Config]
-    end
-
-    %% Application Layer Connections
-    PC --> SOUC
-    PC --> SHUC
-    PC --> BUUC
-    PS --> PSQ
-    PSQ --> SQS
-    PSQ --> SOUC
-    PSQ --> SHUC
-    PV --> SOV
-
-    %% Domain Layer Connections
-    SO --> SOP
-    SOUC --> SO
-    SOUC --> SOV
-    SH --> SHP
-    SHUC --> SH
-    BU --> BUP
-    BUUC --> BU
-
-    %% Infrastructure Connections
-    SQ --> SOLACE
-    SQS --> SOLACE
-    SQP --> SOLACE
-    SQI --> SQS
-    SOP --> DB
-    SHP --> DB
-    BUP --> DB
-    SOP --> ORM
-    SHP --> ORM
-    BUP --> ORM
-    SO --> BASE
-    SH --> BASE
-    BU --> BASE
-    SOUC --> CQRS
-    SHUC --> CQRS
-    BUUC --> CQRS
-    MIGRATION --> DB
-
-    %% External Integration
-    PSQ --> SOLACE
-    ORM --> ENV
-
-    classDef application fill:#e3f2fd
-    classDef domain fill:#f3e5f5
-    classDef infrastructure fill:#e8f5e8
-    classDef external fill:#fff3e0
-
-    class PC,PS,PV,PSQ application
-    class SO,SOUC,SOV,SH,SHUC,BU,BUUC domain
-    class SOP,SHP,BUP,SQ,SQS,SQP,SQI,CQRS,ORM,BASE,MIGRATION infrastructure
-    class SOLACE,DB,ENV external
+    
+    Client --> API
+    API --> Services
+    Services --> Domain
+    Domain --> Data
+    Data --> Database
+    
+    Services <--> Broker
+    
+    classDef external fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef system fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    
+    class Client,Broker,Database external
+    class API,Services,Domain,Data system
 ```
 
-## Detailed Component Architecture
+### Application Layer Structure
 
-### 1. Application Layer - W-HRA Planning Module
+```mermaid
+graph LR
+    subgraph "🚪 Controllers"
+        BC[📊 BizUnits]
+        SOC[📦 SaleOrders]
+        SC[🚚 Shipments]
+    end
+    
+    subgraph "⚙️ Application Services"
+        SVS[✅ Validation Service]
+        SOQI[📮 SaleOrder Queue]
+        SHQI[📮 Shipment Queue]
+    end
+    
+    subgraph "🧠 Domain Layer"
+        Commands[📝 Commands]
+        Handlers[⚡ Handlers]
+    end
+    
+    BC --> SVS
+    SOC --> SVS
+    SOC --> SOQI
+    SC --> SHQI
+    
+    SVS --> Commands
+    SOQI --> Commands
+    SHQI --> Commands
+    
+    Commands --> Handlers
+    
+    classDef controller fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef service fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef domain fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    
+    class BC,SOC,SC controller
+    class SVS,SOQI,SHQI service
+    class Commands,Handlers domain
+```
 
-#### Controllers
-- **[`BizUnitsController`](src/w-hra-planning/controllers/biz-units.controller.ts)**
-  - Handles HTTP requests for business unit operations
-  - POST `/biz-units` - Creates new business units
+### Domain Model Relationships
 
-- **[`SaleOrdersController`](src/w-hra-planning/controllers/sale-orders.controller.ts)**
-  - Manages sale order HTTP endpoints
-  - POST `/sale-orders` - Creates new sale orders
+```mermaid
+graph TB
+    subgraph "📦 Sale Orders Domain"
+        SO[🛒 SaleOrder]
+        SOI[📋 SaleOrderItem]
+        SO --> SOI
+    end
+    
+    subgraph "🚚 Shipments Domain"
+        SH[📦 Shipment]
+        SHSO[🔗 ShipmentSaleOrder]
+        SHSOI[📝 ShipmentSaleOrderItem]
+        
+        SH --> SHSO
+        SH --> SHSOI
+        SHSO --> SO
+    end
+    
+    subgraph "🏢 Business Units Domain"
+        BU[🏢 BizUnit]
+        BUR[🌍 BizUnitRegion]
+        BUS[⚙️ BizUnitSettings]
+        
+        BU --> BUR
+        BU --> BUS
+    end
+    
+    classDef saleorder fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef shipment fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef bizunit fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    
+    class SO,SOI saleorder
+    class SH,SHSO,SHSOI shipment
+    class BU,BUR,BUS bizunit
+```
 
-#### Services
-- **[`SaleOrderCreationValidationService`](src/w-hra-planning/services/validations/saleorder-creation-verification.service.ts)**
-  - Custom validation logic extending default validation
-  - Validates region codes against business units
+### Infrastructure Layer Components
 
-#### Solace Queue Integrations
-- **[`SaleOrderQueueIntegrationService`](src/w-hra-planning/services/solace-queue-integrations/sale-orders/sale-order-queue-integration.service.ts)**
-  - Handles sale order messages from Solace queues
-  - Supports both live and replay modes
+```mermaid
+graph TB
+    subgraph "💾 Persistence Layer"
+        Repos[📚 Repositories]
+        ORM[🔧 TypeORM]
+        Migrations[📋 Migrations]
+        
+        Repos --> ORM
+        ORM --> Migrations
+    end
+    
+    subgraph "📮 Messaging Layer"
+        Provider[🔌 Solace Provider]
+        Subscriber[📥 Queue Subscriber]
+        Publisher[📤 Queue Publisher]
+        
+        Subscriber --> Provider
+        Publisher --> Provider
+    end
+    
+    subgraph "⚡ CQRS Layer"
+        CommandBus[📡 Command Bus]
+        QueryHandlers[🔍 Query Handlers]
+    end
+    
+    classDef persistence fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef messaging fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef cqrs fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class Repos,ORM,Migrations persistence
+    class Provider,Subscriber,Publisher messaging
+    class CommandBus,QueryHandlers cqrs
+```
 
-- **[`ShipmentsQueueIntegrationService`](src/w-hra-planning/services/solace-queue-integrations/shipments/shipments-queue-integration.service.ts)**
-  - Processes shipment messages from message broker
-  - Configurable topic subscriptions
+### Data Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant Client as 📱 Client
+    participant Controller as 🚪 Controller
+    participant Service as ⚙️ Service
+    participant CommandBus as 📡 Command Bus
+    participant Handler as ⚡ Handler
+    participant Repository as 📚 Repository
+    participant Queue as 📮 Message Queue
+    participant DB as 🗄️ Database
+    
+    Client->>Controller: HTTP Request
+    Controller->>Service: Validate & Process
+    Service->>CommandBus: Send Command
+    CommandBus->>Handler: Route Command
+    Handler->>Repository: Persist Data
+    Repository->>DB: Save Entity
+    Handler->>Queue: Publish Event
+    Queue-->>Service: Async Response
+    Service-->>Controller: Result
+    Controller-->>Client: HTTP Response
+```
+
+### Module Interaction Overview
+
+```mermaid
+graph LR
+    subgraph "🏗️ W-HRA Modules"
+        subgraph "📦 Sale Orders"
+            SO_API[🚪 API]
+            SO_DOMAIN[🧠 Domain]
+            SO_INFRA[🔧 Infrastructure]
+        end
+        
+        subgraph "🚚 Shipments"
+            SH_API[🚪 API]
+            SH_DOMAIN[🧠 Domain] 
+            SH_INFRA[🔧 Infrastructure]
+        end
+        
+        subgraph "🏢 Business Units"
+            BU_API[🚪 API]
+            BU_DOMAIN[🧠 Domain]
+            BU_INFRA[🔧 Infrastructure]
+        end
+    end
+    
+    SO_DOMAIN <--> SH_DOMAIN
+    SH_DOMAIN <--> BU_DOMAIN
+    
+    SO_INFRA --> Database[(🗄️ DB)]
+    SH_INFRA --> Database
+    BU_INFRA --> Database
+    
+    SO_INFRA <--> MessageBroker[📮 Solace]
+    SH_INFRA <--> MessageBroker
+    
+    classDef module fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    class SO_API,SO_DOMAIN,SO_INFRA,SH_API,SH_DOMAIN,SH_INFRA,BU_API,BU_DOMAIN,BU_INFRA module
+    class Database,MessageBroker external
+```
+
+## Architecture Layers
+
+### 1. Application Layer
+The outermost layer that handles external interactions and orchestrates business operations.
+
+**Components:**
+- **Controllers**: Handle HTTP requests and responses
+  - `BizUnitsController`: Manages business unit operations
+  - `SaleOrdersController`: Handles sale order endpoints
+  - `ShipmentsController`: Manages shipment operations
+
+- **Planning Services**: Application services that coordinate business logic
+  - `SaleOrderCreationValidationService`: Validates sale order creation rules
+  - `SaleOrderQueueIntegrationService`: Handles sale order message queue integration
+  - `ShipmentsQueueIntegrationService`: Manages shipment message queue operations
 
 ### 2. Domain & Use Cases Layer
+Contains the core business logic and domain models.
+
+**Modules:**
 
 #### Sale Orders Module
-**Domain Models:**
-- **[`SaleOrder`](src/w-hra-modules/sale-orders/domain/models/sale-order.ts)**
-  - Core sale order aggregate root
-  - Contains sale order items collection
+- **Domain Models**:
+  - `SaleOrder`: Main aggregate for sale order management
+  - `SaleOrderItem`: Value object representing individual items
 
-- **[`SaleOrderItem`](src/w-hra-modules/sale-orders/domain/models/sale-order-item.ts)**
-  - Sale order line items with product and quantity
-
-**Use Cases:**
-- **[`CreateSaleOrderCommand`](src/w-hra-modules/sale-orders/use-cases/commands/create/create-sale-order.command.ts)**
-- **[`CreateSaleOrderHandler`](src/w-hra-modules/sale-orders/use-cases/commands/create/create-sale-order.handler.ts)**
-  - CQRS command handler for sale order creation
-  - Integrates validation services
+- **Use Cases**:
+  - `CreateSaleOrderCommand`: Command for creating new sale orders
+  - `CreateSaleOrderHandler`: Handles sale order creation logic
 
 #### Shipments Module
-**Domain Models:**
-- **[`Shipment`](src/w-hra-modules/shipments/domain/models/shipments/shipment.ts)**
-  - Shipment aggregate root with complex relationships
+- **Domain Models**:
+  - `Shipment`: Main aggregate for shipment management
+  - `ShipmentSaleOrder`: Association between shipments and sale orders
+  - `ShipmentSaleOrderItem`: Individual items within shipment sale orders
+  - `BizUnit`: Business unit aggregate
+  - `BizUnitRegion`: Business unit regional settings
+  - `BizUnitSettings`: Configuration for business units
 
-- **[`ShipmentSaleOrder`](src/w-hra-modules/shipments/domain/models/shipments/shipment-sale-order.ts)**
-- **[`ShipmentSaleOrderItem`](src/w-hra-modules/shipments/domain/models/shipments/shipment-sale-order-item.ts)**
-
-- **[`BizUnit`](src/w-hra-modules/shipments/domain/models/biz-units/biz-unit.ts)**
-  - Business unit aggregate with regions and settings
-
-- **[`BizUnitRegion`](src/w-hra-modules/shipments/domain/models/biz-units/biz-unit-region.ts)**
-- **[`BizUnitSettings`](src/w-hra-modules/shipments/domain/models/biz-units/biz-unit-settings.ts)**
-
-**Use Cases:**
-- **[`CreateShipmentCommand`](src/w-hra-modules/shipments/use-cases/commands/shipments/create/create-shipment.command.ts)**
-- **[`CreateBizUnitCommand`](src/w-hra-modules/shipments/use-cases/commands/biz-units/create/create-biz-unit.command.ts)**
+- **Use Cases**:
+  - `CreateShipmentCommand`: Command for creating shipments
+  - `CreateBizUnitCommand`: Command for creating business units
 
 ### 3. Infrastructure Layer
+Provides technical capabilities and external system integrations.
+
+**Components:**
 
 #### Persistence
-- **TypeORM Schemas**: Entity mappings for all domain models
-- **Database Migrations**: Version-controlled schema changes
-- **Repository Pattern**: Data access abstraction
+- **Repositories**: Abstract data access using repository pattern
+  - Sale Orders Repository
+  - Shipments Repository
+  - Biz Units Repository
+- **TypeORM**: Object-relational mapping
+- **Database Migrations**: Schema version control
 
 #### Messaging Infrastructure
-- **[`SolaceQueueProvider`](src/w-hra-modules/solace-queue/solace-queue.provider.ts)**
-  - Manages Solace connections and lifecycle
-  - Handles session events and reconnection
+- **SolaceQueueProvider**: Main interface to Solace message broker
+- **SolaceQueueSubscriber**: Handles incoming messages
+- **SolaceQueuePublisher**: Sends outgoing messages
+- **SubscriptionInstanceBase**: Base class for queue subscriptions
 
-- **[`SolaceQueueSubscriber`](src/w-hra-modules/solace-queue/operators/solace-queue.subscriber.ts)**
-  - Queue subscription management
-  - Message acknowledgment handling
+#### CQRS Infrastructure
+- **Command Bus**: Routes commands to appropriate handlers
+- **Query Handlers**: Process query operations
 
-- **[`SolaceQueuePublisher`](src/w-hra-modules/solace-queue/operators/solace-queue.publisher.ts)**
-  - Message publishing to topics and queues
+## Design Patterns & Principles
 
-- **[`SubscriptionInstanceBase`](src/w-hra-modules/solace-queue/instances/subscription-instance.base.ts)**
-  - Abstract base for queue subscriptions
-  - Replay functionality support
-
-## Key Architectural Patterns
-
-### 1. Domain-Driven Design (DDD)
+### Domain-Driven Design (DDD)
 - **Aggregates**: `SaleOrder`, `Shipment`, `BizUnit`
-- **Value Objects**: `BizUnitSettings`
-- **Domain Services**: Validation services
-- **Repositories**: Data access abstraction
+- **Value Objects**: `SaleOrderItem`, `BizUnitRegion`
+- **Domain Services**: Business logic that doesn't belong to a specific aggregate
 
-### 2. Command Query Responsibility Segregation (CQRS)
-- **Commands**: `CreateSaleOrderCommand`, `CreateShipmentCommand`, `CreateBizUnitCommand`
-- **Command Handlers**: Process business logic
-- **Command Bus**: Message routing
+### CQRS (Command Query Responsibility Segregation)
+- Separates read and write operations
+- Commands modify state through command handlers
+- Queries retrieve data through dedicated query handlers
 
-### 3. Dependency Injection
-- NestJS DI container throughout all layers
-- Interface-based abstractions
-- Factory patterns for configuration
+### Event-Driven Architecture
+- Asynchronous communication through Solace message broker
+- Decoupled systems communication
+- Event sourcing capabilities
 
-### 4. Event-Driven Architecture
-- Solace message broker integration
-- Async message processing
-- Replay capabilities for message recovery
+### Repository Pattern
+- Abstracts data access logic
+- Provides consistent interface for domain layer
+- Enables easy testing and swapping of data sources
 
-### 5. Modular Architecture
-- Self-contained modules with clear boundaries
-- Dynamic module configuration
-- Cross-module dependency injection
+### Dependency Injection
+- Loose coupling between components
+- Easy testing and mocking
+- Configuration-driven dependencies
 
-## Data Flow Patterns
+## External Integrations
 
-### HTTP Request Flow
-```
-HTTP Request → Controller → Command Bus → Command Handler → Domain Model → Repository → Database
-```
+### Message Broker (Solace)
+- **Purpose**: Asynchronous communication with external systems
+- **Configuration**: Environment-based settings
+- **Usage**: Sale order and shipment event processing
 
-### Message Queue Flow
-```
-Solace Queue → Queue Integration Service → Command Bus → Command Handler → Domain Model → Repository → Database
-```
+### Database (PostgreSQL)
+- **Purpose**: Persistent data storage
+- **ORM**: TypeORM for data access
+- **Migrations**: Automated schema management
 
-### Cross-Module Validation Flow
-```
-Planning Module → Custom Validation Service → Domain Repository → Business Logic → Validation Result
-```
+### HTTP API
+- **Purpose**: External client communication
+- **Controllers**: RESTful endpoints
+- **Validation**: Input validation and error handling
 
-## Configuration & Environment
+## Data Flow
 
-### Solace Configuration
-- Connection settings via environment variables
-- Queue and topic configuration
-- Message acknowledgment settings
-- Replay functionality configuration
+1. **HTTP Request** → Controllers receive and validate requests
+2. **Application Services** → Orchestrate business operations
+3. **Command Bus** → Routes commands to appropriate handlers
+4. **Domain Logic** → Executes business rules and validations
+5. **Repositories** → Persist domain changes
+6. **Message Queue** → Publishes events to external systems
 
-### Database Configuration
-- PostgreSQL connection through TypeORM
-- Schema synchronization
-- Migration management
+## Key Benefits
 
-## Scalability & Resilience
+- **Separation of Concerns**: Clear layer boundaries
+- **Testability**: Dependency injection and abstraction
+- **Scalability**: Event-driven architecture and CQRS
+- **Maintainability**: Domain-driven design and clean architecture
+- **Flexibility**: Plugin architecture for external integrations
 
-### Message Processing
-- Configurable message window sizes
-- Connection retry mechanisms
-- Message replay for disaster recovery
-- Dead letter queue handling
+## Configuration
 
-### Database Operations
-- Connection pooling
-- Transaction management
-- Soft delete patterns
-- Audit trails through base entities
-
-### Monitoring & Logging
-- Structured logging throughout all layers
-- Session event monitoring
-- Error handling and reporting
-- Performance metrics collection
-
-## Future Considerations
-
-### Potential Enhancements
-1. **Event Sourcing**: Store domain events for complete audit trail
-2. **Read Models**: Separate query models for performance
-3. **Distributed Caching**: Redis integration for frequently accessed data
-4. **API Gateway**: Centralized routing and security
-5. **Microservices**: Split modules into separate services
-6. **Health Checks**: Application and dependency monitoring
-7. **Circuit Breakers**: Fault tolerance patterns
-8. **Rate Limiting**: API protection mechanisms
-
-This architecture provides a solid foundation for a scalable, maintainable enterprise system with clear separation of concerns and robust messaging capabilities.
+The system uses environment-based configuration for:
+- Database connections
+- Message broker settings
+- External service endpoints
+- Feature flags and business rules
