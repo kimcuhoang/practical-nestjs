@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
+import { BizPartnersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
 import { SaleOrderCreationValidationService } from "./services";
 import { SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { SaleOrdersController } from "./controllers/sale-orders.controller";
@@ -10,6 +10,7 @@ import { SolaceQueueIntegrationProviders } from "./services/solace-queue-integra
 import { SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
 import { shipmentAssignmentService } from "./services/shipments/shipment-assignment.service";
 import { ShipmentsController } from "./controllers/shipments.controller";
+import { BizPartnersController } from "./controllers/biz-partners.controller";
 
 
 @Module({})
@@ -42,12 +43,14 @@ export class WhraPlanningModule {
                             useClass: shipmentAssignmentService
                         }
                     ]
-                })
+                }),
+                BizPartnersModule.forRoot()
             ],
             controllers: [
                 BizUnitsControllers,
                 SaleOrdersController,
-                ShipmentsController
+                ShipmentsController,
+                BizPartnersController
             ]
         } as DynamicModule;
     }

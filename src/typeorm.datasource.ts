@@ -6,7 +6,6 @@ import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/i
 import { ProjectsModuleSchemas } from './old-sources/projects/persistence';
 import { NotificationsModuleSchemas } from './old-sources/notifications/persistence';
 import { TariffSchemas } from './new-sources/tariffs/persistence';
-import { BizPartnerSchemas } from './new-sources/m-biz-partners/persistence';
 import { LocationSchemas } from './new-sources/m-locations/persistence';
 import { WhraModuleSchemas } from './w-hra-modules';
 
@@ -36,7 +35,6 @@ const pgConnectionOptions = {
         ...ProjectsModuleSchemas,
         ...NotificationsModuleSchemas,
         ...TariffSchemas,
-        ...BizPartnerSchemas,
         ...LocationSchemas,
         ...WhraModuleSchemas
     ]
