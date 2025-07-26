@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { BizPartnersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
+import { BizPartnersModule, CustomersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
 import { SaleOrderCreationValidationService } from "./services";
 import { SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { SaleOrdersController } from "./controllers/sale-orders.controller";
@@ -11,6 +11,8 @@ import { SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/servic
 import { shipmentAssignmentService } from "./services/shipments/shipment-assignment.service";
 import { ShipmentsController } from "./controllers/shipments.controller";
 import { BizPartnersController } from "./controllers/biz-partners.controller";
+import { CustomersController } from "./controllers/customers.controller";
+import { CqrsEventHandlers } from "./integrations";
 
 
 @Module({})
@@ -29,12 +31,10 @@ export class WhraPlanningModule {
                     additionalSchemas: [
                         ...ShipmentsModuleSchemas
                     ],
-                    additionalProviders: [
-                        {
-                            provide: SaleOrderCreationValidationServiceSymbol,
-                            useClass: SaleOrderCreationValidationService
-                        }
-                    ]
+                    saleOrderCreationValidationService: {
+                        provide: SaleOrderCreationValidationServiceSymbol,
+                        useClass: SaleOrderCreationValidationService
+                    }
                 }),
                 ShipmentsModule.forRoot({
                     additionalProviders: [
@@ -44,13 +44,18 @@ export class WhraPlanningModule {
                         }
                     ]
                 }),
-                BizPartnersModule.forRoot()
+                BizPartnersModule.forRoot(),
+                CustomersModule.forRoot()
+            ],
+            providers: [
+                ...CqrsEventHandlers
             ],
             controllers: [
                 BizUnitsControllers,
                 SaleOrdersController,
                 ShipmentsController,
-                BizPartnersController
+                BizPartnersController,
+                CustomersController
             ]
         } as DynamicModule;
     }

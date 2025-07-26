@@ -3,19 +3,24 @@ import { HttpStatus } from "@nestjs/common";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { BizPartner, BizPartnerCommunicationType, BizPartnerGroup, BizPartnerRole } from "@src/w-hra-modules/biz-partners/domain";
 import { BizPartnerCommunicationPayload, BizPartnerCustomerPayload, BizPartnerPayload, BizPartnerVendorPayload } from "@src/w-hra-modules/biz-partners/use-cases/commands";
+import { Customer } from "@src/w-hra-modules/customers/domain";
 import { BizPartnersController } from "@src/w-hra-planning/controllers/biz-partners.controller";
 import { app, request, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 
 describe(`Create ${BizPartner.name} via ${BizPartnersController.name}`, () => {
     let bizPartnerRepository: Repository<BizPartner>;
+    let customerRepository: Repository<Customer>;
+
 
     beforeAll(() => {
         bizPartnerRepository = app.get(getRepositoryToken(BizPartner));
+        customerRepository = app.get(getRepositoryToken(Customer));
     });
 
     afterEach(async() => {
         await bizPartnerRepository.delete({});
+        await customerRepository.delete({});
     });
 
     test(`should be success`, async() => {
@@ -85,5 +90,20 @@ describe(`Create ${BizPartner.name} via ${BizPartnersController.name}`, () => {
             const communication = payload.communications.find(p => p.value === c.value && p.communicationType === c.communicationType);
             expect(communication).toBeTruthy();
         });
+
+        const customer = await customerRepository.findOne({
+            where: { code: bizPartner.customer.code },
+            relations: {
+                communications: true
+            }
+        });
+        expect(customer).toBeTruthy();
+        expect(customer.name).toBe(bizPartner.name);
+        expect(customer.communications).toHaveLength(bizPartner.communications.length);
+        customer.communications.forEach(c => {
+            const communication = bizPartner.communications.find(p => p.value === c.value && p.communicationType.toString() === c.type);
+            expect(communication).toBeTruthy();
+        });
+        
     });
 });

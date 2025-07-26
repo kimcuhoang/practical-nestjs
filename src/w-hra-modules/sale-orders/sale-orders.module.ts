@@ -4,10 +4,12 @@ import { SaleOrderModuleSchemas } from "./persistence";
 import { CqrsCommandHandlers } from "./use-cases/commands";
 import { EventHandlers } from "./integrations";
 import { CqrsQueryHandlers } from "./use-cases/queries";
+import { DefaultSaleOrderCreationValidationService, ISaleOrderCreationValidationService, SaleOrderCreationValidationServiceSymbol } from "./services";
 
 export type SaleOrdersModuleSettings = {
     additionalSchemas?: any[],
     additionalProviders?: Provider[],
+    saleOrderCreationValidationService?: Provider<ISaleOrderCreationValidationService>
 };
 
 @Module({})
@@ -22,7 +24,13 @@ export class SaleOrdersModule {
                 ...CqrsCommandHandlers,
                 ...CqrsQueryHandlers,
                 ...EventHandlers,
-                ...(settings?.additionalProviders || [])
+                ...(settings?.additionalProviders || []),
+                settings?.saleOrderCreationValidationService
+                    ? settings.saleOrderCreationValidationService
+                    : {
+                        provide: SaleOrderCreationValidationServiceSymbol,
+                        useClass: DefaultSaleOrderCreationValidationService
+                    }
             ],
             exports: [
                 TypeOrmModule,
