@@ -1,4 +1,4 @@
-import { EntityBase } from "@src/building-blocks/domains/entity-base";
+import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
 import { BizPartnerVendorRegion } from "./biz-partner-vendor-region";
 import { Type } from "class-transformer";
 import { BizPartner } from "./biz-partner";

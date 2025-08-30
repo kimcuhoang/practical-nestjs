@@ -1,4 +1,4 @@
-import { EntityBase } from "@src/building-blocks/domains/entity-base";
+import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
 import { CustomerCommunication } from "./customer-communication";
 import { Type } from "class-transformer";
 

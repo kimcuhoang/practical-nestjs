@@ -1,7 +1,7 @@
 import { EntitySchema } from "typeorm";
 import { BizPartnerCustomerRegion } from "../../domain/models/biz-partner-customer-region";
 import { snakeCase } from "typeorm/util/StringUtils";
-import { EntityBaseSchema } from "@src/building-blocks/infra/database/schemas/entity-base-schema";
+import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { BizPartnerCustomer } from "../../domain";
 
 export const BizPartnerCustomerRegionSchema = new EntitySchema<BizPartnerCustomerRegion>({

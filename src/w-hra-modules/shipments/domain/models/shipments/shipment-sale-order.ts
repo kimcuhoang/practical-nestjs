@@ -1,4 +1,4 @@
-import { EntityBase } from "@src/building-blocks/domains/entity-base";
+import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
 import { Type } from "class-transformer";
 import { Shipment } from "./shipment";
 import { ShipmentSaleOrderItem } from "./shipment-sale-order-item";

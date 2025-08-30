@@ -1,10 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SolaceReplayRequest } from "@src/w-hra-modules/solace-queue/instances/solace-replay.request";
-import { SubscriptionInstanceBase } from "@src/w-hra-modules/solace-queue/instances/subscription-instance.base";
+import { SolaceReplayRequest } from "@src/infra-modules/solace-queue/instances/solace-replay.request";
+import { SubscriptionInstanceBase } from "@src/infra-modules/solace-queue/instances/subscription-instance.base";
 import { BizPartnerSolaceQueueOptions } from "./biz-partner-queue.options";
 import { CommandBus } from "@nestjs/cqrs";
-import { SolaceQueueSubscriber } from "@src/w-hra-modules/solace-queue/operators/solace-queue.subscriber";
-import { SolaceQueueOptions } from "@src/w-hra-modules/solace-queue/solace-queue.options";
+import { SolaceQueueSubscriber } from "@src/infra-modules/solace-queue/operators/solace-queue.subscriber";
+import { SolaceQueueOptions } from "@src/infra-modules/solace-queue/solace-queue.options";
 import { plainToInstance } from "class-transformer";
 import { BizPartnerPayload, CreateBizPartnerCommand } from "@src/w-hra-modules/biz-partners/use-cases/commands";
 

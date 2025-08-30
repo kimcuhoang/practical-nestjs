@@ -2,10 +2,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '@building-blocks/infra/database';
-import { CachingModule } from '@building-blocks/infra/caching';
-import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';
-import { RedisModule } from '@building-blocks/infra/redis';
+import { DatabaseModule } from '@src/infra-modules/database';
+import { CachingModule } from '@src/infra-modules/caching';
+import { RedisIoRedisModule } from '@src/infra-modules/redis-ioredis';
+import { RedisModule } from '@src/infra-modules/redis';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

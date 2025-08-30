@@ -1,19 +1,18 @@
-import { DynamicModule, Global, Module } from "@nestjs/common";
+import { DynamicModule, Logger, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseModuleOptions } from "./database.module.options";
-import { DataSourceProperties } from "./datasource.properties";
-import { Logger } from "testcontainers/build/common";
+import { DatabaseModuleOptions } from "./persistence/database.module.options";
+import { DataSourceProperties } from "./persistence/datasource.properties";
 import { DataSource, DataSourceOptions } from "typeorm";
 import { addTransactionalDataSource, getDataSourceByName } from "typeorm-transactional";
 
-@Global()
 @Module({})
 export class DatabaseModule {
     public static register(configure: (configService: ConfigService) => DatabaseModuleOptions): DynamicModule {
         const logger = new Logger(DatabaseModule.name);
         return {
             module: DatabaseModule,
+            global: true,
             imports: [
                 TypeOrmModule.forRootAsync({
                     inject: [DatabaseModuleOptions],
@@ -22,7 +21,8 @@ export class DatabaseModule {
                         const migrations = [
                             ...new Set([
                                         ...DataSourceProperties.migrations as any[],
-                                        ...databaseSettings.migrations ])
+                                        ...databaseSettings.migrations 
+                                    ])
                         ];
 
                         return ({
@@ -34,7 +34,7 @@ export class DatabaseModule {
                             migrations: migrations
                         });
                     },
-                    async dataSourceFactory(options?: DataSourceOptions) {
+                    async dataSourceFactory(options?: DataSourceOptions): Promise<DataSource> {
                         if (!options) {
                             throw new Error("DataSourceOptions is required");
                         }
