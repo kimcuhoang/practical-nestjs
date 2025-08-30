@@ -9,8 +9,6 @@ import { RedisModule } from '@building-blocks/infra/redis';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { OldAppModule } from './old-sources/old-app.module';
-import { NewAppModule } from './new-sources';
 import { WhraPlanningModule } from './w-hra-planning';
 
 const infrastructureModules = [
@@ -28,8 +26,6 @@ const infrastructureModules = [
     ...infrastructureModules,
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    OldAppModule,
-    NewAppModule,
     WhraPlanningModule.forRoot(),
   ],
   controllers: [AppController],

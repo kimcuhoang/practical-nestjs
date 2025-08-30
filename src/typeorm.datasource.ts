@@ -3,10 +3,6 @@ import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
-import { ProjectsModuleSchemas } from './old-sources/projects/persistence';
-import { NotificationsModuleSchemas } from './old-sources/notifications/persistence';
-import { TariffSchemas } from './new-sources/tariffs/persistence';
-import { LocationSchemas } from './new-sources/m-locations/persistence';
 import { WhraModuleSchemas } from './w-hra-modules';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
@@ -32,10 +28,6 @@ const pgConnectionOptions = {
     synchronize: false,
     url: databaseModuleSettings.url,
     entities: [
-        ...ProjectsModuleSchemas,
-        ...NotificationsModuleSchemas,
-        ...TariffSchemas,
-        ...LocationSchemas,
         ...WhraModuleSchemas
     ]
 } as PostgresConnectionOptions;

@@ -9,13 +9,16 @@ export class AppController {
     private readonly appService: AppService,
   ) {}
 
-  @Get()
-  @ApiExcludeEndpoint(true)
-  @Redirect("/swagger", HttpStatus.MOVED_PERMANENTLY)
-  
-
   @Get("hello")
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get()
+  @ApiExcludeEndpoint(true)
+  @Redirect("/swagger", HttpStatus.MOVED_PERMANENTLY)
+  redirectToSwagger() {
+    // This method will be redirected, so its body can be empty or return any value
+    return;
   }
 }

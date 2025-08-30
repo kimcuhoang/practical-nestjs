@@ -65,7 +65,7 @@ export class SolaceQueueSubscriber {
 
         messageConsumer
             .on(MessageConsumerEventName.CONNECT_FAILED_ERROR, (error: OperationError) => {
-                this.logger.error(`CONNECT_FAILED_ERROR ${error.name}: ${error.message}`);
+                this.logger.error(`CONNECT_FAILED_ERROR ${error.name}: ${error.message}}`);
             })
             .on(MessageConsumerEventName.ACTIVE, () => {
                 this.logger.warn(`Message Consumer is ACTIVE`);
