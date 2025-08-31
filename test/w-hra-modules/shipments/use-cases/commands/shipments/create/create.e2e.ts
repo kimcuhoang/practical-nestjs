@@ -12,25 +12,31 @@ import { Repository } from "typeorm";
 describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     let shipmentRepository: Repository<Shipment>;
     let commandBus: CommandBus;
-    let mockShipmentAssignmentService: IShipmentAssignmentService;
-        //jest.Mocked<IShipmentAssignmentService>;
+    let shipmentAssignmentService: IShipmentAssignmentService;
+    let spyInstanceOfEnsureSaleOrdersIsValid: jest.SpyInstance;
+    let spyInstanceOfAssignShipmentToSaleOrders: jest.SpyInstance;
+
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));
         commandBus = app.get(CommandBus);
-        mockShipmentAssignmentService = app.get(SHIPMENT_ASSIGNMENT_SERVICE);
+        shipmentAssignmentService = app.get(SHIPMENT_ASSIGNMENT_SERVICE);
     });
 
     beforeEach(() => {
-        jest.spyOn(mockShipmentAssignmentService, 'ensureSaleOrdersIsValid')
+        spyInstanceOfEnsureSaleOrdersIsValid = jest
+            .spyOn(shipmentAssignmentService, 'ensureSaleOrdersIsValid')
             .mockResolvedValue([]);
-        jest.spyOn(mockShipmentAssignmentService, 'assignShipmentToSaleOrders')
+
+        spyInstanceOfAssignShipmentToSaleOrders = jest
+            .spyOn(shipmentAssignmentService, 'assignShipmentToSaleOrders')
             .mockResolvedValue(undefined);
     });
 
     afterEach(async () => {
         await shipmentRepository.delete({});
-        jest.clearAllMocks();
+        spyInstanceOfEnsureSaleOrdersIsValid.mockReset();
+        spyInstanceOfAssignShipmentToSaleOrders.mockReset();
     });
 
     test(`should be success`, async () => {

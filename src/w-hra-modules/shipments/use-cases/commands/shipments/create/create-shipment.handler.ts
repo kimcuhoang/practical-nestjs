@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { CreateShipmentCommand } from "./create-shipment.command";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Shipment } from "@src/w-hra-modules/shipments/domain";
+import { Shipment, ShipmentStatus } from "@src/w-hra-modules/shipments/domain";
 import { Repository } from "typeorm";
 import { Inject } from "@nestjs/common";
 import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
@@ -36,6 +36,7 @@ export class CreateShipmentHandler implements ICommandHandler<CreateShipmentComm
             s.finishToDateTime = payload.finishToDateTime;
             s.sourceGeographyCode = payload.sourceGeographyCode;
             s.destinationGeographyCode = payload.destinationGeographyCode;
+            s.status = ShipmentStatus.STATUS0;
 
             for (const saleOrder of payload.saleOrders) {
                 s.addSaleOrder(so => {

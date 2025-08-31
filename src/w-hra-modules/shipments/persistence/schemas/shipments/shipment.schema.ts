@@ -15,6 +15,11 @@ export const ShipmentSchema = new EntitySchema<Shipment>({
             length: 26,
             nullable: false
         },
+        status: {
+            type: String,
+            length: 26,
+            nullable: false
+        },
         bizUnitCode: {
             type: String,
             length: 26,
