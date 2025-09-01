@@ -14,6 +14,10 @@ b:
     clear
     npx yarn build
 
+gen-lib name:
+    clear
+    npx yarn nest g library {{name}} --no-spec
+
 db-create:
     clear
     npx yarn db:create

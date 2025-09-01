@@ -24,12 +24,12 @@
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
     "paths": {
-      "@src/*": ["src/*"],
-      "@building-blocks/*": ["src/building-blocks/*"],
-      "@integration-events/*": ["src/old-sources/integration-events/*"],
-      "@projects/*": ["src/old-sources/projects/*"],
-      "@notifications/*": ["src/old-sources/notifications/*"],
-      "@test/*": ["test/*"]
+      "@src/*": [
+        "src/*"
+      ],
+      "@test/*": [
+        "test/*"
+      ]
     }
-  },
+  }
 }

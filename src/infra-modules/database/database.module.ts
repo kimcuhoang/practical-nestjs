@@ -17,29 +17,21 @@ export class DatabaseModule {
                 TypeOrmModule.forRootAsync({
                     inject: [DatabaseModuleOptions],
                     useFactory: async (databaseSettings: DatabaseModuleOptions) => {
-
-                        const migrations = [
-                            ...new Set([
-                                        ...DataSourceProperties.migrations as any[],
-                                        ...databaseSettings.migrations 
-                                    ])
-                        ];
-
                         return ({
                             ...DataSourceProperties,
+                            migrations: databaseSettings.migrations || [],
                             url: databaseSettings.url,
                             logging: databaseSettings.enableForLog,
                             synchronize: false,
                             migrationsRun: databaseSettings.autoMigration,
-                            migrations: migrations
                         });
                     },
                     async dataSourceFactory(options?: DataSourceOptions): Promise<DataSource> {
                         if (!options) {
                             throw new Error("DataSourceOptions is required");
                         }
-                        return getDataSourceByName('default') 
-                                || addTransactionalDataSource(new DataSource(options));
+                        return getDataSourceByName('default')
+                            || addTransactionalDataSource(new DataSource(options));
                     }
                 })
             ],

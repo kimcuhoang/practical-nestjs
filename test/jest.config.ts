@@ -33,21 +33,20 @@ const jestConfig: Config.InitialOptions = {
     ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
-        "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
-        "^@integration-events/(.*)$": "<rootDir>/src/integration-events/$1",
-        "^@projects/(.*)$": "<rootDir>/src/projects/$1",
-        "^@notifications/(.*)$": "<rootDir>/src/notifications/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
     },
     coverageReporters: ["json", "html", "clover", "lcov", "text"],
     collectCoverageFrom: [
+        "libs/**/src/*.ts",
+        "!libs/**/src/main.ts",
+        "!libs/**/src/**/index.ts",
+        "!libs/**/src/**/*.module.ts",
+        "!libs/**/src/**/persistence/**",
         "src/**/*.ts",
         "!src/main.ts",
         "!src/**/index.ts",
         "!src/**/*.module.ts",
         "!src/**/persistence/**",
-        "!src/building-blocks/**",
-        "!src/integration-events/**",
         "!node_modules/**"
     ]
 };
