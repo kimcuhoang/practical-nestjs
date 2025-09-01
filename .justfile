@@ -32,6 +32,10 @@ gen-migration feature name: b
     clear
     npx yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
 
+create-migration feature name:
+    clear
+    npx yarn typeorm:create-migration src/{{feature}}/persistence/migrations/{{name}}
+
 run-migration: b
     clear
     npx yarn typeorm:run-migrations
@@ -49,7 +53,7 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    npx yarn test:e2e -f test/w-hra-planning/biz-partners-controller/create.e2e.ts --all
+    npx yarn test:e2e -f test/w-hra-planning/shipments-controller/create.e2e.ts --all
 
 e2e-files: pre-test
     npx yarn test:e2e --findRelatedTests \

@@ -21,7 +21,6 @@ export class CreateShipmentSaleOrderPayload
 
 export class CreateShipmentPayload 
     extends PickType(Shipment, [ 
-        "shipmentCode",
         "bizUnitCode",
         "regionCode",
         "startFromDateTime",

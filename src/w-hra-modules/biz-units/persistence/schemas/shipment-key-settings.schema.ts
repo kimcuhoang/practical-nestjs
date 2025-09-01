@@ -8,17 +8,17 @@ export const BizUnitsShipmentKeySettingsSchema = new EntitySchema<ShipmentKeySet
     columns: {
         prefix: {
             type: String,
-            length: 10,
+            length: 50,
             nullable: false
         },
         sequenceStart: {
             type: String, 
-            length: 10,
+            length: 20,
             nullable: false
         },
         sequenceEnd: {
             type: String,
-            length: 10,
+            length: 20,
             nullable: false
         }
     }

@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 import { Inject } from "@nestjs/common";
 import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
 import { Transactional } from "typeorm-transactional";
+import { IShipmentKeyGenerator, SHIPMENT_KEY_GENERATOR_SYMBOL } from "@src/w-hra-modules/shipments/services/shipment-key-generator";
 
 @CommandHandler(CreateShipmentCommand)
 export class CreateShipmentHandler implements ICommandHandler<CreateShipmentCommand, string> {
@@ -14,7 +15,9 @@ export class CreateShipmentHandler implements ICommandHandler<CreateShipmentComm
         @InjectRepository(Shipment)
         private readonly shipmentRepository: Repository<Shipment>,
         @Inject(SHIPMENT_ASSIGNMENT_SERVICE)
-        private readonly shipmentAssignmentService: IShipmentAssignmentService
+        private readonly shipmentAssignmentService: IShipmentAssignmentService,
+        @Inject(SHIPMENT_KEY_GENERATOR_SYMBOL)
+        private readonly shipmentKeyGenerator: IShipmentKeyGenerator
     ) { }
 
     @Transactional()
@@ -28,8 +31,10 @@ export class CreateShipmentHandler implements ICommandHandler<CreateShipmentComm
             throw new Error(`Invalid sale orders: ${invalidSaleOrders.join(", ")}`);
         }
 
+        const shipmentCode = await this.shipmentKeyGenerator.generate();
+
         const shipment = new Shipment(s => {
-            s.shipmentCode = payload.shipmentCode;
+            s.shipmentCode = shipmentCode;
             s.bizUnitCode = payload.bizUnitCode;
             s.regionCode = payload.regionCode;
             s.startFromDateTime = payload.startFromDateTime;

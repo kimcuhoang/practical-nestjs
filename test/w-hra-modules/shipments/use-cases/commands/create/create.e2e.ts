@@ -2,7 +2,8 @@ import { faker } from "@faker-js/faker";
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Shipment } from "@src/w-hra-modules/shipments/domain";
-import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders/shipment-assignment-service.interface";
+import { IShipmentAssignmentService, SHIPMENT_ASSIGNMENT_SERVICE } from "@src/w-hra-modules/shipments/services/sale-orders";
+import { IShipmentKeyGenerator, SHIPMENT_KEY_GENERATOR_SYMBOL } from "@src/w-hra-modules/shipments/services/shipment-key-generator";
 import { CreateShipmentPayload, CreateShipmentSaleOrderPayload, CreateShipmentSaleOrderItemPayload, CreateShipmentCommand } from "@src/w-hra-modules/shipments/use-cases/commands";
 import { CreateShipmentHandler } from "@src/w-hra-modules/shipments/use-cases/commands/create/create-shipment.handler";
 import { app, moment, TestHelpers } from "@test/test.setup";
@@ -15,12 +16,18 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     let shipmentAssignmentService: IShipmentAssignmentService;
     let spyInstanceOfEnsureSaleOrdersIsValid: jest.SpyInstance;
     let spyInstanceOfAssignShipmentToSaleOrders: jest.SpyInstance;
+    let shipmentKeyGenerator: IShipmentKeyGenerator;
+    let spyInstanceOfGenerateShipmentKey: jest.SpyInstance;
+
+
+    const shipmentCode = "SHP00000000003000000001";
 
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));
         commandBus = app.get(CommandBus);
         shipmentAssignmentService = app.get(SHIPMENT_ASSIGNMENT_SERVICE);
+        shipmentKeyGenerator = app.get(SHIPMENT_KEY_GENERATOR_SYMBOL);
     });
 
     beforeEach(() => {
@@ -31,17 +38,21 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
         spyInstanceOfAssignShipmentToSaleOrders = jest
             .spyOn(shipmentAssignmentService, 'assignShipmentToSaleOrders')
             .mockResolvedValue(undefined);
+
+        spyInstanceOfGenerateShipmentKey = jest
+            .spyOn(shipmentKeyGenerator, 'generate')
+            .mockResolvedValue(shipmentCode);
     });
 
     afterEach(async () => {
         await shipmentRepository.delete({});
         spyInstanceOfEnsureSaleOrdersIsValid.mockReset();
         spyInstanceOfAssignShipmentToSaleOrders.mockReset();
+        spyInstanceOfGenerateShipmentKey.mockReset();
     });
 
     test(`should be success`, async () => {
         const payload = {
-            shipmentCode: TestHelpers.genCode(),
             bizUnitCode: TestHelpers.genCode(),
             regionCode: TestHelpers.genCode(2),
             startFromDateTime: new Date(),
@@ -71,7 +82,7 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
             }
         });
         expect(shipment).toBeTruthy();
-        expect(shipment.shipmentCode).toBe(payload.shipmentCode);
+        expect(shipment.shipmentCode).toBe(shipmentCode);
         expect(shipment.bizUnitCode).toBe(payload.bizUnitCode);
         expect(shipment.regionCode).toBe(payload.regionCode);
         expect(shipment.startFromDateTime).toEqual(payload.startFromDateTime);

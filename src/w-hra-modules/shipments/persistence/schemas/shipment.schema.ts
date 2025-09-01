@@ -12,7 +12,7 @@ export const ShipmentSchema = new EntitySchema<Shipment>({
         ...EntityBaseSchema,
         shipmentCode: {
             type: String,
-            length: 26,
+            length: 100,
             nullable: false
         },
         status: {
