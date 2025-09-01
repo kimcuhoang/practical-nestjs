@@ -1,11 +1,11 @@
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { BizUnit, BizUnitSettings } from "@src/w-hra-modules/shipments/domain";
-import { CreateBizUnitCommand, CreateBizUnitPayload, CreateBizUnitRegionPayload } from "@src/w-hra-modules/shipments/use-cases/commands";
-import { CreateBizUnitHandler } from "@src/w-hra-modules/shipments/use-cases/commands/biz-units/create/create-biz-unit.handler";
+import { CreateBizUnitHandler } from "@src/w-hra-modules/biz-units/use-cases/commands/create/create-biz-unit.handler";
 import { app, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 import { faker } from "@faker-js/faker";
+import { BizUnit, CommonSettings } from "@src/w-hra-modules/biz-units/domain";
+import { CreateBizUnitRegionPayload, CreateBizUnitPayload, CreateBizUnitCommand } from "@src/w-hra-modules/biz-units/use-cases/commands";
 
 describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
     let bizUnitRepository: Repository<BizUnit>;
@@ -23,10 +23,15 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
     test(`should be success`, async () => {
         const payload = {
             bizUnitCode: TestHelpers.genCode(),
-            settings: {
+            commonSettings: {
                 countryCode: "VN",
                 timeZone: "GMT+7",
-            } satisfies BizUnitSettings,
+            } satisfies CommonSettings,
+            shipmentKeySettings: {
+                prefix: "SK",
+                sequenceStart: "00001",
+                sequenceEnd: "99999",
+            },
             regions: faker.helpers.multiple(() => ({
                 regionCode: TestHelpers.genCode(2),
             }) satisfies CreateBizUnitRegionPayload, { count: 3 }),
@@ -44,8 +49,14 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
 
         expect(bizUnit).toBeTruthy();
         expect(bizUnit.bizUnitCode).toBe(payload.bizUnitCode);
-        expect(bizUnit.settings.countryCode).toBe(payload.settings.countryCode);
-        expect(bizUnit.settings.timeZone).toBe(payload.settings.timeZone);
+
+        expect(bizUnit.commonSettings.countryCode).toBe(payload.commonSettings.countryCode);
+        expect(bizUnit.commonSettings.timeZone).toBe(payload.commonSettings.timeZone);
+
+        expect(bizUnit.shipmentKeySettings.prefix).toBe(payload.shipmentKeySettings.prefix);
+        expect(bizUnit.shipmentKeySettings.sequenceStart).toBe(payload.shipmentKeySettings.sequenceStart);
+        expect(bizUnit.shipmentKeySettings.sequenceEnd).toBe(payload.shipmentKeySettings.sequenceEnd);
+        
         expect(bizUnit.regions).toHaveLength(payload.regions.length);
         
     });

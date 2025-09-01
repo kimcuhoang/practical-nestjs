@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { CreateBizUnitCommand } from "./create-biz-unit.command";
-import { BizUnit } from "@src/w-hra-modules/shipments/domain";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { BizUnit } from "@src/w-hra-modules/biz-units/domain";
 
 @CommandHandler(CreateBizUnitCommand)
 export class CreateBizUnitHandler implements ICommandHandler<CreateBizUnitCommand, string> {
@@ -17,7 +17,8 @@ export class CreateBizUnitHandler implements ICommandHandler<CreateBizUnitComman
 
         const bizUnit = new BizUnit();
         bizUnit.bizUnitCode = payload.bizUnitCode;
-        bizUnit.settings = payload.settings;
+        bizUnit.commonSettings = payload.commonSettings;
+        bizUnit.shipmentKeySettings = payload.shipmentKeySettings;
 
         for(const region of payload.regions) {
             bizUnit.addBizUnitRegion(region.regionCode);

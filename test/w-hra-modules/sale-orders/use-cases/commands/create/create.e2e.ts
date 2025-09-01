@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { BizUnit } from "@src/w-hra-modules/biz-units/domain";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
 import { ISaleOrderCreationValidationService, SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { CreateSaleOrderCommand, CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
 import { CreateSaleOrderHandler } from "@src/w-hra-modules/sale-orders/use-cases/commands/create/create-sale-order.handler";
-import { BizUnit } from "@src/w-hra-modules/shipments/domain";
 import { app, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 

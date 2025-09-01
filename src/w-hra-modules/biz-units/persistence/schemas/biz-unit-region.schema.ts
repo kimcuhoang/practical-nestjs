@@ -1,7 +1,7 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
-import { BizUnit, BizUnitRegion } from "@src/w-hra-modules/shipments/domain";
 import { EntitySchema } from "typeorm";
 import { snakeCase } from "typeorm/util/StringUtils";
+import { BizUnit, BizUnitRegion } from "../../domain";
 
 
 export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({

@@ -1,8 +1,9 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
-import { BizUnit, BizUnitRegion } from "@src/w-hra-modules/shipments/domain";
 import { EntitySchema } from "typeorm";
 import { snakeCase } from "typeorm/util/StringUtils";
-import { BizUnitSettingsSchema } from "./biz-unit-settings.schema";
+import { BizUnitCommonSettingsSchema } from "./common-settings.schema";
+import { BizUnit, BizUnitRegion } from "../../domain";
+import { BizUnitsShipmentKeySettingsSchema } from "./shipment-key-settings.schema";
 
 
 export const BizUnitSchema = new EntitySchema<BizUnit>({
@@ -18,9 +19,13 @@ export const BizUnitSchema = new EntitySchema<BizUnit>({
         }
     },
     embeddeds: {
-        settings: {
-            schema: BizUnitSettingsSchema,
+        commonSettings: {
+            schema: BizUnitCommonSettingsSchema,
             prefix: ""
+        },
+        shipmentKeySettings: {
+            schema: BizUnitsShipmentKeySettingsSchema,
+            prefix: "shipment_key",
         }
     },
     relations: {

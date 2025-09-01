@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { ApiTags } from "@nestjs/swagger";
-import { CreateBizUnitCommand, CreateBizUnitPayload } from "@src/w-hra-modules/shipments/use-cases/commands";
+import { CreateBizUnitCommand, CreateBizUnitPayload } from "@src/w-hra-modules/biz-units/use-cases/commands";
 
 
 @ApiTags("Biz Units")

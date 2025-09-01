@@ -1,6 +1,6 @@
 
 
-export class BizUnitSettings {
+export class CommonSettings {
     countryCode!: string;
     timeZone!: string;
 }

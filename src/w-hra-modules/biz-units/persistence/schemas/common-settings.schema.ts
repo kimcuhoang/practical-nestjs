@@ -1,10 +1,10 @@
-import { BizUnitSettings } from "@src/w-hra-modules/shipments/domain";
 import { EntitySchema } from "typeorm";
+import { CommonSettings } from "../../domain";
 
 
-export const BizUnitSettingsSchema = new EntitySchema<BizUnitSettings>({
-    name: BizUnitSettings.name,
-    target: BizUnitSettings,
+export const BizUnitCommonSettingsSchema = new EntitySchema<CommonSettings>({
+    name: CommonSettings.name,
+    target: CommonSettings,
     columns: {
         countryCode: {
             type: String,

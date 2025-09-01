@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { BizPartnersModule, CustomersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
+import { BizPartnersModule, BizUnitsModule, CustomersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
 import { SaleOrderCreationValidationService } from "./services";
 import { SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { SaleOrdersController } from "./controllers/sale-orders.controller";
@@ -13,6 +13,7 @@ import { ShipmentsController } from "./controllers/shipments.controller";
 import { BizPartnersController } from "./controllers/biz-partners.controller";
 import { CustomersController } from "./controllers/customers.controller";
 import { CqrsEventHandlers } from "./integrations";
+import { BizUnitsModuleSchemas } from "@src/w-hra-modules/biz-units/persistence";
 
 
 @Module({})
@@ -29,6 +30,7 @@ export class WhraPlanningModule {
                 }),
                 SaleOrdersModule.forRoot({
                     additionalSchemas: [
+                        ...BizUnitsModuleSchemas,
                         ...ShipmentsModuleSchemas
                     ],
                     saleOrderCreationValidationService: {
@@ -37,6 +39,9 @@ export class WhraPlanningModule {
                     }
                 }),
                 ShipmentsModule.forRoot({
+                    additionalSchemas: [
+                        ...BizUnitsModuleSchemas
+                    ],
                     additionalProviders: [
                         {
                             provide: SHIPMENT_ASSIGNMENT_SERVICE,
@@ -45,7 +50,8 @@ export class WhraPlanningModule {
                     ]
                 }),
                 BizPartnersModule.forRoot(),
-                CustomersModule.forRoot()
+                CustomersModule.forRoot(),
+                BizUnitsModule.forRoot()
             ],
             providers: [
                 ...CqrsEventHandlers

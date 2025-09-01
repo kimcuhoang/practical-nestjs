@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
+import { BizUnit } from "@src/w-hra-modules/biz-units/domain";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
 import { DefaultSaleOrderCreationValidationService } from "@src/w-hra-modules/sale-orders/services";
-import { BizUnit } from "@src/w-hra-modules/shipments/domain";
 import { Equal, Repository } from "typeorm";
 
 

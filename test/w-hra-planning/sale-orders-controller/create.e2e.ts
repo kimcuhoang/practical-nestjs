@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 import { HttpStatus } from "@nestjs/common";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { BizUnit } from "@src/w-hra-modules/biz-units/domain";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
 import { CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
-import { BizUnit } from "@src/w-hra-modules/shipments/domain";
 import { SaleOrdersController } from "@src/w-hra-planning/controllers/sale-orders.controller";
 import { app, request, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
@@ -23,9 +23,14 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
     beforeEach(async () => {
         bizUnit = new BizUnit();
         bizUnit.bizUnitCode = TestHelpers.genCode();
-        bizUnit.settings = {
+        bizUnit.commonSettings = {
             countryCode: "ES",
             timeZone: "GMT+1",
+        };
+        bizUnit.shipmentKeySettings = {
+            prefix: "SK",
+            sequenceStart: "00001",
+            sequenceEnd: "99999",
         };
         bizUnit.addBizUnitRegion(regionCode);
 

@@ -1,14 +1,18 @@
 import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
 import { Type } from "class-transformer";
 import { BizUnitRegion } from "./biz-unit-region";
-import { BizUnitSettings } from "./biz-unit-settings";
+import { CommonSettings } from "./value-objects/common-settings";
+import { ShipmentKeySettings } from "./value-objects/shipment-key-settings";
 
 
 export class BizUnit extends EntityBase {
     bizUnitCode!: string;
 
-    @Type(() => BizUnitSettings)
-    settings!: BizUnitSettings;
+    @Type(() => CommonSettings)
+    commonSettings!: CommonSettings;
+
+    @Type(() => ShipmentKeySettings)
+    shipmentKeySettings!: ShipmentKeySettings;
 
     @Type(() => BizUnitRegion)
     regions: BizUnitRegion[];
