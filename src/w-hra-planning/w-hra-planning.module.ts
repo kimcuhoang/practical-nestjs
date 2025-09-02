@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { BizPartnersModule, BizUnitsModule, CustomersModule, SaleOrdersModule, ShipmentsModule } from "@src/w-hra-modules";
+import { BizPartnersModule, BizUnitsModule, CustomersModule, SaleOrdersModule, ShipmentLanesModule, ShipmentsModule } from "@src/w-hra-modules";
 import { SaleOrderCreationValidationService, ShipmentKeyGeneratorService } from "./services";
 import { SaleOrderCreationValidationServiceSymbol } from "@src/w-hra-modules/sale-orders/services";
 import { SaleOrdersController } from "./controllers/sale-orders.controller";
@@ -24,6 +24,9 @@ export class WhraPlanningModule {
         return {
             module: WhraPlanningModule,
             imports: [
+                BizUnitsModule.forRoot(),
+                BizPartnersModule.forRoot(),
+                CustomersModule.forRoot(),
                 SolaceQueueModule.forRoot({
                     additionalProviders: [
                         ...SolaceQueueIntegrationProviders
@@ -54,9 +57,8 @@ export class WhraPlanningModule {
                         useClass: ShipmentKeyGeneratorService
                     }
                 }),
-                BizPartnersModule.forRoot(),
-                CustomersModule.forRoot(),
-                BizUnitsModule.forRoot()
+                ShipmentLanesModule.forRoot()
+                
             ],
             providers: [
                 ...CqrsEventHandlers
