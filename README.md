@@ -1,31 +1,33 @@
 # Practical NestJS
 
-- An example of using [Nest](https://github.com/nestjs/nest)
-- High-lighted points
-  - Use TypeOrm as ORM within Postgres
-  - Use Redis
-  - Use [testcontainer](https://testcontainers.com/) to implement e2e tests
+## Overview
 
-## Notes:
+This project is an experimental of using `DDD` and `modular architecture` within `NestJS(v10.0.0)`. The following technologies are used:
 
-### TypeORM
-- [Avoid relation property initializers](https://typeorm.io/docs/relations/relations-faq/#avoid-relation-property-initializers)
+- `Postgres` as database
+- `TypeORM` as ORM
+- `Solace Queue` as message broker
+- `TestContainers` for integration tests
 
-### To generate migrations for specific feature
-- `typeorm.datasource.ts` -> comment out all the features that we don't want to generate migration
-- run the following command `just gen-migration [feature's folder name] [name of migration]`
-- `typeorm.datasource.ts` -> uncomment
+## Organization
 
-### About `whitelist` and `forbidNonWhitelisted`
+This project is structured in the following way:
 
-- When performing a POST request with Supertest in NestJS, if the payload fields lack class-validator decorators, the ValidationPipe might not parse or expose those fields as expected. This behavior is related to how class-validator and class-transformer interact with the ValidationPipe in NestJS.
+1. `infra-modules`
+- Where the things regarding to infrastructure are implemented to be reused in other modules
+- For instances:
+  - database
+  - solace queue
 
-- The `ValidationPipe` has options like `whitelist` and `forbidNonWhitelisted`.
-    - If `whitelist` is set to true, `class-transformer` will automatically remove properties from the incoming payload that do not have any decorator (including `class-validator` decorators) in the corresponding DTO class.
-    - If `forbidNonWhitelisted` is also set to true in conjunction with `whitelist`, the `ValidationPipe` will throw an error if non-whitelisted properties are present in the payload.
+2. `w-hra-modules`
+- Where the `Bounded-Context` has come. Each of them serve as `business-model` and must not depend on each other.
 
-- By default, `ValidationPipe` in NestJS might have `whitelist` enabled or implicitly remove fields without decorators during the transformation process, leading to the payload not being fully parsed for fields without class-validator decorators.
+3. `w-hra-planning`
+- Where the main application is implemented by connecting all of the `w-hra-modules` and `infra-modules` to form a single application.
 
-- Disable whitelist: Set whitelist to false in your ValidationPipe configuration. This will prevent class-transformer from stripping out properties that lack decorators.
+4. `w-hra-carries`
+- TBD
 
+## Processing flows
 
+### `w-hra-modules`
