@@ -1,4 +1,4 @@
-import { INestApplication, LogLevel, ValidationPipe } from '@nestjs/common';
+import { INestApplication, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
@@ -23,14 +23,8 @@ beforeAll(async () => {
     process.env.LOG_LEVELS = "log";//warn|error";
 
     if (globalThis.redisEnabled) {
-
-        globalThis.console.log("Redis is enabled");
-
-        const redisUrl = globalThis.redisContainer.getConnectionUrl();
-
-        process.env.REDIS_URL = redisUrl;
-        process.env.REDIS_HOST = globalThis.redisContainer.getHost();
-        process.env.REDIS_PORT = globalThis.redisContainer.getFirstMappedPort().toString();
+        console.log("Redis is enabled");
+        process.env.CACHE_REDIS_URL = globalThis.redisContainer.getConnectionUrl();
     }
 
     initializeTransactionalContext({
@@ -79,5 +73,5 @@ afterAll(async () => {
 });
 
 // add some timeout until containers are up and working 
-jest.setTimeout(120000);
+// jest.setTimeout(120000);
 export { app, request, moment, TestHelpers };

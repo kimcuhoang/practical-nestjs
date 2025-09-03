@@ -5,8 +5,8 @@ import { BizUnit } from "@src/w-hra-modules/biz-units/domain";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
 import { CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-modules/sale-orders/use-cases/commands";
 import { SaleOrdersController } from "@src/w-hra-planning/controllers/sale-orders.controller";
-import { app, request, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
+import * as TestHelpers from "@test/test-helpers";
 
 
 describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
@@ -16,8 +16,8 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
     let bizUnit: BizUnit;
 
     beforeAll(() => {
-        saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
-        bizUnitRepository = app.get(getRepositoryToken(BizUnit));
+        saleOrderRepository = global.nestApp.get(getRepositoryToken(SaleOrder));
+        bizUnitRepository = global.nestApp.get(getRepositoryToken(BizUnit));
     });
 
     beforeEach(async () => {
@@ -57,7 +57,7 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
 
         console.log(JSON.stringify(payload));
 
-        const response = await request
+        const response = await global.httpClient
             .post(`/sale-orders`)
             .send(payload)
             .expect(HttpStatus.CREATED);

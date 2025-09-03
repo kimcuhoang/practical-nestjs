@@ -4,7 +4,8 @@ const jestConfig: Config.InitialOptions = {
     silent: false,
     verbose: true,
     restoreMocks: true,
-    cache: false,
+    cache: true,
+    testTimeout: 120000,
     moduleFileExtensions: ["js", "json", "ts"],
     extensionsToTreatAsEsm: [".ts"],
     rootDir: "..",
@@ -24,13 +25,13 @@ const jestConfig: Config.InitialOptions = {
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
-    setupFilesAfterEnv: [
-        "./test/test.setup.ts"
-    ],
-    setupFiles: [
-        "dotenv/config",
-        "reflect-metadata"
-    ],
+    // setupFilesAfterEnv: [
+    //     "./test/test.setup.ts"
+    // ],
+    // setupFiles: [
+    //     "dotenv/config",
+    //     "reflect-metadata"
+    // ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
