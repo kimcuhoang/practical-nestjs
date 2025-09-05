@@ -7,19 +7,22 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from '@src/app.module';
 import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
-import * as httpClient from 'supertest';
 import TestAgent from 'supertest/lib/agent';
+import { CommandBus, EventBus, QueryBus } from '@nestjs/cqrs';
+import * as httpClient from 'supertest';
+import { ModulesContainer } from '@nestjs/core';
+import { ExplorerService } from '@nestjs/cqrs/dist/services/explorer.service';
 
 declare global {
     var postgresContainer: StartedPostgreSqlContainer;
     var redisContainer: StartedRedisContainer | undefined;
     var redisEnabled: boolean | false;
     var nestApp: INestApplication<any>;
-    var testingModule: TestingModule;
 
     var httpClient: TestAgent;
-
-    var getProvider: (token: any) => any;
+    var commandBus: CommandBus;
+    var queryBus: QueryBus;
+    var eventBus: EventBus;
 }
 
 export default async function globalSetup() {
@@ -86,9 +89,23 @@ export default async function globalSetup() {
     const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [];
     app.useLogger(logLevels as LogLevel[]);
 
+    
+
+    // const moduleContainer = app.get(ModulesContainer);
+    // const modules = moduleContainer.values();
+
+    const explorerServices = moduleFixture.get(ExplorerService);
+    const handlers = explorerServices.explore();
+
+    global.commandBus = moduleFixture.get(CommandBus);
+    global.queryBus = moduleFixture.get(QueryBus);
+    global.eventBus = moduleFixture.get(EventBus);
+
+    global.commandBus.register(handlers.commands);
+    global.eventBus.register(handlers.events);
+    global.queryBus.register(handlers.queries);
 
     global.nestApp = await app.init();
-    global.testingModule = moduleFixture;
     global.httpClient = httpClient(app.getHttpServer());
 };
     

@@ -1,11 +1,12 @@
 import { CachingService } from "@src/infra-modules/caching";
+import { app } from "@test/test.setup";
 
 
 describe(`An e2e test with Caching Module with CachingService`, () => {
     let cachingService: CachingService;
 
     beforeAll(() => {
-        cachingService = global.testingModule.get(CachingService);
+        cachingService = app.get(CachingService.name);
     });
 
     test(`should cache data`, async () => {

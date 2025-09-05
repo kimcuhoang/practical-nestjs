@@ -10,6 +10,7 @@ import { WhraPlanningModule } from './w-hra-planning';
 import { CachingModule } from './infra-modules/caching';
 import { CacheSettings } from './infra-modules/caching/cache-settings';
 import { plainToInstance } from 'class-transformer';
+import { CalculatorModule } from './infra-modules/calculator';
 
 const infrastructureModules = [
   DatabaseModule.register(configService =>
@@ -33,8 +34,13 @@ const infrastructureModules = [
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     WhraPlanningModule.forRoot(),
+
+    CalculatorModule.forRoot({
+      initialValue: 100, // Configure the initial value here
+    }),
+
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule { }

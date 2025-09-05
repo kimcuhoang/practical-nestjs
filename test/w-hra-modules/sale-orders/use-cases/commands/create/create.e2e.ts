@@ -20,8 +20,8 @@ describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
     beforeAll(() => {
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
-        commandBus = app.get(CommandBus);
         saleOrderCreationValidationService = app.get(SaleOrderCreationValidationServiceSymbol);
+        commandBus = global.commandBus;
     });
 
     beforeEach(() => {

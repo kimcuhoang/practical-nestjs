@@ -1,5 +1,5 @@
 
-export const SHIPMENT_ASSIGNMENT_SERVICE = Symbol('SHIPMENT_ASSIGNMENT_SERVICE');
+export const SHIPMENT_ASSIGNMENT_SERVICE = 'SHIPMENT_ASSIGNMENT_SERVICE';
 
 export interface IShipmentAssignmentService {
     ensureSaleOrdersIsValid(saleOrderKeys: string[]): Promise<string[]>;

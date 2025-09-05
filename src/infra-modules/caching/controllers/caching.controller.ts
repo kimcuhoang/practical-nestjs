@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post } from "@nestjs/common";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { CachingService } from "../caching.service";
 
@@ -7,6 +7,7 @@ import { CachingService } from "../caching.service";
 @Controller("caching")
 export class CachingController {
     constructor(
+        @Inject(CachingService.name)
         private readonly cachingService: CachingService
     ){}
 

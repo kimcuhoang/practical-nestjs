@@ -7,6 +7,7 @@ import { app, TestHelpers } from "@test/test.setup";
 import { Equal, Repository } from "typeorm";
 
 
+
 describe(`Create ${BizPartner.name}`, () => {
     let bizPartnerRepository: Repository<BizPartner>;
     let bizPartnerCommunicationRepository: Repository<BizPartnerCommunication>;

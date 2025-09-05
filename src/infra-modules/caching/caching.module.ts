@@ -71,10 +71,13 @@ export class CachingModule {
                 cacheManagerModule
             ],
             providers: [
-                CachingService
+                {
+                    provide: CachingService.name,
+                    useClass: CachingService
+                }
             ],
             exports: [
-                CachingService
+                CachingService.name
             ],
             controllers: [
                 CachingController

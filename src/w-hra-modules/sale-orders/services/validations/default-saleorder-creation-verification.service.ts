@@ -1,6 +1,6 @@
 import { SaleOrder } from "../../domain";
 
-export const SaleOrderCreationValidationServiceSymbol = Symbol("ISaleOrderCreationValidationService");
+export const SaleOrderCreationValidationServiceSymbol = "ISaleOrderCreationValidationService";
 
 export interface ISaleOrderCreationValidationService {
     canCreateSaleOrder(saleOrder: SaleOrder): Promise<boolean>;

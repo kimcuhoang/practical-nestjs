@@ -4,6 +4,5 @@ export const CqrsCommandHandlers = [
     CreateBizUnitHandler,
 ];
 
-
 export * from "./create/create-biz-unit.payload";
 export * from "./create/create-biz-unit.command";

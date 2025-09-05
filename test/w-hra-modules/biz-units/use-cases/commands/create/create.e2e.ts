@@ -1,11 +1,11 @@
 import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { CreateBizUnitHandler } from "@src/w-hra-modules/biz-units/use-cases/commands/create/create-biz-unit.handler";
-import { app, TestHelpers } from "@test/test.setup";
 import { Repository } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { BizUnit, CommonSettings } from "@src/w-hra-modules/biz-units/domain";
 import { CreateBizUnitRegionPayload, CreateBizUnitPayload, CreateBizUnitCommand } from "@src/w-hra-modules/biz-units/use-cases/commands";
+import { app, TestHelpers } from "@test/test.setup";
 
 describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
     let bizUnitRepository: Repository<BizUnit>;
@@ -13,7 +13,7 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
 
     beforeAll(() => {
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
-        commandBus = app.get(CommandBus);
+        commandBus = global.commandBus;
     });
 
     afterEach(async () => {
@@ -58,6 +58,5 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
         expect(bizUnit.shipmentKeySettings.sequenceEnd).toBe(payload.shipmentKeySettings.sequenceEnd);
         
         expect(bizUnit.regions).toHaveLength(payload.regions.length);
-        
     });
 });

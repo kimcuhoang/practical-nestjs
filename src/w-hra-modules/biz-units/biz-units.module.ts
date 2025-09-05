@@ -24,9 +24,9 @@ export class BizUnitsModule {
                 ...CqrsCommandHandlers,
                 ...(moduleSettings?.additionalProviders || [])
             ],
-            export: [
+            exports: [
                 TypeOrmModule,
-                ...CqrsCommandHandlers,
+                ...CqrsCommandHandlers
             ]
         } as DynamicModule;
     }
