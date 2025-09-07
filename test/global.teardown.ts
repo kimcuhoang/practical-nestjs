@@ -1,17 +1,18 @@
-export default async function globalTeardown() {
-    if (global.nestApp) {
-        await global.nestApp.close();  
+module.exports = async() => {
+    
+    if (globalThis.nestApp) {
+        await globalThis.nestApp.close();  
     }
     
-    if (global.postgresContainer) {
-        await global.postgresContainer.stop({
+    if (globalThis.postgresContainer) {
+        await globalThis.postgresContainer.stop({
             remove: true,
             timeout: 50000
         });
     }
 
-    if (global.redisContainer) {
-        await global.redisContainer.stop({
+    if (globalThis.redisContainer) {
+        await globalThis.redisContainer.stop({
             remove: true,
             timeout: 50000
         });

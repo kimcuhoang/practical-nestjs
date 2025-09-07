@@ -25,10 +25,9 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));
-        
         shipmentAssignmentService = app.get(SHIPMENT_ASSIGNMENT_SERVICE);
         shipmentKeyGenerator = app.get(SHIPMENT_KEY_GENERATOR_SYMBOL);
-        commandBus = global.commandBus;
+        commandBus = app.get(CommandBus.name);
     });
 
     beforeEach(() => {

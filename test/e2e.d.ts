@@ -6,5 +6,8 @@ export declare global {
         var postgresContainer: StartedPostgreSqlContainer;
         var redisContainer: StartedRedisContainer = undefined;
         var redisEnabled: boolean | false;
+
+        var nestApp: INestApplication<any>;
+        var httpClient: TestAgent;
     }
 }

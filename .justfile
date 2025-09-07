@@ -71,7 +71,7 @@ e2e-folder name: pre-test
     clear
     npx yarn test:e2e --testPathPattern=test/{{name}}
 
-e2e-w-hra-modules: pre-test
+e2e-modules: pre-test
     clear
     npx yarn test:e2e --testPathPattern=test/w-hra-modules
 

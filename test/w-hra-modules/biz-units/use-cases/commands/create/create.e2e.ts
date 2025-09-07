@@ -1,4 +1,3 @@
-import { CommandBus } from "@nestjs/cqrs";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { CreateBizUnitHandler } from "@src/w-hra-modules/biz-units/use-cases/commands/create/create-biz-unit.handler";
 import { Repository } from "typeorm";
@@ -6,14 +5,22 @@ import { faker } from "@faker-js/faker";
 import { BizUnit, CommonSettings } from "@src/w-hra-modules/biz-units/domain";
 import { CreateBizUnitRegionPayload, CreateBizUnitPayload, CreateBizUnitCommand } from "@src/w-hra-modules/biz-units/use-cases/commands";
 import { app, TestHelpers } from "@test/test.setup";
+import { CommandBus } from "@nestjs/cqrs";
 
 describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
     let bizUnitRepository: Repository<BizUnit>;
     let commandBus: CommandBus;
+    let commandHandler: CreateBizUnitHandler;
+
 
     beforeAll(() => {
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
-        commandBus = global.commandBus;
+        commandBus = app.get(CommandBus.name);
+        commandHandler = app.get(CreateBizUnitHandler.name);
+    });
+
+    beforeEach(async () => {
+        await bizUnitRepository.delete({});
     });
 
     afterEach(async () => {
@@ -37,8 +44,12 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
             }) satisfies CreateBizUnitRegionPayload, { count: 3 }),
         } satisfies CreateBizUnitPayload;
 
-        const bizUnitId = await commandBus.execute(new CreateBizUnitCommand(payload));
+        const command = new CreateBizUnitCommand(payload);
+        let bizUnitId = await commandHandler.execute(command);
         expect(bizUnitId).toBeTruthy();
+
+        // bizUnitId = await commandBus.execute(command);
+        // expect(bizUnitId).toBeTruthy();
 
         const bizUnit = await bizUnitRepository.findOne({
             where: { id: bizUnitId },

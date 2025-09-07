@@ -23,6 +23,7 @@ export class WhraPlanningModule {
 
         return {
             module: WhraPlanningModule,
+            global: true,
             imports: [
                 BizUnitsModule.forRoot(),
                 BizPartnersModule.forRoot(),

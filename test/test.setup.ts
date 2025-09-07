@@ -5,6 +5,7 @@ import * as TestHelpers from "@test/test-helpers";
 const app = globalThis.nestApp;
 const request = globalThis.httpClient;
 
+console.log = jest.fn();
 
 export { 
     app, 

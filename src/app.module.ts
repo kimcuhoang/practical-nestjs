@@ -1,6 +1,6 @@
 
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { CommandBus, CqrsModule, EventBus, QueryBus } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@src/infra-modules/database';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
@@ -11,6 +11,7 @@ import { CachingModule } from './infra-modules/caching';
 import { CacheSettings } from './infra-modules/caching/cache-settings';
 import { plainToInstance } from 'class-transformer';
 import { CalculatorModule } from './infra-modules/calculator';
+import { ExplorerService } from '@nestjs/cqrs/dist/services/explorer.service';
 
 const infrastructureModules = [
   DatabaseModule.register(configService =>
@@ -41,6 +42,27 @@ const infrastructureModules = [
 
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [
+    AppService
+    // ExplorerService,
+    // {
+    //   provide: CommandBus.name,
+    //   useExisting: CommandBus
+    //   // inject: [CommandBus, ExplorerService],
+    //   // useFactory: (commandBus: CommandBus, explorerService: ExplorerService) => {
+    //   //   const handlers = explorerService.explore();
+    //   //   commandBus.register(handlers.commands);
+    //   //   return commandBus;
+    //   // }
+    // },
+    // {
+    //   provide: QueryBus.name,
+    //   useExisting: QueryBus,
+    // },
+    // {
+    //   provide: EventBus.name,
+    //   useExisting: EventBus,
+    // }
+  ]
 })
 export class AppModule { }

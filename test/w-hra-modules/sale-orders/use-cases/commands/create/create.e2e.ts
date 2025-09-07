@@ -14,24 +14,24 @@ describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
     let bizUnitRepository: Repository<BizUnit>;
     let commandBus: CommandBus;
     let saleOrderCreationValidationService: ISaleOrderCreationValidationService;
-    // jest.Mocked<ISaleOrderCreationValidationService>;
+    let spyInstanceOfCanCreateSaleOrder: jest.SpyInstance;
 
 
     beforeAll(() => {
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
         saleOrderCreationValidationService = app.get(SaleOrderCreationValidationServiceSymbol);
-        commandBus = global.commandBus;
+        commandBus = app.get(CommandBus.name);
     });
 
     beforeEach(() => {
-        jest.spyOn(saleOrderCreationValidationService, "canCreateSaleOrder")
+        spyInstanceOfCanCreateSaleOrder = jest.spyOn(saleOrderCreationValidationService, "canCreateSaleOrder")
             .mockResolvedValue(true);
     });
 
     afterEach(async() => {
         await saleOrderRepository.delete({});
-        jest.clearAllMocks();
+        spyInstanceOfCanCreateSaleOrder.mockReset();
     });
 
     test(`should be success`, async() => {
