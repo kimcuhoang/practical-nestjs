@@ -21,7 +21,7 @@ describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
         saleOrderCreationValidationService = app.get(SaleOrderCreationValidationServiceSymbol);
-        commandBus = app.get(CommandBus.name);
+        commandBus = app.get(CommandBus);
     });
 
     beforeEach(() => {

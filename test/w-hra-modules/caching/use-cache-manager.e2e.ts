@@ -2,6 +2,7 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { RedisStore } from "cache-manager-redis-yet";
 import { RedisClientType } from "@redis/client";
+import { app } from "@test/test.setup";
 
 describe(`An e2e test with Caching Module with CacheManager`, () => {
 
@@ -9,7 +10,7 @@ describe(`An e2e test with Caching Module with CacheManager`, () => {
     let redisClient: RedisClientType | null = null;
 
     beforeAll(async () => {
-        cacheManager = global.nestApp.get(CACHE_MANAGER);
+        cacheManager = app.get(CACHE_MANAGER);
         const redisStore = cacheManager.store as RedisStore;
         redisClient = redisStore.client as unknown as RedisClientType;
     });

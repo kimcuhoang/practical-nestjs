@@ -7,6 +7,7 @@ import { CreateSaleOrderItemPayload, CreateSaleOrderPayload } from "@src/w-hra-m
 import { SaleOrdersController } from "@src/w-hra-planning/controllers/sale-orders.controller";
 import { Repository } from "typeorm";
 import * as TestHelpers from "@test/test-helpers";
+import { app, request } from "@test/test.setup";
 
 
 describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
@@ -16,8 +17,8 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
     let bizUnit: BizUnit;
 
     beforeAll(() => {
-        saleOrderRepository = global.nestApp.get(getRepositoryToken(SaleOrder));
-        bizUnitRepository = global.nestApp.get(getRepositoryToken(BizUnit));
+        saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
+        bizUnitRepository = app.get(getRepositoryToken(BizUnit));
     });
 
     beforeEach(async () => {
@@ -57,7 +58,7 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
 
         console.log(JSON.stringify(payload));
 
-        const response = await global.httpClient
+        const response = await request
             .post(`/sale-orders`)
             .send(payload)
             .expect(HttpStatus.CREATED);

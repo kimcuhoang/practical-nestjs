@@ -15,7 +15,7 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
 
     beforeAll(() => {
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
-        commandBus = app.get(CommandBus.name);
+        commandBus = app.get(CommandBus);
         commandHandler = app.get(CreateBizUnitHandler.name);
     });
 

@@ -29,7 +29,8 @@
     "test": "jest --runInBand --config ./test/jest.config.ts",
     "test:watch": "yarn test --watch",
     "test:cov": "yarn test --coverage",
-    "test:e2e": "yarn test"
+    "test:e2e": "yarn test",
+    "test:e2e:linux": "yarn test --shard=1/2 & yarn test --shard=2/2"
   },
   "dependencies": {
     "@nestjs/cache-manager": "2.3.0",
