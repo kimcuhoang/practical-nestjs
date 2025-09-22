@@ -31,15 +31,14 @@ export class ShipmentKeyGeneratorService implements IShipmentKeyGenerator {
 
         const prefix = bizUnit.shipmentKeySettings.prefix;
         const sequenceStart = bizUnit.shipmentKeySettings.sequenceStart;
-        const sequenceEnd = bizUnit.shipmentKeySettings.sequenceEnd;
+        const sequenceEnd = Number(bizUnit.shipmentKeySettings.sequenceEnd);
 
         const nextSequenceValue = await this.getNextSequenceValue();
-        const nextShipmentCode = `${prefix}${String(nextSequenceValue).padStart(sequenceStart.length, '0')}`;
-        if (nextShipmentCode === `${prefix}${sequenceEnd}`) {
+        if (nextSequenceValue >= sequenceEnd) {
             throw new Error("Shipment Key Sequence has reached its maximum value");
         }
 
-        return nextShipmentCode;
+        return `${prefix}${String(nextSequenceValue).padStart(sequenceStart.length, '0')}`;
     }
 
     private async getNextSequenceValue(): Promise<number> {

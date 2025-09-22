@@ -14,7 +14,7 @@ import * as httpClient from "supertest";
 let app: INestApplication<any>;
 let request: TestAgent;
 
-console.log = jest.fn();
+// console.log = jest.fn();
 
 
 beforeAll(async () => {
@@ -22,7 +22,7 @@ beforeAll(async () => {
     const connectionString = global.postgresContainer.getConnectionUri();
 
     process.env.POSTGRES_DATABASE_URL = connectionString;
-    process.env.POSTGRES_LOG_ENABLED = "!true";
+    process.env.POSTGRES_LOG_ENABLED = "true";
     process.env.FALLBACK_LANGUAGE = "en";
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";

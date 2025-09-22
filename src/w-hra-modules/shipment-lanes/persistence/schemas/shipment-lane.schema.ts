@@ -9,6 +9,10 @@ export const ShipmentLaneSchema = new EntitySchema<ShipmentLane>({
     target: ShipmentLane,
     tableName: snakeCase("ShipmentLanes"),
     columns: {
-        ...EntityBaseSchema
+        ...EntityBaseSchema,
+        code: {
+            type: String,
+            nullable: true
+        }
     }
 });

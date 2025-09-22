@@ -1,8 +1,8 @@
 
 import { Module } from '@nestjs/common';
-import { CommandBus, CqrsModule, EventBus, QueryBus } from '@nestjs/cqrs';
+import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '@src/infra-modules/database';
+import { DatabaseModule, DatabaseModuleOptions } from '@src/infra-modules/database';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,12 +11,14 @@ import { CachingModule } from './infra-modules/caching';
 import { CacheSettings } from './infra-modules/caching/cache-settings';
 import { plainToInstance } from 'class-transformer';
 import { CalculatorModule } from './infra-modules/calculator';
-import { ExplorerService } from '@nestjs/cqrs/dist/services/explorer.service';
+import { ShipmentLanesModuleEntitySubscribers } from './w-hra-modules/shipment-lanes/persistence';
 
 const infrastructureModules = [
-  DatabaseModule.register(configService =>
-    getDatabaseModuleSettings(configService)
-  ),
+  DatabaseModule.register(configService => {
+    return plainToInstance(DatabaseModuleOptions, {
+      ...getDatabaseModuleSettings(configService)
+    });
+  }),
   CachingModule.forRoot(configService => {
     const settings = plainToInstance(CacheSettings, {
       store: configService.get('CACHE_STORE', 'memory'),

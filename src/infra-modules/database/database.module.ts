@@ -19,6 +19,7 @@ export class DatabaseModule {
                     useFactory: async (databaseSettings: DatabaseModuleOptions) => {
                         return ({
                             ...DataSourceProperties,
+                            subscribers: databaseSettings.subscribers || [],
                             migrations: databaseSettings.migrations || [],
                             url: databaseSettings.url,
                             logging: databaseSettings.enableForLog,

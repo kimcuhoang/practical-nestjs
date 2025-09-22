@@ -18,5 +18,5 @@ export const WhraModuleSchemas = [
     ...BizPartnersModuleSchemas,
     ...CustomersModuleSchemas,
     ...BizUnitsModuleSchemas,
-    ...ShipmentLanesModuleSchemas
+    ...Object.values(ShipmentLanesModuleSchemas)
 ];

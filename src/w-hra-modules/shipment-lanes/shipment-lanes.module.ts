@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ShipmentLanesModuleSchemas } from "./persistence";
+import { ShipmentLanesModuleEntitySubscribers, ShipmentLanesModuleSchemas } from "./persistence";
 
 
 @Module({})
@@ -11,10 +11,12 @@ export class ShipmentLanesModule {
             global: true,
             imports: [
                 TypeOrmModule.forFeature([
-                    ...ShipmentLanesModuleSchemas
+                    ...Object.values(ShipmentLanesModuleSchemas)
                 ])
             ],
-            providers: [],
+            providers: [
+                ...Object.values(ShipmentLanesModuleEntitySubscribers)
+            ],
             exports: [
                 TypeOrmModule
             ]
