@@ -69,7 +69,7 @@ e2e-files: pre-test
 
 e2e-folder name: pre-test
     clear
-    npx yarn test:e2e --testPathPattern=test/{{name}}
+    npx yarn test:e2e --testPathPattern={{name}}
 
 e2e-modules: pre-test
     clear

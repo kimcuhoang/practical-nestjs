@@ -14,7 +14,7 @@ import { BizPartnersController } from "./controllers/biz-partners.controller";
 import { CustomersController } from "./controllers/customers.controller";
 import { CqrsEventHandlers } from "./integrations";
 import { BizUnitsModuleSchemas } from "@src/w-hra-modules/biz-units/persistence";
-import { SHIPMENT_KEY_GENERATOR_SYMBOL } from "@src/w-hra-modules/shipments/services/shipment-key-generator";
+import { overrideShipmentAssigmentServiceProvider, overrideShipmentKeyGeneratorServiceProvider } from "./services/shipments";
 
 
 @Module({})
@@ -36,7 +36,7 @@ export class WhraPlanningModule {
                 SaleOrdersModule.forRoot({
                     additionalSchemas: [
                         ...BizUnitsModuleSchemas,
-                        ...ShipmentsModuleSchemas
+                        ...Object.values(ShipmentsModuleSchemas)
                     ],
                     saleOrderCreationValidationService: {
                         provide: SaleOrderCreationValidationServiceSymbol,
@@ -48,15 +48,9 @@ export class WhraPlanningModule {
                         ...BizUnitsModuleSchemas
                     ],
                     additionalProviders: [
-                        {
-                            provide: SHIPMENT_ASSIGNMENT_SERVICE,
-                            useClass: shipmentAssignmentService
-                        }
+                        overrideShipmentAssigmentServiceProvider
                     ],
-                    shipmentKeyGeneratorProvider: {
-                        provide: SHIPMENT_KEY_GENERATOR_SYMBOL,
-                        useClass: ShipmentKeyGeneratorService
-                    }
+                    shipmentKeyGeneratorProvider: overrideShipmentKeyGeneratorServiceProvider
                 }),
                 ShipmentLanesModule.forRoot()
                 

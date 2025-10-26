@@ -14,7 +14,7 @@ export * from "./shipment-lanes/shipment-lanes.module";
 
 export const WhraModuleSchemas = [
     ...SaleOrderModuleSchemas,
-    ...ShipmentsModuleSchemas,
+    ...Object.values(ShipmentsModuleSchemas),
     ...BizPartnersModuleSchemas,
     ...CustomersModuleSchemas,
     ...BizUnitsModuleSchemas,
