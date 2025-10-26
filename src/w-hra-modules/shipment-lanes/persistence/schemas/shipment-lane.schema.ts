@@ -24,7 +24,8 @@ export const ShipmentLaneSchema = new EntitySchema<ShipmentLane>({
         tariffs: {
             type: "one-to-many",
             target: Tariff.name,
-            inverseSide: "shipmentLane"
+            inverseSide: "shipmentLane",
+            cascade: true
         }
     }
 });

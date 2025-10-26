@@ -23,7 +23,6 @@ export const BaseRateSchema = new EntitySchema<BaseRate>({
             type: "many-to-one",
             target: TariffValidity.name,
             inverseSide: "baseRates",
-            cascade: true,
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
@@ -36,6 +35,7 @@ export const BaseRateSchema = new EntitySchema<BaseRate>({
             type: "one-to-many",
             target: BaseRateValue.name,
             inverseSide: "baseRate",
+            cascade: true
         }
     },
     inheritance: {

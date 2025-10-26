@@ -29,4 +29,9 @@ export class TariffValidity extends EntityBase {
 
         return baseRate as T;
     }
+
+    public anotherAddBaseRate<T extends BaseRate>(baseRate: T): void {
+        this.baseRates ??= [];
+        this.baseRates.push(baseRate);
+    }
 }

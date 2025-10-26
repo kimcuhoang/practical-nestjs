@@ -32,4 +32,9 @@ export class BaseRate extends EntityBase {
 
         return baseRateValue;
     }
+
+    public anotherAddBaseRateValue<T extends BaseRateValue>(baseRateValue: T): void {
+        this.values ??= [];
+        this.values.push(baseRateValue);
+    }
 }

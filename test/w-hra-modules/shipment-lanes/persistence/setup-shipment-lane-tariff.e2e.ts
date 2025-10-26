@@ -1,7 +1,7 @@
 import { getEntityManagerToken, getRepositoryToken } from "@nestjs/typeorm";
 import { ShipmentLane, Tariff, TariffValidity, WeightRate, WeightRateValue } from "@src/w-hra-modules/shipment-lanes/domain";
 import { IShipmentLaneKeySettingsService, SHIPMENT_LANE_KEY_SETTINGS_SERVICE } from "@src/w-hra-modules/shipment-lanes/services/shipment-lane-key-settings";
-import { app } from "@test/test.setup";
+import { app, TestHelpers } from "@test/test.setup";
 import { EntityManager, Repository } from "typeorm";
 
 
@@ -16,7 +16,7 @@ const prefix = "SHIPMENT_LANE";
 const shipmentLane = new ShipmentLane();
 
 const tariff = shipmentLane.addTariff({
-    bizPartnerCode: "BIZPARTNER1",
+    bizPartnerCode: TestHelpers.genCode(),
     preferred: true
 });
 
@@ -25,8 +25,17 @@ const tariffValidity = tariff.addValidity({
     validTo: new Date("2024-12-31")
 });
 
-const weightRate = tariffValidity.addBaseRate<WeightRate>()
+// const weightRate = new WeightRate(tariffValidity);
+// tariffValidity.anotherAddBaseRate(weightRate);
 
+// const weightRateValue = new WeightRateValue(weightRate);
+// weightRateValue.value = 100;
+// weightRateValue.perSegment = 1;
+// weightRateValue.segmentUnit = "kg";
+
+// weightRate.anotherAddBaseRateValue(weightRateValue);
+
+const weightRate = tariffValidity.addBaseRate<WeightRate>()
 const weightRateValue = weightRate.addBaseRateValue<WeightRateValue>();
 weightRateValue.value = 100;
 weightRateValue.perSegment = 1;
@@ -56,6 +65,7 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
     });
 
     test(`should persist successfully`, async () => {
+
         const savedShipmentLane = await shipmentLaneRepository.findOne({
             where: {
                 id: shipmentLane.id
@@ -76,5 +86,7 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
         expect(savedShipmentLane.tariffs.flatMap(t => t.validities)).toHaveLength(1);
         expect(savedShipmentLane.tariffs.flatMap(t => t.validities).flatMap(v => v.baseRates)).toHaveLength(1);
         expect(savedShipmentLane.tariffs.flatMap(t => t.validities).flatMap(v => v.baseRates).flatMap(br => br.values)).toHaveLength(1);
+
+        console.dir(savedShipmentLane, { depth: null });
     });
 });

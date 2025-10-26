@@ -33,6 +33,11 @@ export class ShipmentLaneSubscriber implements EntitySubscriberInterface<Shipmen
         const prefix = this.shipmentLaneKeySettingsService.prefix;
 
         entity.code = `${prefix}${String(nextValue).padStart(codeTemplate.length, '0')}`
+
+        entity.tariffs.forEach((tariff, index) => {
+            tariff.code = `${entity.code}-TARIFF-${index + 1}`;
+        });
+    
     }
 
     private async getNextSequenceValue(entityManager: EntityManager): Promise<number> {

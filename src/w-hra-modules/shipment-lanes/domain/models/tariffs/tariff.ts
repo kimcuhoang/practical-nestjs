@@ -23,6 +23,7 @@ export class Tariff extends EntityBase {
 
     public addValidity(validity: Pick<TariffValidity, 'validFrom' | 'validTo'>): TariffValidity {
         this.validities ??= [];
+        
         const tariffValidity = new TariffValidity(this, validity);
         this.validities.push(tariffValidity);
 

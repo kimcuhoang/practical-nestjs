@@ -14,7 +14,7 @@ import * as httpClient from "supertest";
 let app: INestApplication<any>;
 let request: TestAgent;
 
-console.log = jest.fn();
+// console.log = jest.fn();
 
 
 beforeAll(async () => {

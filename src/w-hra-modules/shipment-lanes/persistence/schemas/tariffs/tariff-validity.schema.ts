@@ -28,7 +28,6 @@ export const TariffValiditySchema = new EntitySchema<TariffValidity>({
             type: "many-to-one",
             target: Tariff.name,
             inverseSide: "validities",
-            cascade: true,
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
@@ -41,6 +40,7 @@ export const TariffValiditySchema = new EntitySchema<TariffValidity>({
             type: "one-to-many",
             target: BaseRate.name,
             inverseSide: "tariffValidity",
+            cascade: true
         }
     }
 });

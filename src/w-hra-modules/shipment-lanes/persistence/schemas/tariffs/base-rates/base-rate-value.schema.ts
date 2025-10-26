@@ -23,7 +23,6 @@ export const BaseRateValueSchema = new EntitySchema<BaseRateValue>({
             type: "many-to-one",
             target: BaseRate.name,
             inverseSide: "baseRateValues",
-            cascade: true,
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
