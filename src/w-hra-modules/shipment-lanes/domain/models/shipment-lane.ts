@@ -2,7 +2,8 @@ import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
 import { Tariff } from "./tariffs/tariff";
 
 export class ShipmentLane extends EntityBase {
-    code: string;
+    code!: string;
+    description: string | null;
 
     tariffs: Tariff[];
 

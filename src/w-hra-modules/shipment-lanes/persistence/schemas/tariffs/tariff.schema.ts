@@ -36,7 +36,7 @@ export const TariffSchema = new EntitySchema<Tariff>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase(Tariff.prototype.shipmentLaneId),
+                name: snakeCase("shipmentLaneId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: snakeCase("FK_Tariff_ShipmentLane")
             }
@@ -45,7 +45,6 @@ export const TariffSchema = new EntitySchema<Tariff>({
             type: "one-to-many",
             target: TariffValidity.name,
             inverseSide: "tariff",
-            cascade: true
         }
     }
 });

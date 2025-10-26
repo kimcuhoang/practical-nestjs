@@ -27,15 +27,15 @@ export const BaseRateValueSchema = new EntitySchema<BaseRateValue>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase(BaseRateValue.prototype.baseRateId),
+                name: snakeCase("baseRateId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: snakeCase("FK_BaseRateValue_BaseRate")
             }
         }
     },
-    // inheritance: {
-    //     pattern: "STI",
-    //     column: BaseRateValue.prototype.baseRateType
-    // }
+    inheritance: {
+        pattern: "STI",
+        column: "baseRateType"
+    }
 });
 

@@ -32,7 +32,7 @@ export const TariffValiditySchema = new EntitySchema<TariffValidity>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase(TariffValidity.prototype.tariffId),
+                name: snakeCase("tariffId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: snakeCase("FK_TariffValidity_Tariff")
             }
@@ -41,7 +41,6 @@ export const TariffValiditySchema = new EntitySchema<TariffValidity>({
             type: "one-to-many",
             target: BaseRate.name,
             inverseSide: "tariffValidity",
-            cascade: true
         }
     }
 });

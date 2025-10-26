@@ -27,7 +27,7 @@ export const BaseRateSchema = new EntitySchema<BaseRate>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase(BaseRate.prototype.tariffValidityId),
+                name: snakeCase("tariffValidityId"),
                 referencedColumnName: "id",
                 foreignKeyConstraintName: snakeCase("FK_BaseRate_TariffValidity")
             }
@@ -36,12 +36,11 @@ export const BaseRateSchema = new EntitySchema<BaseRate>({
             type: "one-to-many",
             target: BaseRateValue.name,
             inverseSide: "baseRate",
-            cascade: true
         }
     },
-    // inheritance: {
-    //     pattern: "STI",
-    //     column: BaseRate.prototype.baseRateType
-    // }
+    inheritance: {
+        pattern: "STI",
+        column: "baseRateType"
+    }
 });
 

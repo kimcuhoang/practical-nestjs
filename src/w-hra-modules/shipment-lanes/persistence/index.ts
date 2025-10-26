@@ -14,8 +14,8 @@ export const ShipmentLanesModuleSchemas  = {
     TariffValiditySchema,
     BaseRateSchema,
     BaseRateValueSchema,
-    // WeightRateSchema,
-    // WeightRateValueSchema
+    WeightRateSchema,
+    WeightRateValueSchema
 };
 
 export const ShipmentLanesModuleEntitySubscribers = {
