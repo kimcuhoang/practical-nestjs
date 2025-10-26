@@ -1,8 +1,9 @@
 import { DataSource, EntityManager, EntitySubscriberInterface, EventSubscriber, InsertEvent } from "typeorm";
 import { ShipmentLane } from "../../domain";
 import { ShipmentLaneSequence } from "../sequences";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
+import { IShipmentLaneKeySettingsService, SHIPMENT_LANE_KEY_SETTINGS_SERVICE } from "../../services/shipment-lane-key-settings";
 
 
 @Injectable()
@@ -12,6 +13,8 @@ export class ShipmentLaneSubscriber implements EntitySubscriberInterface<Shipmen
     constructor(
         @InjectDataSource() 
         private readonly dataSource: DataSource,
+        @Inject(SHIPMENT_LANE_KEY_SETTINGS_SERVICE)
+        private readonly shipmentLaneKeySettingsService: IShipmentLaneKeySettingsService
     ) {
         this.dataSource.subscribers.push(this);
     }
@@ -26,15 +29,13 @@ export class ShipmentLaneSubscriber implements EntitySubscriberInterface<Shipmen
 
         const nextValue = await this.getNextSequenceValue(entityManager);
 
-        const codeTemplate = "#########";
-        entity.code = `L${String(nextValue).padStart(codeTemplate.length, '0')}`
+        const codeTemplate = this.shipmentLaneKeySettingsService.template;
+        const prefix = this.shipmentLaneKeySettingsService.prefix;
+
+        entity.code = `${prefix}${String(nextValue).padStart(codeTemplate.length, '0')}`
     }
 
     private async getNextSequenceValue(entityManager: EntityManager): Promise<number> {
-
-        // Hint: can get repository like that
-        //const shipmentLaneRepository: Repository<ShipmentLane> = entityManager.getRepository(getRepositoryToken(ShipmentLane));
-
         const result = await entityManager.query(`SELECT nextval('public.${ShipmentLaneSequence}') as nextval`);
         return result[0].nextval;
     }

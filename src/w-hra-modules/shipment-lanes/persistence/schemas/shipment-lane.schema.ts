@@ -12,7 +12,7 @@ export const ShipmentLaneSchema = new EntitySchema<ShipmentLane>({
         ...EntityBaseSchema,
         code: {
             type: String,
-            nullable: true
+            nullable: false
         }
     }
 });

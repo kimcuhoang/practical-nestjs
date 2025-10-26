@@ -30,7 +30,7 @@ db-reset: db-drop db-create
 
 gen-migration feature name: b
     clear
-    npx yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+    npx yarn typeorm:generate-migration {{feature}}/persistence/migrations/{{name}}
 
 create-migration feature name:
     clear

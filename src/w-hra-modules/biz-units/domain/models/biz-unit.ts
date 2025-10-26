@@ -3,6 +3,7 @@ import { Type } from "class-transformer";
 import { BizUnitRegion } from "./biz-unit-region";
 import { CommonSettings } from "./value-objects/common-settings";
 import { ShipmentKeySettings } from "./value-objects/shipment-key-settings";
+import { ShipmentLaneKeySettings } from "./value-objects/shipment-lane-key-settings";
 
 
 export class BizUnit extends EntityBase {
@@ -13,6 +14,9 @@ export class BizUnit extends EntityBase {
 
     @Type(() => ShipmentKeySettings)
     shipmentKeySettings!: ShipmentKeySettings;
+
+    @Type(() => ShipmentLaneKeySettings)
+    shipmentLaneKeySettings!: ShipmentLaneKeySettings;
 
     @Type(() => BizUnitRegion)
     regions: BizUnitRegion[];

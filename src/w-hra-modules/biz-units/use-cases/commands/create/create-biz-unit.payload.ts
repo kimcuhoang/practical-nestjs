@@ -12,6 +12,11 @@ export class ShipmentKeySettingsDto {
     sequenceEnd!: string;
 }
 
+export class ShipmentLaneKeySettingsDto {
+    prefix!: string;
+    template!: string;
+}
+
 export class CreateBizUnitRegionPayload {
     regionCode!: string;
 }
@@ -22,11 +27,15 @@ export class CreateBizUnitPayload {
 
     @ValidateNested()
     @Type(() => CommonSettingsDto)
-    commonSettings!: CommonSettingsDto
+    commonSettings!: CommonSettingsDto;
 
     @ValidateNested()
     @Type(() => ShipmentKeySettingsDto)
-    shipmentKeySettings!: ShipmentKeySettingsDto
+    shipmentKeySettings!: ShipmentKeySettingsDto;
+
+    @ValidateNested()
+    @Type(() => ShipmentLaneKeySettingsDto)
+    shipmentLaneKeySettings!: ShipmentLaneKeySettingsDto;
 
     @ValidateNested({ each: true })
     @Type(() => CreateBizUnitRegionPayload)

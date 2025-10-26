@@ -15,6 +15,7 @@ import { CustomersController } from "./controllers/customers.controller";
 import { CqrsEventHandlers } from "./integrations";
 import { BizUnitsModuleSchemas } from "@src/w-hra-modules/biz-units/persistence";
 import { overrideShipmentAssigmentServiceProvider, overrideShipmentKeyGeneratorServiceProvider } from "./services/shipments";
+import { overrideShipmentLaneKeySettingsServiceProvider } from "./services/shipment-lanes";
 
 
 @Module({})
@@ -52,7 +53,9 @@ export class WhraPlanningModule {
                     ],
                     shipmentKeyGeneratorProvider: overrideShipmentKeyGeneratorServiceProvider
                 }),
-                ShipmentLanesModule.forRoot()
+                ShipmentLanesModule.forRoot({
+                    shipmentLaneKeySettingsServiceProvider: overrideShipmentLaneKeySettingsServiceProvider
+                })
                 
             ],
             providers: [

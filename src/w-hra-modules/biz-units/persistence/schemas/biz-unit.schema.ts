@@ -4,6 +4,7 @@ import { snakeCase } from "typeorm/util/StringUtils";
 import { BizUnitCommonSettingsSchema } from "./common-settings.schema";
 import { BizUnit, BizUnitRegion } from "../../domain";
 import { BizUnitsShipmentKeySettingsSchema } from "./shipment-key-settings.schema";
+import { ShipmentLaneKeySettingsSchema } from "./shipment-lane-key-settings.schema";
 
 
 export const BizUnitSchema = new EntitySchema<BizUnit>({
@@ -26,6 +27,10 @@ export const BizUnitSchema = new EntitySchema<BizUnit>({
         shipmentKeySettings: {
             schema: BizUnitsShipmentKeySettingsSchema,
             prefix: "shipment_key",
+        },
+        shipmentLaneKeySettings: {
+            schema: ShipmentLaneKeySettingsSchema,
+            prefix: snakeCase("ShipmentLaneKey"),
         }
     },
     relations: {

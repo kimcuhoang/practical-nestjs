@@ -19,6 +19,7 @@ export class CreateBizUnitHandler implements ICommandHandler<CreateBizUnitComman
         bizUnit.bizUnitCode = payload.bizUnitCode;
         bizUnit.commonSettings = payload.commonSettings;
         bizUnit.shipmentKeySettings = payload.shipmentKeySettings;
+        bizUnit.shipmentLaneKeySettings = payload.shipmentLaneKeySettings;
 
         for(const region of payload.regions) {
             bizUnit.addBizUnitRegion(region.regionCode);

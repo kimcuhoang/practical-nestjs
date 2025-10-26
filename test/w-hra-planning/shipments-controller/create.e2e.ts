@@ -3,8 +3,11 @@ import { HttpStatus } from "@nestjs/common";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { BizUnit, CommonSettings } from "@src/w-hra-modules/biz-units/domain";
 import { ShipmentKeySettings } from "@src/w-hra-modules/biz-units/domain/models/value-objects/shipment-key-settings";
+import { ShipmentLaneKeySettings } from "@src/w-hra-modules/biz-units/domain/models/value-objects/shipment-lane-key-settings";
 import { SaleOrder } from "@src/w-hra-modules/sale-orders/domain";
 import { Shipment } from "@src/w-hra-modules/shipments/domain";
+import { ShipmentsSequences } from "@src/w-hra-modules/shipments/persistence/sequences";
+import { IShipmentKeyGenerator, SHIPMENT_KEY_GENERATOR_SYMBOL } from "@src/w-hra-modules/shipments/services/shipment-key-generator";
 import { CreateShipmentPayload } from "@src/w-hra-modules/shipments/use-cases/commands";
 import { ShipmentsController } from "@src/w-hra-planning/controllers/shipments.controller";
 import { app, TestHelpers, moment, request } from "@test/test.setup";
@@ -16,6 +19,7 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
     let bizUnitRepository: Repository<BizUnit>;
     let shipmentRepository: Repository<Shipment>;
     let saleOrderRepository: Repository<SaleOrder>;
+    let shipmentKeyGeneratorService: IShipmentKeyGenerator;
 
 
     const regionCode = "ES";
@@ -26,6 +30,7 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
         bizUnitRepository = app.get(getRepositoryToken(BizUnit));
         shipmentRepository = app.get(getRepositoryToken(Shipment));
         saleOrderRepository = app.get(getRepositoryToken(SaleOrder));
+        shipmentKeyGeneratorService = app.get<IShipmentKeyGenerator>(SHIPMENT_KEY_GENERATOR_SYMBOL);
     });
 
     beforeEach(async () => {
@@ -40,7 +45,11 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
                 prefix: "SHP000000000030",
                 sequenceStart: "00000000",
                 sequenceEnd: "99999999"
-            } satisfies ShipmentKeySettings)
+            } satisfies ShipmentKeySettings),
+            shipmentLaneKeySettings: plainToInstance(ShipmentLaneKeySettings, {
+                prefix: "SHPLANE000000000050",
+                template: "#########"
+            } satisfies ShipmentLaneKeySettings),
         });
         bizUnit.addBizUnitRegion(regionCode);
 
@@ -63,6 +72,7 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
 
         await bizUnitRepository.save(bizUnit);
         await saleOrderRepository.save(existingSaleOrders);
+        await shipmentKeyGeneratorService.loadSettings();
     });
 
     afterEach(async () => {
@@ -98,7 +108,7 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
                 const shipmentId = res.text;
                 expect(shipmentId).toBeTruthy();
 
-                const currentShipmentSequence = await shipmentRepository.query(`SELECT last_value as currval FROM public.shipment_sequence;`);
+                const currentShipmentSequence = await shipmentRepository.query(`SELECT last_value as currval FROM public.${ShipmentsSequences.shipmentSequence};`);
                 const currentShipmentSequenceValue = Number(currentShipmentSequence[0]?.currval);
                 expect(currentShipmentSequenceValue).toBeGreaterThan(0);
 
@@ -153,9 +163,5 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
                     }
                 }
             });
-
-
-
-
     });
 });

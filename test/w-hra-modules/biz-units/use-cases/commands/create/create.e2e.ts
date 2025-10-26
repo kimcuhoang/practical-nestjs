@@ -39,6 +39,10 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
                 sequenceStart: "00001",
                 sequenceEnd: "99999",
             },
+            shipmentLaneKeySettings: {
+                prefix: "SL",
+                template: "#########"
+            },
             regions: faker.helpers.multiple(() => ({
                 regionCode: TestHelpers.genCode(2),
             }) satisfies CreateBizUnitRegionPayload, { count: 3 }),

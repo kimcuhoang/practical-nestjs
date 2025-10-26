@@ -1,11 +1,16 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ShipmentLanesModuleEntitySubscribers, ShipmentLanesModuleSchemas } from "./persistence";
+import { defaultShipmentKeyGeneratorProvider } from "../shipments/services/shipment-key-generator";
+import { IShipmentLaneKeySettingsService } from "./services/shipment-lane-key-settings";
 
+export type ShipmentLanesModuleSettings = {
+    shipmentLaneKeySettingsServiceProvider?: Provider<IShipmentLaneKeySettingsService>
+};
 
 @Module({})
 export class ShipmentLanesModule {
-    public static forRoot(): DynamicModule {
+    public static forRoot(settings?: ShipmentLanesModuleSettings): DynamicModule {
         return {
             module: ShipmentLanesModule,
             global: true,
@@ -15,7 +20,8 @@ export class ShipmentLanesModule {
                 ])
             ],
             providers: [
-                ...Object.values(ShipmentLanesModuleEntitySubscribers)
+                ...Object.values(ShipmentLanesModuleEntitySubscribers),
+                settings?.shipmentLaneKeySettingsServiceProvider ?? defaultShipmentKeyGeneratorProvider
             ],
             exports: [
                 TypeOrmModule
