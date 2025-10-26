@@ -2,77 +2,69 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '@building-blocks/infra/database';
-import { CachingModule } from '@building-blocks/infra/caching';
-import { RedisIoRedisModule } from '@building-blocks/infra/redis-ioredis';
-import { RedisModule } from '@building-blocks/infra/redis';
-import { SolaceModule, SolaceModuleSettings } from '@building-blocks/infra/solace';
-import { ProjectsModule } from './projects';
-import { NotificationsModule } from './notifications';
+import { DatabaseModule, DatabaseModuleOptions } from '@src/infra-modules/database';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LocalizationsModule, LocalizationsModuleOptions } from './localizations';
-import { BusinessPartnersModule, BusinessPartnersModuleOptions } from './business-partners';
+import { WhraPlanningModule } from './w-hra-planning';
+import { CachingModule } from './infra-modules/caching';
+import { CacheSettings } from './infra-modules/caching/cache-settings';
+import { plainToInstance } from 'class-transformer';
+import { CalculatorModule } from './infra-modules/calculator';
+import { ShipmentLanesModuleEntitySubscribers } from './w-hra-modules/shipment-lanes/persistence';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
-    return getDatabaseModuleSettings(configService);
+    return plainToInstance(DatabaseModuleOptions, {
+      ...getDatabaseModuleSettings(configService)
+    });
   }),
-  CachingModule.register(),
-  RedisIoRedisModule.register(),
-  RedisModule.register(),
-  SolaceModule.register(configService => {
-    return new SolaceModuleSettings({
-        enabled: configService.get("SOLACE_ENABLED")?.toLowerCase() === "true",
-        logLevel: configService.get("SOLACE_LOG_LEVEL"),
-        clientName: configService.get("SOLACE_CLIENT_NAME"),
-        solaceHost: configService.get("SOLACE_HOST"),
-        solaceMessageVpn: configService.get("SOLACE_MESSAGE_VPN"),
-        solaceUsername: configService.get("SOLACE_USERNAME"),
-        solacePassword: configService.get("SOLACE_PASSWORD"),
-        acknowledgeMessage: configService.get("SOLACE_ACKNOWLEDGE_MESSAGE")?.toLowerCase() === "true"
-      });
-  })
+  CachingModule.forRoot(configService => {
+    const settings = plainToInstance(CacheSettings, {
+      store: configService.get('CACHE_STORE', 'memory'),
+      ttl: Number(configService.get('CACHE_TTL_IN_MINUTES', 3)),
+      max: Number(configService.get('CACHE_MAX', 100)),
+      redisUrl: configService.get('CACHE_REDIS_URL'),
+    });
+    return settings;
+  }),
 ];
 
-const featureModules = [
-  ProjectsModule,
-  NotificationsModule,
-  BusinessPartnersModule.register(configService => {
-    return new BusinessPartnersModuleOptions({
-      businessPartnerSolaceQueueName: configService.get<string>("BUSINESS_PARTNER_SOLACE_QUEUE"),
-      enabledSubscribeTopics: configService.get("BUSINESS_PARTNER_SOLACE_ENABLED_SUBSCRIBE_TOPICS")?.toLowerCase() === 'true',
-      topicCRT: configService.get("BUSINESS_PARTNER_SOLACE_QUEUE_TOPIC_CRT")
-    });
-  })
-];
 
 @Module({
   imports: [
+    ...infrastructureModules,
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    LocalizationsModule.register(configService => {
-      return {
-        fallbackLanguage: configService.get<string>("I18N_FALLBACK_LANGUAGE"),
-        disableMiddleware: configService.get<string>("I18N_MIDDLEWARE_DISABLED")?.toLocaleLowerCase() === "true",
-        logging: configService.get<string>("I18N_LOGGING_ENABLED")?.toLocaleLowerCase() === "true",
-        fallbacks: {
-          'vi': 'vi',
-          'vi-*': 'vi',
-          'en-*': 'en',
-          // 'fr-*': 'fr',
-          // 'pt-PT': 'pt-BR',
-          // 'pt': 'pt-BR'
-        }
-      } as LocalizationsModuleOptions;
+    WhraPlanningModule.forRoot(),
+
+    CalculatorModule.forRoot({
+      initialValue: 100, // Configure the initial value here
     }),
-    ...infrastructureModules,
-    ...featureModules
+
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService
+    // ExplorerService,
+    // {
+    //   provide: CommandBus.name,
+    //   useExisting: CommandBus
+    //   // inject: [CommandBus, ExplorerService],
+    //   // useFactory: (commandBus: CommandBus, explorerService: ExplorerService) => {
+    //   //   const handlers = explorerService.explore();
+    //   //   commandBus.register(handlers.commands);
+    //   //   return commandBus;
+    //   // }
+    // },
+    // {
+    //   provide: QueryBus.name,
+    //   useExisting: QueryBus,
+    // },
+    // {
+    //   provide: EventBus.name,
+    //   useExisting: EventBus,
+    // }
+  ]
 })
-export class AppModule {
-
-}
+export class AppModule { }

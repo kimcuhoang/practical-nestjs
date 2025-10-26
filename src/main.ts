@@ -1,8 +1,7 @@
-import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
-import { LogLevel, ValidationPipe } from '@nestjs/common';
+import { LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
@@ -14,15 +13,24 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule, {
-    abortOnError: true
+    abortOnError: true,
+    bodyParser: true
   });
 
   const configService = app.get<ConfigService>(ConfigService);
 
-  const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [ 'error' ];
+  const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? ['error'];
   app.useLogger(logLevels as LogLevel[]);
-  
-  app.useGlobalPipes(new I18nValidationPipe());
+
+  app.useGlobalPipes(new I18nValidationPipe({
+    whitelist: false,
+    transform: true,
+    stopAtFirstError: true,
+    always: true,
+    transformOptions: {
+      enableImplicitConversion: true,
+    }
+  }));
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({
       detailedErrors: true,
@@ -46,7 +54,7 @@ async function bootstrap() {
     explorer: true
   });
 
-  
+
   await app.listen(3000);
 }
 bootstrap();

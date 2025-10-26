@@ -1,54 +1,80 @@
 # use PowerShell instead of sh:
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
+default:
+    clear
+    just --list
+
 i:
     clear
     rm -rf node_modules
-    yarn install
+    npx yarn install
 
 b: 
     clear
-    yarn build
+    npx yarn build
+
+gen-lib name:
+    clear
+    npx yarn nest g library {{name}} --no-spec
 
 db-create:
     clear
-    yarn db:create
+    npx yarn db:create
 
 db-drop:
     clear
-    yarn db:drop
+    npx yarn db:drop
 
 db-reset: db-drop db-create
 
 gen-migration feature name: b
     clear
-    yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+    npx yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+
+create-migration feature name:
+    clear
+    npx yarn typeorm:create-migration src/{{feature}}/persistence/migrations/{{name}}
 
 run-migration: b
     clear
-    yarn typeorm:run-migrations
+    npx yarn typeorm:run-migrations
+
+revert-migration: b
+    clear
+    npx yarn typeorm:revert-migration
 
 pre-test: b
     # yarn jest --clearCache
 
 e2e: pre-test
     clear
-    yarn test:e2e
+    npx yarn test:e2e
 
 e2e-file: pre-test
     clear
-    yarn test:e2e -f test/projects/persistence/test-bulk-insert.e2e.ts --all
+    npx yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/create.e2e.ts --all
 
 e2e-files: pre-test
-    yarn test:e2e --findRelatedTests \
-                test/notifications/event-handlers/project-created.handler.e2e.ts \
-                test/projects/commands/test-bulk-insert-command.e2e.ts \
+    npx yarn test:e2e --findRelatedTests \
+                test/app.e2e.ts \
+                test/w-hra-planning/sale-orders-controller/create.e2e.ts \
+                test/w-hra-modules/caching/use-cache-manager.e2e.ts \
+                test/w-hra-modules/caching/use-caching-service.e2e.ts \
+                # test/w-hra-planning/sale-orders-controller/create.e2e.ts \
+                # test/w-hra-modules/shipments/use-cases/commands/shipments/create/create.e2e.ts \
+                # test/w-hra-modules/shipments/use-cases/commands/shipments/create/another.create.e2e.ts \
+                # test/w-hra-planning/shipments-controller/create.e2e.ts \
                 --all
 
 e2e-folder name: pre-test
     clear
-    yarn test:e2e --testPathPattern=test/{{name}}
+    npx yarn test:e2e --testPathPattern=test/{{name}}
+
+e2e-modules: pre-test
+    clear
+    npx yarn test:e2e --testPathPattern=test/w-hra-modules
 
 s:
     clear
-    yarn start:dev
+    npx yarn start:dev

@@ -1,44 +1,33 @@
 # Practical NestJS
 
-- An example of using [Nest](https://github.com/nestjs/nest)
-- High-lighted points
-  - Use TypeOrm as ORM within Postgres
-  - Use Redis
-  - Use [testcontainer](https://testcontainers.com/) to implement e2e tests
+## Overview
 
-## Notes:
-### To generate migrations for specific feature
-- `typeorm.datasource.ts` -> comment out all the features that we don't want to generate migration
-- run the following command `just gen-migration [feature's folder name] [name of migration]`
-- `typeorm.datasource.ts` -> uncomment
+This project is an experimental of using `DDD` and `modular architecture` within `NestJS(v10.0.0)`. The following technologies are used:
 
-## Installation
+- `Postgres` as database
+- `TypeORM` as ORM
+- `Solace Queue` as message broker
+- `TestContainers` for integration tests
 
-```bash
-$ yarn install
-```
+## Organization
 
-## Running the app
+This project is structured in the following way:
 
-```bash
-# development
-$ yarn run start
+1. `infra-modules`
+- Where the things regarding to infrastructure are implemented to be reused in other modules
+- For instances:
+  - database
+  - solace queue
 
-# watch mode
-$ yarn run start:dev
+2. `w-hra-modules`
+- Where the `Bounded-Context` has come. Each of them serve as `business-model` and must not depend on each other.
 
-# production mode
-$ yarn run start:prod
-```
+3. `w-hra-planning`
+- Where the main application is implemented by connecting all of the `w-hra-modules` and `infra-modules` to form a single application.
 
-## Test
+4. `w-hra-carries`
+- TBD
 
-```bash
+## Processing flows
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
+### `w-hra-modules`

@@ -4,7 +4,8 @@ const jestConfig: Config.InitialOptions = {
     silent: false,
     verbose: true,
     restoreMocks: true,
-    cache: false,
+    cache: true,
+    testTimeout: 120000,
     moduleFileExtensions: ["js", "json", "ts"],
     extensionsToTreatAsEsm: [".ts"],
     rootDir: "..",
@@ -20,35 +21,33 @@ const jestConfig: Config.InitialOptions = {
         ".e2e.ts$"
     ],
     transform: {
-        "^.+\\.(t|j)s$": "@swc/jest",
-        // "^.+\\.(t|j)s$": "ts-jest"
+        "^.+\\.(t|j)s$": "ts-jest"
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
-    setupFilesAfterEnv: [
-        "./test/test.setup.ts"
-    ],
-    setupFiles: [
-        "dotenv/config",
-        "reflect-metadata"
-    ],
+    // setupFilesAfterEnv: [
+    //     "./test/test.setup.ts"
+    // ],
+    // setupFiles: [
+    //     "dotenv/config",
+    //     "reflect-metadata"
+    // ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
-        "^@building-blocks/(.*)$": "<rootDir>/src/building-blocks/$1",
-        "^@integration-events/(.*)$": "<rootDir>/src/integration-events/$1",
-        "^@projects/(.*)$": "<rootDir>/src/projects/$1",
-        "^@notifications/(.*)$": "<rootDir>/src/notifications/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
     },
     coverageReporters: ["json", "html", "clover", "lcov", "text"],
     collectCoverageFrom: [
+        "libs/**/src/*.ts",
+        "!libs/**/src/main.ts",
+        "!libs/**/src/**/index.ts",
+        "!libs/**/src/**/*.module.ts",
+        "!libs/**/src/**/persistence/**",
         "src/**/*.ts",
         "!src/main.ts",
         "!src/**/index.ts",
         "!src/**/*.module.ts",
         "!src/**/persistence/**",
-        "!src/building-blocks/**",
-        "!src/integration-events/**",
         "!node_modules/**"
     ]
 };

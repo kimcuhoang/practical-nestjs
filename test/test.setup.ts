@@ -1,35 +1,35 @@
-import { INestApplication, LogLevel } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@src/app.module';
-import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
-import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
-// import * as httpClient from 'supertest';
-import httpClient from 'supertest';
 
-let app: INestApplication;
-let connectionString: string;
-let request: any | undefined;
+import { ConfigService } from "@nestjs/config";
+import { TestingModule, Test } from "@nestjs/testing";
+import { AppModule } from "@src/app.module";
+import { I18nValidationPipe, I18nValidationExceptionFilter } from "nestjs-i18n";
+import { initializeTransactionalContext, StorageDriver } from "typeorm-transactional";
+import { INestApplication, LogLevel } from "@nestjs/common";
+import TestAgent from "supertest/lib/agent";
+import * as moment from "moment";
+import * as TestHelpers from "@test/test-helpers";
+import * as httpClient from "supertest";
+
+
+let app: INestApplication<any>;
+let request: TestAgent;
+
+// console.log = jest.fn();
+
 
 beforeAll(async () => {
 
-    connectionString = globalThis.postgresContainer.getConnectionUri();
+    const connectionString = global.postgresContainer.getConnectionUri();
 
     process.env.POSTGRES_DATABASE_URL = connectionString;
-    process.env.POSTGRES_LOG_ENABLED = "false";
+    process.env.POSTGRES_LOG_ENABLED = "true";
     process.env.FALLBACK_LANGUAGE = "en";
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";
 
-    if (globalThis.redisEnabled) {
-
-        globalThis.console.log("Redis is enabled");
-
-        const redisUrl = globalThis.redisContainer.getConnectionUrl();
-
-        process.env.REDIS_URL = redisUrl;
-        process.env.REDIS_HOST = globalThis.redisContainer.getHost();
-        process.env.REDIS_PORT = globalThis.redisContainer.getFirstMappedPort().toString();
+    if (global.redisEnabled) {
+        console.log("Redis is enabled");
+        process.env.CACHE_REDIS_URL = global.redisContainer.getConnectionUrl();
     }
 
     initializeTransactionalContext({
@@ -45,18 +45,30 @@ beforeAll(async () => {
         bodyParser: true
     });
 
-    app.useGlobalPipes(new I18nValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(new I18nValidationPipe({
+        //since we don't config @nestjs/swagger CLI plugin
+        // TODO: config ts-jest within @nestjs/swagger
+        whitelist: false, 
+        transform: true,
+        forbidNonWhitelisted: true,
+        stopAtFirstError: true,
+        always: true,
+        transformOptions: {
+            enableImplicitConversion: true,
+        }
+    }));
+    
     app.useGlobalFilters(
         new I18nValidationExceptionFilter({
             detailedErrors: true
         })
     );
 
-    const configService = app.get<ConfigService>(ConfigService);
+    const configService = app.get(ConfigService);
     const logLevels = configService.get("LOG_LEVELS")?.split("|") ?? [];
     app.useLogger(logLevels as LogLevel[]);
 
-    
+
     await app.init();
     request = httpClient(app.getHttpServer());
 });
@@ -65,6 +77,4 @@ afterAll(async () => {
     await app.close();
 });
 
-// add some timeout until containers are up and working 
-jest.setTimeout(120000);
-export { app, request };
+export { app, request, moment, TestHelpers };

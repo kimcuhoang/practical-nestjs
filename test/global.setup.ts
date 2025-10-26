@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer } from '@testcontainers/redis';
 
@@ -11,11 +12,8 @@ module.exports = async () => {
                         .withStartupTimeout(50000)
                         .start();
 
-    const redisHost = process.env.REDIS_HOST;
-    const redisPort = process.env.REDIS_PORT;
-    const redisUrl = process.env.REDIS_URL;
-
-    const redisIsEnabled = Boolean(redisUrl) || (Boolean(redisHost) && Boolean(redisPort));
+    const cacheStore = process.env.CACHE_STORE;
+    const redisIsEnabled = cacheStore === 'redis';
         
     globalThis.redisEnabled = redisIsEnabled;
 
@@ -26,3 +24,4 @@ module.exports = async () => {
                         .start();
     }
 };
+

@@ -2,9 +2,8 @@ import 'dotenv/config';
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { ConfigService } from '@nestjs/config';
-import { DatabaseModuleOptions, DataSourceProperties } from './building-blocks/infra/database';
-import { ProjectsModuleSchemas } from './projects/persistence';
-import { NotificationsModuleSchemas } from './notifications/persistence';
+import { DatabaseModuleOptions, DataSourceProperties } from './infra-modules/database';
+import { WhraModuleSchemas } from './w-hra-modules';
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({
@@ -26,11 +25,10 @@ const databaseModuleSettings: DatabaseModuleOptions = getDatabaseModuleSettings(
 
 const pgConnectionOptions = {
     ...DataSourceProperties,
+    ...databaseModuleSettings,
     synchronize: false,
-    url: databaseModuleSettings.url,
     entities: [
-        ...ProjectsModuleSchemas,
-        ...NotificationsModuleSchemas
+        ...WhraModuleSchemas
     ]
 } as PostgresConnectionOptions;
 

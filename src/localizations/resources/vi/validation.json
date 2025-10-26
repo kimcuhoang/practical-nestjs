@@ -1,7 +1,0 @@
-{
-    "fields": {
-        "projectName": "Tên dự án"
-    },
-    "required": "Giá trị của `$t(validation.fields.{property})` không được để trống",
-    "string": "`$t(validation.fields.{property})` có giá trị {value} không hợp lệ"
-}

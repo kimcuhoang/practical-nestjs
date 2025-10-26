@@ -1,7 +1,0 @@
-{
-    "fields": {
-        "projectName": "Project's name"
-    },
-    "required": "Please provide a value for `{property}`",
-    "string": "`{property}` must be a string; you provided {value}"
-}
