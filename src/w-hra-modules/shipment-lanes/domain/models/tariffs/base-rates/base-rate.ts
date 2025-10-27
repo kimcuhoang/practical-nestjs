@@ -25,15 +25,7 @@ export class BaseRate extends EntityBase {
         });
     }
 
-    public addBaseRateValue<T extends BaseRateValue>(): T {
-        this.values ??= [];
-        const baseRateValue = new BaseRateValue(this) as T;
-        this.values.push(baseRateValue);
-
-        return baseRateValue;
-    }
-
-    public anotherAddBaseRateValue<T extends BaseRateValue>(baseRateValue: T): void {
+    public addBaseRateValue<T extends BaseRateValue>(baseRateValue: T): void {
         this.values ??= [];
         this.values.push(baseRateValue);
     }

@@ -9,5 +9,8 @@ export const WeightRateSchema = new EntitySchema<WeightRate>({
     discriminatorValue: BaseRateType.WEIGHT,
     columns: {
         ...BaseRateSchema.options.columns,
+    },
+    relations: {
+        ...BaseRateSchema.options.relations
     }
 });

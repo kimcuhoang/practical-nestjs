@@ -15,33 +15,6 @@ const prefix = "SHIPMENT_LANE";
 
 const shipmentLane = new ShipmentLane();
 
-const tariff = shipmentLane.addTariff({
-    bizPartnerCode: TestHelpers.genCode(),
-    preferred: true
-});
-
-const tariffValidity = tariff.addValidity({
-    validFrom: new Date("2024-01-01"),
-    validTo: new Date("2024-12-31")
-});
-
-// const weightRate = new WeightRate(tariffValidity);
-// tariffValidity.anotherAddBaseRate(weightRate);
-
-// const weightRateValue = new WeightRateValue(weightRate);
-// weightRateValue.value = 100;
-// weightRateValue.perSegment = 1;
-// weightRateValue.segmentUnit = "kg";
-
-// weightRate.anotherAddBaseRateValue(weightRateValue);
-
-const weightRate = tariffValidity.addBaseRate<WeightRate>()
-const weightRateValue = weightRate.addBaseRateValue<WeightRateValue>();
-weightRateValue.value = 100;
-weightRateValue.perSegment = 1;
-weightRateValue.segmentUnit = "kg";
-
-
 describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
 
     beforeAll(() => {
@@ -55,6 +28,26 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
             jest.spyOn(shipmentLaneKeySettingsService, "prefix", "get").mockReturnValue(prefix),
             jest.spyOn(shipmentLaneKeySettingsService, "template", "get").mockReturnValue(codeTemplate)
         );
+
+        const tariff = shipmentLane.addTariff({
+            bizPartnerCode: TestHelpers.genCode(),
+            preferred: true
+        });
+
+        const tariffValidity = tariff.addValidity({
+            validFrom: new Date("2024-01-01"),
+            validTo: new Date("2024-12-31")
+        });
+
+        const weightRate = new WeightRate(tariffValidity);
+
+        await shipmentLaneRepository.save(shipmentLane);
+
+        const weightRateValue = new WeightRateValue(weightRate, {
+            value: 100,
+            perSegment: 10,
+            segmentUnit: "kg"
+        });
 
         await shipmentLaneRepository.save(shipmentLane);
     });

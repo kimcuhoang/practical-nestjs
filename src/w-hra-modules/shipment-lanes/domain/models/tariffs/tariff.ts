@@ -10,7 +10,7 @@ export class Tariff extends EntityBase {
     shipmentLaneId!: string;
     shipmentLane!: ShipmentLane;
 
-    validities!: TariffValidity[];
+    validities: TariffValidity[];
 
     constructor(shipmentLane?: ShipmentLane, tariff?: Pick<Tariff, 'bizPartnerCode' | 'preferred'>) {
         super();

@@ -1,5 +1,5 @@
+import { BaseRate } from "../base-rate";
 import { BaseRateValue } from "../base-rate-value";
-import { WeightRate } from "./weight-rate";
 
 
 export class WeightRateValue extends BaseRateValue {
@@ -8,7 +8,9 @@ export class WeightRateValue extends BaseRateValue {
     perSegment!: number;
     segmentUnit!: "kg" | "lb";
 
-    constructor(baseRate?: WeightRate) {
+    constructor(baseRate?: BaseRate, options?: Pick<WeightRateValue, 'value' | 'perSegment' | 'segmentUnit'>) {
         super(baseRate);
+        Object.assign(this, options);
+        baseRate?.addBaseRateValue(this);
     }
 }

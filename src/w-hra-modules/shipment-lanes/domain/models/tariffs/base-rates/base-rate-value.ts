@@ -4,15 +4,15 @@ import { BaseRate } from "./base-rate";
 
 export class BaseRateValue extends EntityBase {
 
-    baseRateId!: string;
     baseRate: BaseRate;
+    baseRateId!: string;
     baseRateType!: string;
 
     constructor(baseRate?: BaseRate) {
         super();
         Object.assign(this, {
-            baseRateId: baseRate?.id,
             baseRate: baseRate,
+            baseRateId: baseRate?.id,
             baseRateType: baseRate?.baseRateType
         });
     }

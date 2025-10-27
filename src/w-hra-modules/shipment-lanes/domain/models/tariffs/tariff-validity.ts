@@ -22,15 +22,7 @@ export class TariffValidity extends EntityBase {
         });
     }
 
-    public addBaseRate<T extends BaseRate>(): T {
-        this.baseRates ??= [];
-        const baseRate = new BaseRate(this);
-        this.baseRates.push(baseRate);
-
-        return baseRate as T;
-    }
-
-    public anotherAddBaseRate<T extends BaseRate>(baseRate: T): void {
+    public addBaseRate<T extends BaseRate>(baseRate: T): void {
         this.baseRates ??= [];
         this.baseRates.push(baseRate);
     }
