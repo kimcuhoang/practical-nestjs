@@ -4,10 +4,11 @@ import { BaseRateValue } from "./base-rate-value";
 
 export enum BaseRateType {
     WEIGHT = "WEIGHT",
-    VOLUME = "VOLUME",
+    STOP = "STOP",
+    LANE = "LANE",
 }
 
-export class BaseRate extends EntityBase {
+export abstract class BaseRate extends EntityBase {
     
     tariffValidityId!: string;
     tariffValidity!: TariffValidity;

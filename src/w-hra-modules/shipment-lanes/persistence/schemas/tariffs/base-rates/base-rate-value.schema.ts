@@ -16,7 +16,11 @@ export const BaseRateValueSchema = new EntitySchema<BaseRateValue>({
         baseRateId: {
             type: String,
             nullable: false
-        }
+        },
+        value: {
+            type: "float",
+            nullable: false
+        },
     },
     relations: {
         baseRate: {

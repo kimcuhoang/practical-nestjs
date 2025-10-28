@@ -16,7 +16,7 @@ export const BaseRateSchema = new EntitySchema<BaseRate>({
         baseRateType: {
             type: String,
             nullable: false
-        }
+        },
     },
     relations: {
         tariffValidity: {

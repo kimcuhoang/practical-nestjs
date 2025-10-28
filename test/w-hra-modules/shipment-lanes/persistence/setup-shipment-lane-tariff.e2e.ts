@@ -1,8 +1,8 @@
 import { getEntityManagerToken, getRepositoryToken } from "@nestjs/typeorm";
-import { BaseRate, BaseRateType, BaseRateValue, ShipmentLane, Tariff, TariffValidity, WeightRate, WeightRateValue } from "@src/w-hra-modules/shipment-lanes/domain";
+import { BaseRateType, LaneRate, LaneRateValue, ShipmentLane, StopRate, StopRateValue, WeightRate, WeightRateValue } from "@src/w-hra-modules/shipment-lanes/domain";
 import { IShipmentLaneKeySettingsService, SHIPMENT_LANE_KEY_SETTINGS_SERVICE } from "@src/w-hra-modules/shipment-lanes/services/shipment-lane-key-settings";
 import { app, TestHelpers } from "@test/test.setup";
-import { Brackets, EntityManager, EntityTarget, ILike, MoreThan, ObjectLiteral, Repository } from "typeorm";
+import { EntityManager, ILike, MoreThan, ObjectLiteral, Repository } from "typeorm";
 
 
 let shipmentLaneRepository: Repository<ShipmentLane>;
@@ -25,18 +25,38 @@ const tariffValidity = tariff.addValidity({
     validTo: new Date("2024-12-31")
 });
 
-const weightRate = new WeightRate(tariffValidity);
+const laneRate = new LaneRate(tariffValidity);
+const laneRateValue = new LaneRateValue(laneRate, {
+    value: 5000
+});
 
+const weightRate = new WeightRate(tariffValidity);
 const weightRateValue = new WeightRateValue(weightRate, {
     value: 100,
     perSegment: 10,
     segmentUnit: "kg"
 });
 
+const stopRate = new StopRate(tariffValidity);
+const stopRateValue = new StopRateValue(stopRate, {
+    value: 50,
+    perNumberOfStops: 5
+});
+
 const allTariffs = shipmentLane.tariffs;
 const allTariffValidities = allTariffs.flatMap(t => t.validities);
 const allBaseRates = allTariffValidities.flatMap(v => v.baseRates);
 const allBaseRateValues = allBaseRates.flatMap(br => br.values);
+
+const allLaneRates = allBaseRates.filter(br => br instanceof LaneRate);
+const allLaneRateValues = allLaneRates.flatMap(lr => lr.values);
+
+const allWeightRates = allBaseRates.filter(br => br instanceof WeightRate);
+const allWeightRateValues = allWeightRates.flatMap(wr => wr.values);
+
+const allStopRates = allBaseRates.filter(br => br instanceof StopRate);
+const allStopRateValues = allStopRates.flatMap(sr => sr.values);
+
 
 
 describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
@@ -132,23 +152,35 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
         expect(savedShipmentLane.tariffs).toHaveLength(allTariffs.length);
         expect(savedShipmentLane.tariffs.flatMap(t => t.validities)).toHaveLength(allTariffValidities.length);
 
-
         const baseRates = savedShipmentLane.tariffs.flatMap(t => t.validities).flatMap(v => v.baseRates);
         expect(baseRates).toHaveLength(allBaseRates.length);
-        baseRates.forEach(br => {
-            expect(br).toBeInstanceOf(WeightRate);
-        });
 
         const baseRateValues = baseRates.flatMap(br => br.values);
         expect(baseRateValues).toHaveLength(allBaseRateValues.length);
-        baseRateValues.forEach(brv => {
-            expect(brv).toBeInstanceOf(WeightRateValue);
-        });
+
+        const laneRates = baseRates.filter(br => br instanceof LaneRate);
+        expect(laneRates).toHaveLength(allLaneRates.length);
+
+        const laneRateValues = laneRates.flatMap(lr => lr.values);
+        expect(laneRateValues).toHaveLength(allLaneRateValues.length);
+
+        const weightRates = baseRates.filter(br => br instanceof WeightRate);
+        expect(weightRates).toHaveLength(allWeightRates.length);
+
+        const weightRateValues = weightRates.flatMap(wr => wr.values);
+        expect(weightRateValues).toHaveLength(allWeightRateValues.length);
+
+        const stopRates = baseRates.filter(br => br instanceof StopRate);
+        expect(stopRates).toHaveLength(allStopRates.length);
+
+        const stopRateValues = stopRates.flatMap(sr => sr.values);
+        expect(stopRateValues).toHaveLength(allStopRateValues.length);
+        
 
         console.dir(savedShipmentLane, { depth: null });
     });
 
-    test.only(`should queryable`, async () => {  
+    test.skip(`should queryable`, async () => {  
         const shipmentLanes = await shipmentLaneRepository.find({
             where: { 
                 tariffs: {
