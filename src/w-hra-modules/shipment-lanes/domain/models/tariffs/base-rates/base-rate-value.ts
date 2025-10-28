@@ -1,12 +1,11 @@
 import { EntityBase } from "@src/infra-modules/database/domain/entity-base";
-import { BaseRate } from "./base-rate";
+import { BaseRate, BaseRateType } from "./base-rate";
 
 
 export abstract class BaseRateValue extends EntityBase {
-
-    baseRate: BaseRate;
-    baseRateId!: string;
-    baseRateType!: string;
+    readonly baseRate: BaseRate;
+    readonly baseRateId!: string;
+    readonly baseRateType!: BaseRateType;
     value!: number;
 
     constructor(baseRate?: BaseRate, options?: Pick<BaseRateValue, 'value'>) {

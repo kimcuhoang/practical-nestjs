@@ -3,8 +3,10 @@ import { BaseRate, BaseRateType } from "../base-rate";
 
 export class WeightRate extends BaseRate {
 
+    override readonly baseRateType = BaseRateType.WEIGHT;
+
     constructor(tariffValidity?: TariffValidity) {
-        super(tariffValidity, BaseRateType.WEIGHT);
+        super(tariffValidity);
         tariffValidity?.addBaseRate(this);
     }
 }

@@ -10,19 +10,17 @@ export enum BaseRateType {
 
 export abstract class BaseRate extends EntityBase {
     
-    tariffValidityId!: string;
-    tariffValidity!: TariffValidity;
-
-    baseRateType!: BaseRateType;
+    readonly tariffValidityId!: string;
+    readonly tariffValidity!: TariffValidity;
+    abstract readonly baseRateType: BaseRateType;
 
     values: BaseRateValue[];
 
-    constructor(tariffValidity?: TariffValidity, baseRateType?: BaseRateType) {
+    constructor(tariffValidity?: TariffValidity) {
         super();
         Object.assign(this, {
             tariffValidityId: tariffValidity?.id,
             tariffValidity: tariffValidity,
-            baseRateType: baseRateType
         });
     }
 

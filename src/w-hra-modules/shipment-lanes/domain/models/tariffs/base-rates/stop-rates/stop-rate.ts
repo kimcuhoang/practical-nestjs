@@ -3,8 +3,11 @@ import { BaseRate, BaseRateType } from "../base-rate";
 
 
 export class StopRate extends BaseRate {
+
+    override readonly baseRateType = BaseRateType.STOP;
+    
     constructor(tariffValidity?: TariffValidity) {
-        super(tariffValidity, BaseRateType.STOP);
+        super(tariffValidity);
         tariffValidity?.addBaseRate(this);
     }
 }
