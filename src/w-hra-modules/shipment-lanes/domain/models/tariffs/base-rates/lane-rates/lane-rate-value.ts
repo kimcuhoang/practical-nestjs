@@ -3,7 +3,6 @@ import { BaseRateValue } from "../base-rate-value";
 
 
 export class LaneRateValue extends BaseRateValue {
-    perNumberOfStops!: number;
     
     constructor(baseRate?: BaseRate, options?: Pick<LaneRateValue, 'value'>) {
         super(baseRate, options);
