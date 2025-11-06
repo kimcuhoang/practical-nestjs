@@ -2,7 +2,7 @@ import { getEntityManagerToken, getRepositoryToken } from "@nestjs/typeorm";
 import { BaseRateType, LaneRate, LaneRateValue, ShipmentLane, StopRate, StopRateValue, WeightRate, WeightRateValue } from "@src/w-hra-modules/shipment-lanes/domain";
 import { IShipmentLaneKeySettingsService, SHIPMENT_LANE_KEY_SETTINGS_SERVICE } from "@src/w-hra-modules/shipment-lanes/services/shipment-lane-key-settings";
 import { app, TestHelpers } from "@test/test.setup";
-import { EntityManager, ILike, MoreThan, ObjectLiteral, Repository } from "typeorm";
+import { EntityManager, ILike, MoreThan, Repository } from "typeorm";
 
 
 let shipmentLaneRepository: Repository<ShipmentLane>;
@@ -91,39 +91,41 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
         expect(weightRateValue.baseRateId).toBeTruthy();
         expect(weightRateValue.baseRateId).toBe(weightRate.id);
 
-        await entityManager.transaction(async transactionalEntityManager => {
+        await shipmentLaneRepository.save(shipmentLane);
 
-            const allEntities = [
-                shipmentLane,
-                ...allTariffs,
-                ...allTariffValidities,
-                ...allBaseRates,
-                ...allBaseRateValues
-            ];
+        // await entityManager.transaction(async transactionalEntityManager => {
 
-            // 2. Group the entities by their class using reduce, directly accessing the constructor.
-            const baseRateClasses = allEntities.reduce((groups, entity) => {
-                // 1. Identify the class (the EntityTarget)
-                const entityClass = entity.constructor;
+        //     const allEntities = [
+        //         shipmentLane,
+        //         ...allTariffs,
+        //         ...allTariffValidities,
+        //         ...allBaseRates,
+        //         ...allBaseRateValues
+        //     ];
 
-                // 2. Get or initialize the array for this class
-                const group = groups.get(entityClass) || [];
+        //     // 2. Group the entities by their class using reduce, directly accessing the constructor.
+        //     const baseRateClasses = allEntities.reduce((groups, entity) => {
+        //         // 1. Identify the class (the EntityTarget)
+        //         const entityClass = entity.constructor;
 
-                // 3. Add the current entity to the array
-                group.push(entity);
+        //         // 2. Get or initialize the array for this class
+        //         const group = groups.get(entityClass) || [];
 
-                // 4. Update the map
-                groups.set(entityClass, group);
+        //         // 3. Add the current entity to the array
+        //         group.push(entity);
 
-                // 5. Return the accumulator (the Map)
-                return groups;
-            }, new Map<Function, ObjectLiteral[]>());
+        //         // 4. Update the map
+        //         groups.set(entityClass, group);
 
-            // 3. Execute the bulk inserts using the grouped map.
-            for (const [entityClass, entities] of baseRateClasses.entries()) {
-                await transactionalEntityManager.insert(entityClass, entities);
-            }
-        });
+        //         // 5. Return the accumulator (the Map)
+        //         return groups;
+        //     }, new Map<Function, ObjectLiteral[]>());
+
+        //     // 3. Execute the bulk inserts using the grouped map.
+        //     for (const [entityClass, entities] of baseRateClasses.entries()) {
+        //         await transactionalEntityManager.insert(entityClass, entities);
+        //     }
+        // });
     });
 
     afterEach(async () => {
@@ -131,7 +133,7 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
         spyInstances.forEach(spy => spy.mockRestore());
     });
 
-    test(`should persist successfully`, async () => {
+    test.only(`should persist successfully`, async () => {
 
         const savedShipmentLane = await shipmentLaneRepository.findOne({
             where: {

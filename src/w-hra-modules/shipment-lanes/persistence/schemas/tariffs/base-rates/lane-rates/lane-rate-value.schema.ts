@@ -9,5 +9,11 @@ export const LaneRateValueSchema = new EntitySchema<LaneRateValue>({
     discriminatorValue: BaseRateType.LANE,
     columns: {
         ...BaseRateValueSchema.options.columns
+    },
+    relations: {
+        baseRate: {
+            ...BaseRateValueSchema.options.relations.baseRate,
+            target: LaneRateValue.name
+        }
     }
 });

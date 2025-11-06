@@ -23,6 +23,9 @@ export const WeightRateValueSchema = new EntitySchema<WeightRateValue>({
         }
     },
     relations: {
-        ...BaseRateValueSchema.options.relations
+        baseRate: {
+            ...BaseRateValueSchema.options.relations.baseRate,
+            target: WeightRateValue.name
+        }
     }
 });

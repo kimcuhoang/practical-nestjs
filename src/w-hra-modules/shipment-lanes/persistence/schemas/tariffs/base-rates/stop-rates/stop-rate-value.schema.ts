@@ -13,5 +13,11 @@ export const StoptRateValueSchema = new EntitySchema<StopRateValue>({
             type: "int",
             nullable: false
         }
+    },
+    relations: {
+        baseRate: {
+            ...BaseRateValueSchema.options.relations.baseRate,
+            target: StopRateValue.name
+        }
     }
 });
