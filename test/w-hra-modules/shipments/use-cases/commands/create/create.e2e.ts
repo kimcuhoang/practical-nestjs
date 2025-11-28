@@ -14,14 +14,12 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     let shipmentRepository: Repository<Shipment>;
     let commandBus: CommandBus;
     let shipmentAssignmentService: IShipmentAssignmentService;
-    let spyInstanceOfEnsureSaleOrdersIsValid: jest.SpyInstance;
-    let spyInstanceOfAssignShipmentToSaleOrders: jest.SpyInstance;
     let shipmentKeyGenerator: IShipmentKeyGenerator;
-    let spyInstanceOfGenerateShipmentKey: jest.SpyInstance;
 
-
-    const shipmentCode = "SHP00000000003000000001";
-
+    const spyInstances: jest.SpyInstance[] = [];
+    const shipmentCodePrefix = "TEST-SHP";
+    const shipmentCodeTemplate = "#########";
+    const shipmentCodeSequenceEnd = 9999999999;
 
     beforeAll(() => {
         shipmentRepository = app.get(getRepositoryToken(Shipment));
@@ -31,24 +29,28 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     });
 
     beforeEach(() => {
-        spyInstanceOfEnsureSaleOrdersIsValid = jest
-            .spyOn(shipmentAssignmentService, 'ensureSaleOrdersIsValid')
-            .mockResolvedValue([]);
-
-        spyInstanceOfAssignShipmentToSaleOrders = jest
-            .spyOn(shipmentAssignmentService, 'assignShipmentToSaleOrders')
-            .mockResolvedValue(undefined);
-
-        spyInstanceOfGenerateShipmentKey = jest
-            .spyOn(shipmentKeyGenerator, 'generate')
-            .mockResolvedValue(shipmentCode);
+        spyInstances.push(
+            jest
+                .spyOn(shipmentAssignmentService, 'ensureSaleOrdersIsValid')
+                .mockResolvedValue([]),
+            jest
+                .spyOn(shipmentAssignmentService, 'assignShipmentToSaleOrders')
+                .mockResolvedValue(undefined),
+            jest
+                .spyOn(shipmentKeyGenerator, 'shipmentKeyPrefix', 'get')
+                .mockReturnValue(shipmentCodePrefix),
+            jest
+                .spyOn(shipmentKeyGenerator, 'shipmentKeyTemplate', 'get')
+                .mockReturnValue(shipmentCodeTemplate),
+            jest
+                .spyOn(shipmentKeyGenerator, 'shipmentKeySequenceEnd', 'get')
+                .mockReturnValue(shipmentCodeSequenceEnd)
+        );
     });
 
     afterEach(async () => {
         await shipmentRepository.delete({});
-        spyInstanceOfEnsureSaleOrdersIsValid.mockReset();
-        spyInstanceOfAssignShipmentToSaleOrders.mockReset();
-        spyInstanceOfGenerateShipmentKey.mockReset();
+        spyInstances.forEach(spy => spy.mockRestore());
     });
 
     test(`should be success`, async () => {
@@ -82,7 +84,10 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
             }
         });
         expect(shipment).toBeTruthy();
-        expect(shipment.shipmentCode).toBe(shipmentCode);
+
+        expect(shipment.shipmentCode).toBeTruthy();
+        expect(shipment.shipmentCode).toMatch(new RegExp(`^${shipmentCodePrefix}\\d{${shipmentCodeTemplate.length}}$`));
+
         expect(shipment.bizUnitCode).toBe(payload.bizUnitCode);
         expect(shipment.regionCode).toBe(payload.regionCode);
         expect(shipment.startFromDateTime).toEqual(payload.startFromDateTime);

@@ -30,7 +30,7 @@ db-reset: db-drop db-create
 
 gen-migration feature name: b
     clear
-    npx yarn typeorm:generate-migration src/{{feature}}/persistence/migrations/{{name}}
+    npx yarn typeorm:generate-migration {{feature}}/persistence/migrations/{{name}}
 
 create-migration feature name:
     clear
@@ -53,7 +53,7 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    npx yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/create.e2e.ts --all
+    npx yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/setup-shipment-lane-tariff.e2e.ts --all
 
 e2e-files: pre-test
     npx yarn test:e2e --findRelatedTests \
@@ -69,7 +69,7 @@ e2e-files: pre-test
 
 e2e-folder name: pre-test
     clear
-    npx yarn test:e2e --testPathPattern=test/{{name}}
+    npx yarn test:e2e --testPathPattern={{name}}
 
 e2e-modules: pre-test
     clear

@@ -31,6 +31,10 @@ describe(`Create ${BizUnit.name} via ${BizUnitsControllers.name}`, () => {
                 sequenceStart: "00001",
                 sequenceEnd: "99999",
             },
+            shipmentLaneKeySettings: {
+                prefix: "SLK",
+                template: "####"
+            },
             regions: [
                 {
                     regionCode: "ES"
@@ -66,6 +70,9 @@ describe(`Create ${BizUnit.name} via ${BizUnitsControllers.name}`, () => {
         expect(bizUnit.shipmentKeySettings.prefix).toBe(payload.shipmentKeySettings.prefix);
         expect(bizUnit.shipmentKeySettings.sequenceStart).toBe(payload.shipmentKeySettings.sequenceStart);
         expect(bizUnit.shipmentKeySettings.sequenceEnd).toBe(payload.shipmentKeySettings.sequenceEnd);
+
+        expect(bizUnit.shipmentLaneKeySettings.prefix).toBe(payload.shipmentLaneKeySettings.prefix);
+        expect(bizUnit.shipmentLaneKeySettings.template).toBe(payload.shipmentLaneKeySettings.template);
 
         expect(bizUnit.regions).toHaveLength(payload.regions.length);
 

@@ -25,6 +25,7 @@ const jestConfig: Config.InitialOptions = {
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
+    
     // setupFilesAfterEnv: [
     //     "./test/test.setup.ts"
     // ],

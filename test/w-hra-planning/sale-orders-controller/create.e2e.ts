@@ -33,6 +33,10 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
             sequenceStart: "00001",
             sequenceEnd: "99999",
         };
+        bizUnit.shipmentLaneKeySettings = {
+            prefix: "SL",
+            template: "#########"
+        };
         bizUnit.addBizUnitRegion(regionCode);
 
         await bizUnitRepository.save(bizUnit);
