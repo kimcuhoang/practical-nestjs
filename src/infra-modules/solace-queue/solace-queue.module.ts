@@ -60,7 +60,7 @@ export class SolaceQueueModule {
                         vpnName: solaceQueueOptions.solaceMessageVpn,
                         userName: solaceQueueOptions.solaceUsername,
                         password: solaceQueueOptions.solacePassword,
-                        // clientName: `${options.clientName}-${process.getgid()}`,
+                        clientName: `${solaceQueueOptions.clientName}-${process.getuid()}`,
                         applicationDescription: solaceQueueOptions.clientName,
                         generateSendTimestamps: true,
                         generateReceiveTimestamps: true,

@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { CreateBizUnitCommand, CreateBizUnitPayload } from "@src/w-hra-modules/biz-units/use-cases/commands";
 
 
@@ -12,6 +12,7 @@ export class BizUnitsControllers {
     ){}
 
     @Post()
+    @ApiBody({ type: CreateBizUnitPayload })
     public async create(@Body() payload: CreateBizUnitPayload): Promise<string> {
         return await this.commandBus.execute(new CreateBizUnitCommand(payload));
     }

@@ -1,0 +1,30 @@
+
+@url = http://localhost:3000
+
+POST {{url}}/biz-units HTTP/1.1
+Content-Type: application/json
+
+{
+    "bizUnitCode": "VN01",
+    "commonSettings": {
+        "countryCode": "VN",
+        "timeZone": "GMT+7"
+    },
+    "shipmentKeySettings": {
+        "prefix": "SH",
+        "sequenceStart": "000000000",
+        "sequenceEnd": "999999999"
+    },
+    "shipmentLaneKeySettings": {
+        "prefix": "SHLN",
+        "template": "#########"
+    },
+    "regions": [
+        {
+            "regionCode": "V1"
+        },
+        {
+            "regionCode": "V2"
+        }
+    ]
+}
