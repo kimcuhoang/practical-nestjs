@@ -8,55 +8,55 @@ default:
 i:
     clear
     rm -rf node_modules
-    npx yarn install
+    yarn install
 
 b: 
     clear
-    npx yarn build
+    yarn build
 
 gen-lib name:
     clear
-    npx yarn nest g library {{name}} --no-spec
+    yarn nest g library {{name}} --no-spec
 
 db-create:
     clear
-    npx yarn db:create
+    yarn db:create
 
 db-drop:
     clear
-    npx yarn db:drop
+    yarn db:drop
 
 db-reset: db-drop db-create
 
 gen-migration feature name: b
     clear
-    npx yarn typeorm:generate-migration {{feature}}/persistence/migrations/{{name}}
+    yarn typeorm:generate-migration {{feature}}/persistence/migrations/{{name}}
 
 create-migration feature name:
     clear
-    npx yarn typeorm:create-migration src/{{feature}}/persistence/migrations/{{name}}
+    yarn typeorm:create-migration src/{{feature}}/persistence/migrations/{{name}}
 
 run-migration: b
     clear
-    npx yarn typeorm:run-migrations
+    yarn typeorm:run-migrations
 
 revert-migration: b
     clear
-    npx yarn typeorm:revert-migration
+    yarn typeorm:revert-migration
 
 pre-test: b
     # yarn jest --clearCache
 
 e2e: pre-test
     clear
-    npx yarn test:e2e
+    yarn test:e2e
 
 e2e-file: pre-test
     clear
-    npx yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/setup-shipment-lane-tariff.e2e.ts --all
+    yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/setup-shipment-lane-tariff.e2e.ts --all
 
 e2e-files: pre-test
-    npx yarn test:e2e --findRelatedTests \
+    yarn test:e2e --findRelatedTests \
                 test/app.e2e.ts \
                 test/w-hra-planning/sale-orders-controller/create.e2e.ts \
                 test/w-hra-modules/caching/use-cache-manager.e2e.ts \
@@ -69,12 +69,12 @@ e2e-files: pre-test
 
 e2e-folder name: pre-test
     clear
-    npx yarn test:e2e --testPathPattern={{name}}
+    yarn test:e2e --testPathPattern={{name}}
 
 e2e-modules: pre-test
     clear
-    npx yarn test:e2e --testPathPattern=test/w-hra-modules
+    yarn test:e2e --testPathPattern=test/w-hra-modules
 
 s:
     clear
-    npx yarn start:dev
+    yarn start:dev
