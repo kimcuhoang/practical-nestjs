@@ -26,10 +26,15 @@ beforeAll(async () => {
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";
 
-    if (global.redisEnabled) {
-        console.log("Redis is enabled");
-        process.env.CACHE_REDIS_URL = global.redisContainer.getConnectionUrl();
-    }
+    // if (global.redisEnabled) {
+    //     console.log("Redis is enabled");
+    //     process.env.CACHE_REDIS_URL = global.redisContainer.getConnectionUrl();
+    // }
+    // process.env.CACHE_STORE = "redis";
+
+    process.env.YAN_REDIS_HOST = global.redisContainer.getHost();
+    process.env.YAN_REDIS_PORT = global.redisContainer.getMappedPort(6379).toString();
+    process.env.YAN_REDIS_CONNECTION_STRING = global.redisContainer.getConnectionUrl();
 
     initializeTransactionalContext({
         storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE

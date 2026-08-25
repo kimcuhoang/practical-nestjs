@@ -15,11 +15,12 @@ export class CreateBizUnitHandler implements ICommandHandler<CreateBizUnitComman
     public async execute(command: CreateBizUnitCommand): Promise<string> {
         const payload = command.payload;
 
-        const bizUnit = new BizUnit();
-        bizUnit.bizUnitCode = payload.bizUnitCode;
-        bizUnit.commonSettings = payload.commonSettings;
-        bizUnit.shipmentKeySettings = payload.shipmentKeySettings;
-        bizUnit.shipmentLaneKeySettings = payload.shipmentLaneKeySettings;
+        const bizUnit = new BizUnit({
+            bizUnitCode: payload.bizUnitCode,
+            commonSettings: payload.commonSettings,
+            shipmentKeySettings: payload.shipmentKeySettings,
+            shipmentLaneKeySettings: payload.shipmentLaneKeySettings,
+        });
 
         for(const region of payload.regions) {
             bizUnit.addBizUnitRegion(region.regionCode);

@@ -16,6 +16,7 @@ import { CqrsEventHandlers } from "./integrations";
 import { BizUnitsModuleSchemas } from "@src/w-hra-modules/biz-units/persistence";
 import { overrideShipmentAssigmentServiceProvider, overrideShipmentKeyGeneratorServiceProvider } from "./services/shipments";
 import { overrideShipmentLaneKeySettingsServiceProvider } from "./services/shipment-lanes";
+import { BizUnitsService } from "./services/biz-units/biz-units.service";
 
 
 @Module({})
@@ -26,7 +27,10 @@ export class WhraPlanningModule {
             module: WhraPlanningModule,
             global: true,
             imports: [
-                BizUnitsModule.forRoot(),
+                BizUnitsModule.forRoot({
+                    additionalProviders: [ BizUnitsService ],
+                    exportProviders: [ BizUnitsService ]
+                }),
                 BizPartnersModule.forRoot(),
                 CustomersModule.forRoot(),
                 SolaceQueueModule.forRoot({

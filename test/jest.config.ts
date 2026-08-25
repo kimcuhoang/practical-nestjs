@@ -39,11 +39,6 @@ const jestConfig: Config.InitialOptions = {
     },
     coverageReporters: ["json", "html", "clover", "lcov", "text"],
     collectCoverageFrom: [
-        "libs/**/src/*.ts",
-        "!libs/**/src/main.ts",
-        "!libs/**/src/**/index.ts",
-        "!libs/**/src/**/*.module.ts",
-        "!libs/**/src/**/persistence/**",
         "src/**/*.ts",
         "!src/main.ts",
         "!src/**/index.ts",

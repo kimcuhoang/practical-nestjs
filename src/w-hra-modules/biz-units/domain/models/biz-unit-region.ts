@@ -13,9 +13,7 @@ export class BizUnitRegion extends EntityBase {
 
     constructor(bizUnit?: BizUnit){
         super();
-        if(bizUnit) {
-            this.bizUnit = bizUnit;
-            this.bizUnitId = bizUnit.id;
-        }
+        this.bizUnit = bizUnit;
+        this.bizUnitId = bizUnit?.id;
     }
 }
