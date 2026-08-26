@@ -2,10 +2,12 @@ import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BizUnitsModuleSchemas } from "./persistence";
 import { BizUnitsModulesCqrsCommandHandlers } from "./use-cases/commands";
+import { queryHandlers } from "./use-cases/queries";
 
 export type BizUnitsModuleSettings = {
     additionalSchemas?: any[],
     additionalProviders?: Provider[],
+    exportProviders?: Provider[]
 };
 
 @Module({})
@@ -17,16 +19,19 @@ export class BizUnitsModule {
             imports: [
                 TypeOrmModule.forFeature([
                     ...BizUnitsModuleSchemas,
-                    ...(moduleSettings?.additionalSchemas || [])
+                    ...(moduleSettings?.additionalSchemas ?? [])
                 ])
             ],
             providers: [
                 ...BizUnitsModulesCqrsCommandHandlers,
-                ...(moduleSettings?.additionalProviders || [])
+                ...queryHandlers,
+                ...(moduleSettings?.additionalProviders ?? [])
             ],
             exports: [
                 TypeOrmModule,
-                ...BizUnitsModulesCqrsCommandHandlers
+                ...BizUnitsModulesCqrsCommandHandlers,
+                ...queryHandlers,
+                ...(moduleSettings?.exportProviders ?? [])
             ]
         } as DynamicModule;
     }

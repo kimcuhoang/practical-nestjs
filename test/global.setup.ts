@@ -12,16 +12,21 @@ module.exports = async () => {
                         .withStartupTimeout(50000)
                         .start();
 
-    const cacheStore = process.env.CACHE_STORE;
-    const redisIsEnabled = cacheStore === 'redis';
+    // const cacheStore = process.env.CACHE_STORE;
+    // const redisIsEnabled = cacheStore === 'redis';
         
-    globalThis.redisEnabled = redisIsEnabled;
+    // globalThis.redisEnabled = redisIsEnabled;
 
-    if (redisIsEnabled) {
-        globalThis.redisContainer = await new RedisContainer("redis:alpine")
+    // if (redisIsEnabled) {
+    //     globalThis.redisContainer = await new RedisContainer("redis:alpine")
+    //                     .withNetworkAliases("practical-nestjs-network")
+    //                     .withStartupTimeout(50000)
+    //                     .start();
+    // }
+
+    globalThis.redisContainer = await new RedisContainer("redis:alpine")
                         .withNetworkAliases("practical-nestjs-network")
                         .withStartupTimeout(50000)
                         .start();
-    }
 };
 

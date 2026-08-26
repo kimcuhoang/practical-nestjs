@@ -1,6 +1,4 @@
 # use PowerShell instead of sh:
-set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
-
 default:
     clear
     just --list
@@ -53,7 +51,7 @@ e2e: pre-test
 
 e2e-file: pre-test
     clear
-    yarn test:e2e -f test/w-hra-modules/shipment-lanes/persistence/setup-shipment-lane-tariff.e2e.ts --all
+    yarn test:e2e --runTestsByPath test/w-hra-planning/biz-units-controller/get.e2e.ts
 
 e2e-files: pre-test
     yarn test:e2e --findRelatedTests \

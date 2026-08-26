@@ -21,8 +21,9 @@ export class BizUnit extends EntityBase {
     @Type(() => BizUnitRegion)
     regions: BizUnitRegion[];
 
-    constructor() {
+    constructor(options?: Partial<Omit<BizUnit, 'id' | 'createdAt' | 'updatedAt'>>) {
         super();
+        Object.assign(this, options);
     }
 
     public addBizUnitRegion(regionCode: string): BizUnit {

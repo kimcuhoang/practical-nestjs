@@ -1,17 +1,15 @@
 
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule, DatabaseModuleOptions } from '@src/infra-modules/database';
 import { getDatabaseModuleSettings } from './typeorm.datasource';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WhraPlanningModule } from './w-hra-planning';
-import { CachingModule } from './infra-modules/caching';
-import { CacheSettings } from './infra-modules/caching/cache-settings';
 import { plainToInstance } from 'class-transformer';
 import { CalculatorModule } from './infra-modules/calculator';
-import { ShipmentLanesModuleEntitySubscribers } from './w-hra-modules/shipment-lanes/persistence';
+import { HraCacheModule } from './infra-modules/cache/cache.module';
 
 const infrastructureModules = [
   DatabaseModule.register(configService => {
@@ -19,15 +17,18 @@ const infrastructureModules = [
       ...getDatabaseModuleSettings(configService)
     });
   }),
-  CachingModule.forRoot(configService => {
-    const settings = plainToInstance(CacheSettings, {
-      store: configService.get('CACHE_STORE', 'memory'),
-      ttl: Number(configService.get('CACHE_TTL_IN_MINUTES', 3)),
-      max: Number(configService.get('CACHE_MAX', 100)),
-      redisUrl: configService.get('CACHE_REDIS_URL'),
-    });
-    return settings;
-  }),
+  HraCacheModule.forRoot({
+    cacheOptions: {
+      useFactory: (configService) => {
+        return {
+          timeToLiveInMinutes: Number(configService.get('YAN_CACHE_TTL_IN_MINUTES', 30)),
+          redisConnectionString: configService.get('YAN_REDIS_CONNECTION_STRING', 'redis://localhost:6379/0'),
+          redisEnabled: configService.get('YAN_REDIS_ENABLED', true),
+        };
+      },
+      inject: [ConfigService],
+    }
+  })
 ];
 
 
@@ -44,27 +45,6 @@ const infrastructureModules = [
 
   ],
   controllers: [AppController],
-  providers: [
-    AppService
-    // ExplorerService,
-    // {
-    //   provide: CommandBus.name,
-    //   useExisting: CommandBus
-    //   // inject: [CommandBus, ExplorerService],
-    //   // useFactory: (commandBus: CommandBus, explorerService: ExplorerService) => {
-    //   //   const handlers = explorerService.explore();
-    //   //   commandBus.register(handlers.commands);
-    //   //   return commandBus;
-    //   // }
-    // },
-    // {
-    //   provide: QueryBus.name,
-    //   useExisting: QueryBus,
-    // },
-    // {
-    //   provide: EventBus.name,
-    //   useExisting: EventBus,
-    // }
-  ]
+  providers: [ AppService ]
 })
 export class AppModule { }

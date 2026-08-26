@@ -179,7 +179,7 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
         expect(stopRateValues).toHaveLength(allStopRateValues.length);
         
 
-        console.dir(savedShipmentLane, { depth: null });
+        console.dir(savedShipmentLane, { depth: null, colors: true });
     });
 
     test.skip(`should queryable`, async () => {  
