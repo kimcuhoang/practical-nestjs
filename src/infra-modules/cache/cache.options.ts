@@ -1,9 +1,7 @@
 import { ModuleMetadata } from "@nestjs/common";
-import { HraRedisService } from "./services/redis.service";
+import { HraRedisService } from "./services/redis-service/redis.service";
 
-
-export type CacheOptions =
-{
+export type CacheOptions = {
     timeToLiveInMinutes?: number;
     redisConnectionString: string;
     redisEnabled?: boolean;

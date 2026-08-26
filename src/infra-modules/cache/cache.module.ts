@@ -2,8 +2,8 @@ import { DynamicModule, Logger, Module, Provider } from "@nestjs/common";
 import { HraCacheModuleOptions, CacheOptions } from "./cache.options";
 import { REDIS_CLIENT, REDIS_SERVICE, YAN_CACHE_MODULE_OPTIONS, YAN_CACHE_SERVICE } from "./cache.symbols";
 import Redis from "ioredis";
-import { HraRedisService } from "./services/redis.service";
-import { HraCacheService } from "./services/cache.service";
+import { HraRedisService } from "./services/redis-service/redis.service";
+import { HraCacheService } from "./services/cache-service/cache.service";
 
 
 @Module({})
