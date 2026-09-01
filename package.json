@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/kimcuhoang/practical-nestjs"
   },
+  "engines": { "node": ">=20.20.2" },
   "scripts": {
     "nest": "./node_modules/.bin/nest",
     "build": "yarn nest build",
