@@ -16,7 +16,7 @@ describe(`Create ${BizUnit.name} via ${BizUnitsControllers.name}`, () => {
     });
 
     afterEach(async() => {
-        await bizUnitRepository.delete({});
+        await bizUnitRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async() => {

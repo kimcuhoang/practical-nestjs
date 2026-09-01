@@ -19,8 +19,8 @@ describe(`Create ${BizPartner.name} via ${BizPartnersController.name}`, () => {
     });
 
     afterEach(async() => {
-        await bizPartnerRepository.delete({});
-        await customerRepository.delete({});
+        await bizPartnerRepository.createQueryBuilder().delete().execute();
+        await customerRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async() => {

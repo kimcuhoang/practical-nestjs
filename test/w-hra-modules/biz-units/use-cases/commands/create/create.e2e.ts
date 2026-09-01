@@ -19,12 +19,8 @@ describe(`Create ${BizUnit.name} via ${CreateBizUnitHandler.name}`, () => {
         commandHandler = app.get(CreateBizUnitHandler.name);
     });
 
-    beforeEach(async () => {
-        await bizUnitRepository.delete({});
-    });
-
     afterEach(async () => {
-        await bizUnitRepository.delete({});
+        await bizUnitRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async () => {
