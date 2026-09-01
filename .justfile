@@ -6,6 +6,7 @@ default:
 i:
     clear
     rm -rf node_modules
+    yarn cache clean
     yarn install
 
 b: 
@@ -43,7 +44,7 @@ revert-migration: b
     yarn typeorm:revert-migration
 
 pre-test: b
-    # yarn jest --clearCache
+    yarn jest --clearCache
 
 e2e: pre-test
     clear

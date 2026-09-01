@@ -40,7 +40,7 @@ describe(`Get ${BizUnit.name} via ${BizUnitsControllers.name}`, () => {
         await bizUnitRepository.createQueryBuilder().delete().execute();
     });
 
-    test(`data should be setup correctly`, async() => {
+    test.only(`data should be setup correctly`, async() => {
         const savedBizUnit = await bizUnitRepository.findOneOrFail({
             where: { id: bizUnit.id },
             relations: {
