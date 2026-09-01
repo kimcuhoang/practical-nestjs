@@ -9,7 +9,6 @@ import { CreateShipmentCommand, CreateShipmentPayload } from "@src/w-hra-modules
 
 @Injectable()
 export class ShipmentsQueueIntegrationService extends SubscriptionInstanceBase {
-    protected readonly logger: Logger;
 
     constructor(
         protected readonly solaceQueueOptions: SolaceQueueOptions,
@@ -19,7 +18,6 @@ export class ShipmentsQueueIntegrationService extends SubscriptionInstanceBase {
     ) {
         const logger = new Logger(ShipmentsQueueIntegrationService.name);
         super(solaceQueueOptions, solaceSubscription, logger);
-        this.logger = logger;
     }
 
     protected allowSubscribing(): boolean {

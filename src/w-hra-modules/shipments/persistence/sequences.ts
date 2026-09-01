@@ -1,6 +1,6 @@
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 export const ShipmentsSequences = {
-    shipmentSequence: snakeCase("ShipmentSequence"),
+    shipmentSequence: new SnakeNamingStrategy().tableName("ShipmentSequence", ""),
 };
 

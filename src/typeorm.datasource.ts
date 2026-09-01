@@ -1,9 +1,10 @@
 import 'dotenv/config';
-import { DataSource } from "typeorm";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModuleOptions, DataSourceProperties } from './infra-modules/database';
 import { WhraModuleSchemas } from './w-hra-modules';
+
+export type PostgresConnectionOptions = Extract<DataSourceOptions, { type: 'postgres' }>;
 
 export const getDatabaseModuleSettings = (configService: ConfigService) : DatabaseModuleOptions => {
     return new DatabaseModuleOptions({

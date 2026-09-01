@@ -6,30 +6,28 @@
   },
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
+    "target": "ES2022",
+    "strict": true,
+    "skipLibCheck": true,
+    "incremental": false,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    
+    "removeComments": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
+    "types": ["node", "jest"],
     "paths": {
-      "@src/*": [
-        "src/*"
-      ],
-      "@test/*": [
-        "test/*"
-      ]
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"],
     }
   }
 }

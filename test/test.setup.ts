@@ -6,9 +6,9 @@ import { I18nValidationPipe, I18nValidationExceptionFilter } from "nestjs-i18n";
 import { initializeTransactionalContext, StorageDriver } from "typeorm-transactional";
 import { INestApplication, LogLevel } from "@nestjs/common";
 import TestAgent from "supertest/lib/agent";
-import * as moment from "moment";
+import moment from "moment";
 import * as TestHelpers from "@test/test-helpers";
-import * as httpClient from "supertest";
+import httpClient from "supertest";
 
 
 let app: INestApplication<any>;
@@ -25,12 +25,6 @@ beforeAll(async () => {
     process.env.FALLBACK_LANGUAGE = "en";
     process.env.SOLACE_ENABLED = "false";
     process.env.LOG_LEVELS = "log";//warn|error";
-
-    // if (global.redisEnabled) {
-    //     console.log("Redis is enabled");
-    //     process.env.CACHE_REDIS_URL = global.redisContainer.getConnectionUrl();
-    // }
-    // process.env.CACHE_STORE = "redis";
 
     process.env.YAN_REDIS_HOST = global.redisContainer.getHost();
     process.env.YAN_REDIS_PORT = global.redisContainer.getMappedPort(6379).toString();

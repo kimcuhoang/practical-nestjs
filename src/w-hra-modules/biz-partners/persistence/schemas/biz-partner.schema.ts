@@ -1,14 +1,15 @@
 import { EntitySchema } from "typeorm";
 import { BizPartner, BizPartnerCommunication, BizPartnerCustomer, BizPartnerVendor } from "../../domain";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 
 export const BizPartnerSchema = new EntitySchema<BizPartner>({
     name: BizPartner.name,
     target: BizPartner,
-    tableName: snakeCase("BizPartners"),
+    tableName: snakeCaseStrategy.tableName("BizPartners", ""),
     columns: {
         ...EntityBaseSchema,
         name: {

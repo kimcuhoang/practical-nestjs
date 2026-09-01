@@ -6,6 +6,7 @@ const jestConfig: Config.InitialOptions = {
     restoreMocks: true,
     cache: true,
     testTimeout: 120000,
+    injectGlobals: true,
     moduleFileExtensions: ["js", "json", "ts"],
     extensionsToTreatAsEsm: [".ts"],
     rootDir: "..",

@@ -26,13 +26,13 @@ db-drop:
 
 db-reset: db-drop db-create
 
-gen-migration feature name: b
+gen-migration module name: b
     clear
-    yarn typeorm:generate-migration {{feature}}/persistence/migrations/{{name}}
+    yarn typeorm:generate-migration {{module}}/persistence/migrations/{{name}}
 
-create-migration feature name:
+create-migration module name:
     clear
-    yarn typeorm:create-migration src/{{feature}}/persistence/migrations/{{name}}
+    yarn typeorm:create-migration src/{{module}}/persistence/migrations/{{name}}
 
 run-migration: b
     clear

@@ -1,13 +1,13 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { TariffValidity, Tariff, BaseRate } from "../../../domain";
 
-
+const snakeCaseStrategy = new SnakeNamingStrategy();
 export const TariffValiditySchema = new EntitySchema<TariffValidity>({
     name: TariffValidity.name,
     target: TariffValidity,
-    tableName: snakeCase("TariffValidities"),
+    tableName: snakeCaseStrategy.tableName("TariffValidities", ""),
     columns: {
         ...EntityBaseSchema,
         tariffId: {
@@ -31,9 +31,14 @@ export const TariffValiditySchema = new EntitySchema<TariffValidity>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase("tariffId"),
+                name: snakeCaseStrategy.columnName("tariffId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_TariffValidity_Tariff")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "TariffValidities",
+                    ["tariffId"],
+                    "Tariffs",
+                    ["id"]
+                )
             }
         },
         baseRates: {

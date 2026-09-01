@@ -1,13 +1,14 @@
 import { EntitySchema } from "typeorm";
 import { Customer, CustomerCommunication } from "../../domain";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const CustomerCommunicationSchema = new EntitySchema<CustomerCommunication>({
     name: CustomerCommunication.name,
     target: CustomerCommunication,
-    tableName: snakeCase("CustomerCommunications"),
+    tableName: snakeCaseStrategy.tableName("CustomerCommunications", ""),
     columns: {
         ...EntityBaseSchema,
         customerId: {
@@ -34,9 +35,14 @@ export const CustomerCommunicationSchema = new EntitySchema<CustomerCommunicatio
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase("customerId"),
+                name: snakeCaseStrategy.columnName("customerId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_CustomerCommunications_Customers")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "CustomerCommunications",
+                    ["customerId"],
+                    "Customers",
+                    ["id"]
+                )
             }
         }
     }
