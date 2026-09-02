@@ -5,11 +5,7 @@ const CqrsCommandHandlers = [
 ];
 
 export const BizUnitsModulesCqrsCommandHandlers = [
-    ...CqrsCommandHandlers,
-    ...CqrsCommandHandlers.map(h => ({
-        provide: h.name,
-        useExisting: h
-    }))
+    ...CqrsCommandHandlers
 ];
 
 

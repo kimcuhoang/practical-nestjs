@@ -3,8 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    // "declaration": true,
-    // "declarationMap": true,
+    "declarationMap": true,
   },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "**/*.e2e.ts"]
 }

@@ -35,10 +35,10 @@ const jestConfig: Config.InitialOptions = {
     // setupFilesAfterEnv: [
     //     "./test/test.setup.ts"
     // ],
-    setupFiles: [
-        "reflect-metadata",
-        "dotenv/config"
-    ],
+    // setupFiles: [
+    //     "reflect-metadata",
+    //     "dotenv/config"
+    // ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",
         "^@test/(.*)$": "<rootDir>/test/$1"
