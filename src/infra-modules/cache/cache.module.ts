@@ -10,9 +10,10 @@ import { HraCacheService } from "./services/cache-service/cache.service";
 export class HraCacheModule {
     public static forRoot(options: HraCacheModuleOptions): DynamicModule {
         const logger = new Logger(HraCacheModule.name);
+
         const cacheOptionsProvider: Provider<CacheOptions> = {
             provide: YAN_CACHE_MODULE_OPTIONS,
-            ...options.cacheOptions
+            ... options.cacheOptions
         };
 
         const redisClientProvider: Provider = {
