@@ -1,16 +1,17 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BizUnitCommonSettingsSchema } from "./common-settings.schema";
 import { BizUnit, BizUnitRegion } from "../../domain";
 import { BizUnitsShipmentKeySettingsSchema } from "./shipment-key-settings.schema";
 import { ShipmentLaneKeySettingsSchema } from "./shipment-lane-key-settings.schema";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const BizUnitSchema = new EntitySchema<BizUnit>({
     name: BizUnit.name,
     target: BizUnit,
-    tableName: snakeCase("BizUnits"),
+    tableName: snakeCaseStrategy.tableName("BizUnits", ""),
     columns: {
         ...EntityBaseSchema,
         bizUnitCode: {
@@ -30,7 +31,7 @@ export const BizUnitSchema = new EntitySchema<BizUnit>({
         },
         shipmentLaneKeySettings: {
             schema: ShipmentLaneKeySettingsSchema,
-            prefix: snakeCase("ShipmentLaneKey"),
+            prefix: snakeCaseStrategy.columnName("ShipmentLaneKey", "", []),
         }
     },
     relations: {

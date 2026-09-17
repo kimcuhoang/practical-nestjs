@@ -1,13 +1,14 @@
 import { EntitySchema } from "typeorm";
 import { SaleOrder, SaleOrderItem, SaleOrderShipmentHistory } from "../../domain";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const SaleOrderSchema = new EntitySchema<SaleOrder>({
     name: SaleOrder.name,
     target: SaleOrder,
-    tableName: snakeCase("SaleOrders"),
+    tableName: snakeCaseStrategy.tableName("SaleOrders", ""),
     columns: {
         ...EntityBaseSchema,
         saleOrderCode: {

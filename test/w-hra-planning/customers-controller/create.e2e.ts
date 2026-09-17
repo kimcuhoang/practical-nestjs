@@ -17,7 +17,7 @@ describe(`Create ${Customer.name} via ${CustomersController.name}`, () => {
     });
 
     afterEach(async() => {
-        await customerRepository.delete({});
+        await customerRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async() => {

@@ -1,13 +1,14 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BizUnit, BizUnitRegion } from "../../domain";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({
     name: BizUnitRegion.name,
     target: BizUnitRegion,
-    tableName: snakeCase("BizUnitRegions"),
+    tableName: snakeCaseStrategy.tableName("BizUnitRegions", ""),
     columns: {
         ...EntityBaseSchema,
         regionCode: {
@@ -23,9 +24,14 @@ export const BizUnitRegionSchema = new EntitySchema<BizUnitRegion>({
             inverseSide: "regions",
             onDelete: "CASCADE",
             joinColumn: {
-                name: snakeCase("bizUnitId"),
+                name: snakeCaseStrategy.columnName("bizUnitId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_BizUnitRegion_BizUnit")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "BizUnitRegions",
+                    ["bizUnitId"],
+                    "BizUnits",
+                    ["id"]
+                )
             }
         }
     }

@@ -1,13 +1,13 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { Shipment, ShipmentSaleOrder } from "@src/w-hra-modules/shipments/domain";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
-
+const snakeCaseStrategy = new SnakeNamingStrategy();
 export const ShipmentSchema = new EntitySchema<Shipment>({
     name: Shipment.name,
     target: Shipment,
-    tableName: snakeCase("Shipments"),
+    tableName: snakeCaseStrategy.tableName("Shipments", ""),
     columns: {
         ...EntityBaseSchema,
         shipmentCode: {

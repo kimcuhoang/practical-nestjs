@@ -44,8 +44,8 @@ describe(`Create ${SaleOrder.name} via ${SaleOrdersController.name}`, () => {
     });
 
     afterEach(async () => {
-        await saleOrderRepository.delete({});
-        await bizUnitRepository.delete({});
+        await saleOrderRepository.createQueryBuilder().delete().execute();
+        await bizUnitRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async () => {

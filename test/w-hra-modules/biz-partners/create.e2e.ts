@@ -33,7 +33,7 @@ describe(`Create ${BizPartner.name}`, () => {
     });
 
     afterEach(async() => {
-        await bizPartnerRepository.delete({});
+        await bizPartnerRepository.createQueryBuilder().delete().execute();
 
         const communications = await bizPartnerCommunicationRepository.find();
         expect(communications).toHaveLength(0);

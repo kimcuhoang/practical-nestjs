@@ -10,7 +10,6 @@ import { BizPartnerPayload, CreateBizPartnerCommand } from "@src/w-hra-modules/b
 
 @Injectable()
 export class BizPartnerQueueIntegrationService extends SubscriptionInstanceBase {
-    protected readonly logger: Logger;
     
     constructor(
         protected readonly solaceQueueOptions: SolaceQueueOptions,
@@ -20,7 +19,6 @@ export class BizPartnerQueueIntegrationService extends SubscriptionInstanceBase 
     ) {
         const logger = new Logger(BizPartnerQueueIntegrationService.name);
         super(solaceQueueOptions, solaceSubscription, logger);
-        this.logger = logger;
     }
     
     protected allowSubscribing(): boolean {

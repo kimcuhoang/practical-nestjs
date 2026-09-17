@@ -49,7 +49,7 @@ describe(`Create ${Shipment.name} via ${CreateShipmentHandler.name}`, () => {
     });
 
     afterEach(async () => {
-        await shipmentRepository.delete({});
+        await shipmentRepository.createQueryBuilder().delete().execute();
         spyInstances.forEach(spy => spy.mockRestore());
     });
 

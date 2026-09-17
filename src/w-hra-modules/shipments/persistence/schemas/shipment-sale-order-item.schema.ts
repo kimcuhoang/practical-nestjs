@@ -1,13 +1,13 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { ShipmentSaleOrder, ShipmentSaleOrderItem } from "@src/w-hra-modules/shipments/domain";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
-
+const snakeCaseStrategy = new SnakeNamingStrategy();
 export const ShipmentSaleOrderItemSchema = new EntitySchema<ShipmentSaleOrderItem>({
     name: ShipmentSaleOrderItem.name,
     target: ShipmentSaleOrderItem,
-    tableName: snakeCase("ShipmentSaleOrderItems"),
+    tableName: snakeCaseStrategy.tableName("ShipmentSaleOrderItems", ""),
     columns: {
         ...EntityBaseSchema,
         productCode: {
@@ -27,9 +27,14 @@ export const ShipmentSaleOrderItemSchema = new EntitySchema<ShipmentSaleOrderIte
             inverseSide: "items",
             onDelete: "CASCADE",
             joinColumn: { 
-                name: snakeCase("saleOrderId"),
+                name: snakeCaseStrategy.columnName("saleOrderId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_ShipmentSaleOrderItem_ShipmentSaleOrder")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "ShipmentSaleOrderItems",
+                    ["saleOrderId"],
+                    "ShipmentSaleOrders",
+                    ["id"]
+                )
             },
         }
     }

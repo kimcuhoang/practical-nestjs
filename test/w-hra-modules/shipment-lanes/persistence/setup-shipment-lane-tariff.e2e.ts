@@ -129,7 +129,7 @@ describe(`Setup from ${ShipmentLane.name} to ${WeightRateValue.name}`, () => {
     });
 
     afterEach(async () => {
-        await shipmentLaneRepository.delete({});
+        await shipmentLaneRepository.createQueryBuilder().delete().execute();
         spyInstances.forEach(spy => spy.mockRestore());
     });
 

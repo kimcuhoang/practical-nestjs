@@ -37,7 +37,7 @@ describe(`Get ${BizUnit.name} via ${BizUnitsControllers.name}`, () => {
     });
 
     afterAll(async () => {
-        await bizUnitRepository.delete({});
+        await bizUnitRepository.createQueryBuilder().delete().execute();
     });
 
     test(`data should be setup correctly`, async() => {

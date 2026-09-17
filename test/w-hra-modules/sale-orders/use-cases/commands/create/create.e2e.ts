@@ -30,7 +30,7 @@ describe(`Create ${SaleOrder.name} via ${CreateSaleOrderHandler.name}`, () => {
     });
 
     afterEach(async() => {
-        await saleOrderRepository.delete({});
+        await saleOrderRepository.createQueryBuilder().delete().execute();
         spyInstanceOfCanCreateSaleOrder.mockReset();
     });
 

@@ -1,13 +1,14 @@
 import { EntitySchema } from "typeorm";
 import { ShipmentLane, Tariff } from "../../domain";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const ShipmentLaneSchema = new EntitySchema<ShipmentLane>({
     name: ShipmentLane.name,
     target: ShipmentLane,
-    tableName: snakeCase("ShipmentLanes"),
+    tableName: snakeCaseStrategy.tableName("ShipmentLanes", ""),
     columns: {
         ...EntityBaseSchema,
         code: {

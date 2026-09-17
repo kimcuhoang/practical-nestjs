@@ -1,13 +1,15 @@
 import { EntitySchema } from "typeorm";
 import { BizPartnerCustomerRegion } from "../../domain/models/biz-partner-customer-region";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { BizPartnerCustomer } from "../../domain";
+
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const BizPartnerCustomerRegionSchema = new EntitySchema<BizPartnerCustomerRegion>({
     name: BizPartnerCustomerRegion.name,
     target: BizPartnerCustomerRegion,
-    tableName: snakeCase("BizPartnerCustomerRegions"),
+    tableName: snakeCaseStrategy.tableName("BizPartnerCustomerRegions", ""),
     columns: {
         ...EntityBaseSchema,
         bizPartnerCustomerId: {
@@ -29,9 +31,9 @@ export const BizPartnerCustomerRegionSchema = new EntitySchema<BizPartnerCustome
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase("bizPartnerCustomerId"),
+                name: snakeCaseStrategy.columnName("bizPartnerCustomerId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_BizPartnerCustomerRegions_BizPartnerCustomers")
+                foreignKeyConstraintName: snakeCaseStrategy.relationName("FK_BizPartnerCustomerRegions_BizPartnerCustomers")
             }
         }
     }

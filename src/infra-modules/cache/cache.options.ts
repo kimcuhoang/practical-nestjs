@@ -1,5 +1,6 @@
-import { ModuleMetadata } from "@nestjs/common";
+import { ClassProvider, FactoryProvider, ModuleMetadata, Provider } from "@nestjs/common";
 import { HraRedisService } from "./services/redis-service/redis.service";
+import { HraCacheService } from "./services/cache-service/cache.service";
 
 export type CacheOptions = {
     timeToLiveInMinutes?: number;
@@ -9,16 +10,9 @@ export type CacheOptions = {
 
 export type HraCacheModuleOptions = Pick<ModuleMetadata, 'imports'> &
 {
-    cacheOptions?: {
-        useFactory: (...args: any[]) => Promise<CacheOptions> | CacheOptions;
-        inject?: any[];
-    },
-    overrideYanRedisService?: {
-        useFactory: (...args: any[]) => Promise<HraRedisService> | HraRedisService;
-        inject?: any[];
-    },
-    overrideYanCacheService?: {
-        useFactory: (...args: any[]) => Promise<HraRedisService> | HraRedisService;
-        inject?: any[];
-    }
+    cacheOptions?: Omit<FactoryProvider<CacheOptions>, "provide">;
+    overrideYanRedisService?: Omit<Provider<Promise<HraRedisService> | HraRedisService>, "provider">
+                                & Omit<ClassProvider<Promise<HraRedisService> | HraRedisService>, "provide">;
+    overrideYanCacheService?: Omit<Provider<Promise<HraCacheService> | HraCacheService>, "provider">
+                                & Omit<ClassProvider<Promise<HraCacheService> | HraCacheService>, "provide">;
 };

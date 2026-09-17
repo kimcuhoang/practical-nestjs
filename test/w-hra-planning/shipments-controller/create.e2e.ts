@@ -76,9 +76,9 @@ describe(`Create ${Shipment.name} via ${ShipmentsController.name}`, () => {
     });
 
     afterEach(async () => {
-        await bizUnitRepository.delete({});
-        await shipmentRepository.delete({});
-        await saleOrderRepository.delete({});
+        await bizUnitRepository.createQueryBuilder().delete().execute();
+        await shipmentRepository.createQueryBuilder().delete().execute();
+        await saleOrderRepository.createQueryBuilder().delete().execute();
     });
 
     test(`should be success`, async () => {

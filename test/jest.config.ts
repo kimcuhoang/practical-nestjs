@@ -6,6 +6,7 @@ const jestConfig: Config.InitialOptions = {
     restoreMocks: true,
     cache: true,
     testTimeout: 120000,
+    injectGlobals: true,
     moduleFileExtensions: ["js", "json", "ts"],
     extensionsToTreatAsEsm: [".ts"],
     rootDir: "..",
@@ -21,17 +22,22 @@ const jestConfig: Config.InitialOptions = {
         ".e2e.ts$"
     ],
     transform: {
-        "^.+\\.(t|j)s$": "ts-jest"
+        "^.+\\.(t|j)s$": [
+            'ts-jest', {
+                "isolatedModules": false,
+                "diagnostics": false
+            }
+        ]
     },
     globalSetup: "./test/global.setup.ts",
     globalTeardown: "./test/global.teardown.ts",
-    
+
     // setupFilesAfterEnv: [
     //     "./test/test.setup.ts"
     // ],
     // setupFiles: [
-    //     "dotenv/config",
-    //     "reflect-metadata"
+    //     "reflect-metadata",
+    //     "dotenv/config"
     // ],
     moduleNameMapper: {
         "^@src/(.*)$": "<rootDir>/src/$1",

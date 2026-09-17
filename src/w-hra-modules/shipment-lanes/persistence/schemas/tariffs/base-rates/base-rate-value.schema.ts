@@ -1,12 +1,13 @@
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
 import { EntitySchema } from "typeorm";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BaseRate, BaseRateValue } from "../../../../domain";
 
+const snakeCaseStrategy = new SnakeNamingStrategy();
 export const BaseRateValueSchema = new EntitySchema<BaseRateValue>({
     name: BaseRateValue.name,
     target: BaseRateValue,
-    tableName: snakeCase("BaseRateValues"),
+    tableName: snakeCaseStrategy.tableName("BaseRateValues", ""),
     columns: {
         ...EntityBaseSchema,
         baseRateType: {
@@ -30,9 +31,14 @@ export const BaseRateValueSchema = new EntitySchema<BaseRateValue>({
             onDelete: "CASCADE",
             orphanedRowAction: "delete",
             joinColumn: {
-                name: snakeCase("baseRateId"),
+                name: snakeCaseStrategy.columnName("baseRateId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_BaseRateValue_BaseRate")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "BaseRateValues",
+                    ["baseRateId"],
+                    "BaseRates",
+                    ["id"]
+                )
             }
         }
     },

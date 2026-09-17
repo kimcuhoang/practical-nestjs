@@ -17,7 +17,7 @@ export class AppController {
   @Get()
   @ApiExcludeEndpoint(true)
   @Redirect("/swagger", HttpStatus.MOVED_PERMANENTLY)
-  redirectToSwagger() {
+  redirectToSwagger(): void {
     // This method will be redirected, so its body can be empty or return any value
     return;
   }

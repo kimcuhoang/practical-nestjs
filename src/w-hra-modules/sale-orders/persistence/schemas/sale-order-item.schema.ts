@@ -1,12 +1,14 @@
 import { EntitySchema } from "typeorm";
 import { SaleOrder, SaleOrderItem } from "../../domain";
-import { snakeCase } from "typeorm/util/StringUtils";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { EntityBaseSchema } from "@src/infra-modules/database/persistence/schemas/entity-base-schema";
+
+const snakeCaseStrategy = new SnakeNamingStrategy();
 
 export const SaleOrderItemSchema = new EntitySchema<SaleOrderItem>({
     name: SaleOrderItem.name,
     target: SaleOrderItem,
-    tableName: snakeCase("SaleOrderItems"),
+    tableName: snakeCaseStrategy.tableName("SaleOrderItems", ""),
     columns: {
         ...EntityBaseSchema,
         saleOrderId: {
@@ -31,9 +33,14 @@ export const SaleOrderItemSchema = new EntitySchema<SaleOrderItem>({
             inverseSide: "items",
             onDelete: "CASCADE",
             joinColumn: {
-                name: snakeCase("saleOrderId"),
+                name: snakeCaseStrategy.columnName("saleOrderId", "", []),
                 referencedColumnName: "id",
-                foreignKeyConstraintName: snakeCase("FK_SaleOrderLineItem_SaleOrder")
+                foreignKeyConstraintName: snakeCaseStrategy.foreignKeyName(
+                    "SaleOrderItems",
+                    ["saleOrderId"],
+                    "SaleOrders",
+                    ["id"]
+                )
             }
         }
     }
